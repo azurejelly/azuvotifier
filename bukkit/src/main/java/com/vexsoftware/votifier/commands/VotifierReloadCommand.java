@@ -7,11 +7,11 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
-public class NVReloadCmd implements CommandExecutor {
+public class VotifierReloadCommand implements CommandExecutor {
 
     private final NuVotifierBukkit plugin;
 
-    public NVReloadCmd(NuVotifierBukkit plugin) {
+    public VotifierReloadCommand(NuVotifierBukkit plugin) {
         this.plugin = plugin;
     }
 

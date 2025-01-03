@@ -18,8 +18,8 @@
 
 package com.vexsoftware.votifier;
 
-import com.vexsoftware.votifier.commands.NVReloadCmd;
-import com.vexsoftware.votifier.commands.TestVoteCmd;
+import com.vexsoftware.votifier.commands.VotifierReloadCommand;
+import com.vexsoftware.votifier.commands.TestVoteCommand;
 import com.vexsoftware.votifier.forwarding.BukkitPluginMessagingForwardingSink;
 import com.vexsoftware.votifier.support.forwarding.ForwardedVoteListener;
 import com.vexsoftware.votifier.support.forwarding.ForwardingVoteSink;
@@ -347,8 +347,8 @@ public class NuVotifierBukkit extends JavaPlugin implements VoteHandler, Votifie
 
     @Override
     public void onEnable() {
-        getCommand("nvreload").setExecutor(new NVReloadCmd(this));
-        getCommand("testvote").setExecutor(new TestVoteCmd(this));
+        getCommand("nvreload").setExecutor(new VotifierReloadCommand(this));
+        getCommand("testvote").setExecutor(new TestVoteCommand(this));
 
         if (!loadAndBind()) {
             gracefulExit();

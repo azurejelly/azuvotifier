@@ -10,11 +10,11 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
-public class TestVoteCmd implements CommandExecutor {
+public class TestVoteCommand implements CommandExecutor {
 
     private final NuVotifierBukkit plugin;
 
-    public TestVoteCmd(NuVotifierBukkit plugin) {
+    public TestVoteCommand(NuVotifierBukkit plugin) {
         this.plugin = plugin;
     }
 
