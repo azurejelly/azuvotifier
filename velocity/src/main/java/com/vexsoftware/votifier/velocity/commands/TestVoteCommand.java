@@ -1,4 +1,4 @@
-package com.vexsoftware.votifier.velocity.cmd;
+package com.vexsoftware.votifier.velocity.commands;
 
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.command.SimpleCommand;
@@ -9,11 +9,11 @@ import com.vexsoftware.votifier.velocity.VotifierPlugin;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
-public class TestVoteCmd implements SimpleCommand {
+public class TestVoteCommand implements SimpleCommand {
 
     private final VotifierPlugin plugin;
 
-    public TestVoteCmd(VotifierPlugin plugin) {
+    public TestVoteCommand(VotifierPlugin plugin) {
         this.plugin = plugin;
     }
 
@@ -26,12 +26,12 @@ public class TestVoteCmd implements SimpleCommand {
             v = ArgsToVote.parse(invocation.arguments());
         } catch (IllegalArgumentException e) {
             sender.sendMessage(Component.text("Error while parsing arguments to create test vote: " + e.getMessage(), NamedTextColor.DARK_RED));
-            sender.sendMessage(Component.text("Usage hint: /testvote [username] [serviceName=?] [username=?] [address=?] [localTimestamp=?] [timestamp=?]", NamedTextColor.GRAY));
+            sender.sendMessage(Component.text("Usage hint: /testvote [username] [serviceName] [username] [address] [localTimestamp] [timestamp]", NamedTextColor.GRAY));
             return;
         }
 
         plugin.onVoteReceived(v, VotifierSession.ProtocolVersion.TEST, "localhost.test");
-        sender.sendMessage(Component.text("Test vote executed: " + v.toString(), NamedTextColor.GREEN));
+        sender.sendMessage(Component.text("Test vote executed: " + v, NamedTextColor.GREEN));
     }
 
     @Override

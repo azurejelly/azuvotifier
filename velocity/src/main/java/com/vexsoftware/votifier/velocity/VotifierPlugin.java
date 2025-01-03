@@ -31,14 +31,14 @@ import com.vexsoftware.votifier.support.forwarding.redis.RedisPoolConfiguration;
 import com.vexsoftware.votifier.util.IOUtil;
 import com.vexsoftware.votifier.util.KeyCreator;
 import com.vexsoftware.votifier.util.TokenUtil;
-import com.vexsoftware.votifier.velocity.cmd.NVReloadCmd;
-import com.vexsoftware.votifier.velocity.cmd.TestVoteCmd;
+import com.vexsoftware.votifier.velocity.commands.VotifierReloadCommand;
+import com.vexsoftware.votifier.velocity.commands.TestVoteCommand;
 import com.vexsoftware.votifier.velocity.event.VotifierEvent;
 import com.vexsoftware.votifier.velocity.forwarding.OnlineForwardPluginMessagingForwardingSource;
 import com.vexsoftware.votifier.velocity.forwarding.PluginMessagingForwardingSource;
 import com.vexsoftware.votifier.velocity.platform.logger.SLF4JLogger;
-import com.vexsoftware.votifier.velocity.platform.VelocityBackendServer;
-import com.vexsoftware.votifier.velocity.platform.logger.VelocityScheduler;
+import com.vexsoftware.votifier.velocity.platform.scheduler.VelocityScheduler;
+import com.vexsoftware.votifier.velocity.platform.server.VelocityBackendServer;
 import org.slf4j.Logger;
 
 import java.io.ByteArrayInputStream;
@@ -290,11 +290,12 @@ public class VotifierPlugin implements VoteHandler, ProxyVotifierPlugin {
         this.scheduler = new VelocityScheduler(server, this);
         this.loggingAdapter = new SLF4JLogger(logger);
 
-        this.getServer().getCommandManager().register("pnvreload", new NVReloadCmd(this));
-        this.getServer().getCommandManager().register("ptestvote", new TestVoteCmd(this));
+        this.getServer().getCommandManager().register("pnvreload", new VotifierReloadCommand(this));
+        this.getServer().getCommandManager().register("ptestvote", new TestVoteCommand(this));
 
-        if (!loadAndBind())
+        if (!loadAndBind()) {
             gracefulExit();
+        }
     }
 
     @Subscribe

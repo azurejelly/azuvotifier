@@ -1,4 +1,4 @@
-package com.vexsoftware.votifier.velocity.cmd;
+package com.vexsoftware.votifier.velocity.commands;
 
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.command.SimpleCommand;
@@ -6,11 +6,11 @@ import com.vexsoftware.votifier.velocity.VotifierPlugin;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
-public class NVReloadCmd implements SimpleCommand {
+public class VotifierReloadCommand implements SimpleCommand {
 
     private final VotifierPlugin plugin;
 
-    public NVReloadCmd(VotifierPlugin plugin) {
+    public VotifierReloadCommand(VotifierPlugin plugin) {
         this.plugin = plugin;
     }
 

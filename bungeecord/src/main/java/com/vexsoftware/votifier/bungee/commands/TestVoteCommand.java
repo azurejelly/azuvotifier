@@ -15,7 +15,7 @@ public class TestVoteCommand extends Command {
     private final NuVotifierBungee plugin;
 
     private static final BaseComponent PERMISSION = new TextComponent("You do not have permission to do this!");
-    private static final BaseComponent USAGE = new TextComponent("Usage hint: /ptestvote [username] [serviceName=?] [username=?] [address=?] [localTimestamp=?] [timestamp=?]");
+    private static final BaseComponent USAGE = new TextComponent("Usage hint: /ptestvote [username] [serviceName] [username] [address] [localTimestamp] [timestamp]");
 
     static {
         USAGE.setColor(ChatColor.GRAY);
