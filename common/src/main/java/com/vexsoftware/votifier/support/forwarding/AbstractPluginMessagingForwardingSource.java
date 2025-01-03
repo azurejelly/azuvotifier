@@ -83,7 +83,8 @@ public abstract class AbstractPluginMessagingForwardingSource implements Forward
     public void halt() {
         if (cache instanceof FileVoteCache) {
             try {
-                ((FileVoteCache) cache).halt();
+                FileVoteCache c = (FileVoteCache) cache;
+                c.halt();
             } catch (IOException e) {
                 plugin.getPluginLogger().error("Unable to save cached votes, votes will be lost.", e);
             }

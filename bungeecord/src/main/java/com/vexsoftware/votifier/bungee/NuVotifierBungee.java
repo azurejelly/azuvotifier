@@ -1,19 +1,23 @@
 package com.vexsoftware.votifier.bungee;
 
 import com.vexsoftware.votifier.VoteHandler;
-import com.vexsoftware.votifier.bungee.commands.VotifierReloadCommand;
 import com.vexsoftware.votifier.bungee.commands.TestVoteCommand;
+import com.vexsoftware.votifier.bungee.commands.VotifierReloadCommand;
+import com.vexsoftware.votifier.bungee.events.VotifierEvent;
+import com.vexsoftware.votifier.bungee.listeners.ProxyReloadListener;
 import com.vexsoftware.votifier.bungee.platform.forwarding.OnlineForwardPluginMessagingForwardingSource;
 import com.vexsoftware.votifier.bungee.platform.forwarding.PluginMessagingForwardingSource;
-import com.vexsoftware.votifier.bungee.listeners.ProxyReloadListener;
-import com.vexsoftware.votifier.bungee.platform.server.BungeeBackendServer;
 import com.vexsoftware.votifier.bungee.platform.scheduler.BungeeScheduler;
+import com.vexsoftware.votifier.bungee.platform.server.BungeeBackendServer;
+import com.vexsoftware.votifier.model.Vote;
 import com.vexsoftware.votifier.net.VotifierServerBootstrap;
+import com.vexsoftware.votifier.net.VotifierSession;
+import com.vexsoftware.votifier.net.protocol.v1crypto.RSAIO;
+import com.vexsoftware.votifier.net.protocol.v1crypto.RSAKeygen;
 import com.vexsoftware.votifier.platform.BackendServer;
 import com.vexsoftware.votifier.platform.JavaUtilLogger;
 import com.vexsoftware.votifier.platform.LoggingAdapter;
 import com.vexsoftware.votifier.platform.ProxyVotifierPlugin;
-import com.vexsoftware.votifier.bungee.events.VotifierEvent;
 import com.vexsoftware.votifier.platform.scheduler.VotifierScheduler;
 import com.vexsoftware.votifier.support.forwarding.ForwardingVoteSource;
 import com.vexsoftware.votifier.support.forwarding.ServerFilter;
@@ -21,13 +25,8 @@ import com.vexsoftware.votifier.support.forwarding.cache.FileVoteCache;
 import com.vexsoftware.votifier.support.forwarding.cache.MemoryVoteCache;
 import com.vexsoftware.votifier.support.forwarding.cache.VoteCache;
 import com.vexsoftware.votifier.support.forwarding.proxy.ProxyForwardingVoteSource;
-import com.vexsoftware.votifier.model.Vote;
-import com.vexsoftware.votifier.net.VotifierSession;
-import com.vexsoftware.votifier.net.protocol.v1crypto.RSAIO;
-import com.vexsoftware.votifier.net.protocol.v1crypto.RSAKeygen;
 import com.vexsoftware.votifier.support.forwarding.redis.RedisCredentials;
 import com.vexsoftware.votifier.support.forwarding.redis.RedisForwardingVoteSource;
-import com.vexsoftware.votifier.support.forwarding.redis.RedisPoolConfiguration;
 import com.vexsoftware.votifier.util.IOUtil;
 import com.vexsoftware.votifier.util.KeyCreator;
 import com.vexsoftware.votifier.util.TokenUtil;
@@ -348,31 +347,20 @@ public class NuVotifierBungee extends Plugin implements VoteHandler, ProxyVotifi
                 getLogger().info("Forwarding votes from this NuVotifier instance to another NuVotifier server.");
             }
             case "redis": {
-                if (!fwd.contains("redis") || !fwd.contains("redis.pool-settings")) {
-                    throw new RuntimeException("Redis configuration is missing or incomplete! " +
+                Configuration section = fwd.getSection("redis");
+                if (!fwd.contains("redis")) {
+                    throw new RuntimeException("Redis configuration is missing! " +
                             "Defaulting to noop implementation.");
                 }
 
-                Configuration redisSection = fwd.getSection("redis");
-                Configuration poolSection = redisSection.getSection("pool-settings");
-
                 this.forwardingMethod = new RedisForwardingVoteSource(
                         RedisCredentials.builder()
-                                .host(redisSection.getString("address"))
-                                .port(redisSection.getInt("port"))
-                                .password(redisSection.getString("password"))
-                                .channel(redisSection.getString("channel"))
-                                .build(),
-
-                        RedisPoolConfiguration.builder()
-                                .timeout(poolSection.getInt("timeout"))
-                                .maxTotal(poolSection.getInt("max-total"))
-                                .maxIdle(poolSection.getInt("max-idle"))
-                                .minIdle(poolSection.getInt("min-idle"))
-                                .minEvictableIdleTime(poolSection.getInt("min-evictable-idle-time"))
-                                .timeBetweenEvictionRuns(poolSection.getInt("time-between-eviction-runs"))
-                                .numTestsPerEvictionRun(poolSection.getInt("num-tests-per-eviction-run"))
-                                .blockWhenExhausted(poolSection.getBoolean("block-when-exhausted"))
+                                .host(section.getString("address"))
+                                .port(section.getInt("port"))
+                                .username(section.getString("username"))
+                                .password(section.getString("password"))
+                                .uri(section.getString("uri"))
+                                .channel(section.getString("channel"))
                                 .build(),
 
                         getPluginLogger()

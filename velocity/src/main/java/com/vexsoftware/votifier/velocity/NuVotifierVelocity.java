@@ -27,7 +27,6 @@ import com.vexsoftware.votifier.support.forwarding.cache.VoteCache;
 import com.vexsoftware.votifier.support.forwarding.proxy.ProxyForwardingVoteSource;
 import com.vexsoftware.votifier.support.forwarding.redis.RedisCredentials;
 import com.vexsoftware.votifier.support.forwarding.redis.RedisForwardingVoteSource;
-import com.vexsoftware.votifier.support.forwarding.redis.RedisPoolConfiguration;
 import com.vexsoftware.votifier.util.IOUtil;
 import com.vexsoftware.votifier.util.KeyCreator;
 import com.vexsoftware.votifier.util.TokenUtil;
@@ -261,7 +260,7 @@ public class NuVotifierVelocity implements VoteHandler, ProxyVotifierPlugin {
                 return true;
             }
             case "redis": {
-                if (!fwd.containsTable("redis") || !fwd.containsTable("redis.pool")) {
+                if (!fwd.containsTable("redis")) {
                     getLogger().error(
                             "Cannot set up Redis forwarding as the 'redis' configuration section is missing "
                                     + "or incomplete. Defaulting to noop implementation."
@@ -271,25 +270,15 @@ public class NuVotifierVelocity implements VoteHandler, ProxyVotifierPlugin {
                 }
 
                 Toml redis = fwd.getTable("redis");
-                Toml pool = redis.getTable("pool");
 
                 this.forwardingMethod = new RedisForwardingVoteSource(
                         RedisCredentials.builder()
                                 .host(redis.getString("address"))
                                 .port(redis.getLong("port").intValue())
+                                .username(redis.getString("username"))
                                 .password(redis.getString("password"))
+                                .uri(redis.getString("uri"))
                                 .channel(redis.getString("channel"))
-                                .build(),
-
-                        RedisPoolConfiguration.builder()
-                                .timeout(pool.getLong("timeout").intValue())
-                                .maxTotal(pool.getLong("max-total").intValue())
-                                .maxIdle(pool.getLong("max-idle").intValue())
-                                .minIdle(pool.getLong("min-idle").intValue())
-                                .minEvictableIdleTime(pool.getLong("min-evictable-idle-time").intValue())
-                                .timeBetweenEvictionRuns(pool.getLong("time-between-eviction-runs").intValue())
-                                .numTestsPerEvictionRun(pool.getLong("num-tests-per-eviction-run").intValue())
-                                .blockWhenExhausted(pool.getBoolean("block-when-exhausted"))
                                 .build(),
 
                         getPluginLogger()

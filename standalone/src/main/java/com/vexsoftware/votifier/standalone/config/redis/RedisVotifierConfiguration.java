@@ -1,38 +1,37 @@
 package com.vexsoftware.votifier.standalone.config.redis;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.vexsoftware.votifier.standalone.config.redis.pool.RedisPoolVotifierConfiguration;
-
 public class RedisVotifierConfiguration {
 
     private final boolean enabled;
     private final String address;
     private final int port;
+    private final String username;
     private final String password;
+    private final String uri;
     private final String channel;
-
-    @JsonProperty("pool-settings")
-    private final RedisPoolVotifierConfiguration poolSettings;
 
     public RedisVotifierConfiguration(
             boolean enabled, String address, int port,
-            String password, String channel, RedisPoolVotifierConfiguration poolSettings
+            String username, String password, String uri,
+            String channel
     ) {
         this.enabled = enabled;
         this.address = address;
         this.port = port;
         this.password = password;
         this.channel = channel;
-        this.poolSettings = poolSettings;
+        this.username = username;
+        this.uri = uri;
     }
 
     public RedisVotifierConfiguration() {
         this.enabled = false;
         this.address = "127.0.0.1";
         this.port = 6379;
+        this.username = "";
         this.password = "";
+        this.uri = "";
         this.channel = "nuvotifier:votes";
-        this.poolSettings = new RedisPoolVotifierConfiguration();
     }
 
     public boolean isEnabled() {
@@ -55,7 +54,11 @@ public class RedisVotifierConfiguration {
         return channel;
     }
 
-    public RedisPoolVotifierConfiguration getPoolSettings() {
-        return poolSettings;
+    public String getUsername() {
+        return username;
+    }
+
+    public String getUri() {
+        return uri;
     }
 }

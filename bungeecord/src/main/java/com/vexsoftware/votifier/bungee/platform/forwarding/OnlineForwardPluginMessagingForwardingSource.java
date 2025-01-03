@@ -1,7 +1,7 @@
 package com.vexsoftware.votifier.bungee.platform.forwarding;
 
-import com.vexsoftware.votifier.bungee.platform.server.BungeeBackendServer;
 import com.vexsoftware.votifier.bungee.NuVotifierBungee;
+import com.vexsoftware.votifier.bungee.platform.server.BungeeBackendServer;
 import com.vexsoftware.votifier.model.Vote;
 import com.vexsoftware.votifier.platform.BackendServer;
 import com.vexsoftware.votifier.support.forwarding.AbstractPluginMessagingForwardingSource;
@@ -32,8 +32,8 @@ public final class OnlineForwardPluginMessagingForwardingSource extends Abstract
             int dumpRate
     ) {
         super(channel, serverFilter, nuVotifier, cache, dumpRate);
-
         this.fallback = fallback;
+
         ProxyServer.getInstance().getPluginManager().registerListener(nuVotifier, this);
     }
 

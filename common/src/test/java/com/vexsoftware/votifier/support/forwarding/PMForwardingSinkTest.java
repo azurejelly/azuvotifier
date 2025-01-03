@@ -29,13 +29,11 @@ public class PMForwardingSinkTest {
         }
 
         byte[] messageBytes = message.toString().getBytes(StandardCharsets.UTF_8);
-        System.out.println(message.toString());
+        System.out.println(message);
 
-        AbstractPluginMessagingForwardingSink sink = new AbstractPluginMessagingForwardingSink(vl) {
+        AbstractPluginMessagingForwardingSink sink = new AbstractPluginMessagingForwardingSink(vl, null) {
             @Override
-            public void halt() {
-
-            }
+            public void halt() {}
         };
 
         sink.handlePluginMessage(messageBytes);

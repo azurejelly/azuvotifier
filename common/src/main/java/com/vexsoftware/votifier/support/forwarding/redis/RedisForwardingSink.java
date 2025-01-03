@@ -11,10 +11,13 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.JedisPubSub;
 
-import java.time.Duration;
+import java.net.URI;
+import java.net.URISyntaxException;
+
+import static com.vexsoftware.votifier.util.RedisPoolUtils.getJedisConfiguration;
 
 /**
- * @author AkramL
+ * @author AkramL, azurejelly
  */
 public class RedisForwardingSink extends JedisPubSub implements ForwardingVoteSink {
 
@@ -22,54 +25,68 @@ public class RedisForwardingSink extends JedisPubSub implements ForwardingVoteSi
     private final LoggingAdapter logger;
     private final String channel;
     private final JedisPool pool;
+    private final Thread thread;
 
-    public RedisForwardingSink(
-            RedisCredentials credentials,
-            RedisPoolConfiguration cfg,
-            ForwardedVoteListener listener,
-            LoggingAdapter logger
-    ) {
+    private static final int REDIS_TIMEOUT_MS = 5000;
+
+    public RedisForwardingSink(RedisCredentials credentials, ForwardedVoteListener listener, LoggingAdapter logger) {
         this.logger = logger;
         this.channel = credentials.getChannel();
         this.listener = listener;
 
-        JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
-        jedisPoolConfig.setMaxTotal(cfg.getMaxTotal());
-        jedisPoolConfig.setMaxIdle(cfg.getMaxIdle());
-        jedisPoolConfig.setMinIdle(cfg.getMinIdle());
-        jedisPoolConfig.setMinEvictableIdleTime(Duration.ofMillis(cfg.getMinEvictableIdleTime()));
-        jedisPoolConfig.setTimeBetweenEvictionRuns(Duration.ofMillis(cfg.getTimeBetweenEvictionRuns()));
-        jedisPoolConfig.setNumTestsPerEvictionRun(cfg.getNumTestsPerEvictionRun());
-        jedisPoolConfig.setBlockWhenExhausted(cfg.isBlockWhenExhausted());
-
-        String password = credentials.getPassword();
-        if (password == null || password.trim().isEmpty()) {
-            this.pool = new JedisPool(jedisPoolConfig,
-                    credentials.getHost(),
-                    credentials.getPort(),
-                    5000
-            );
+        JedisPoolConfig cfg = getJedisConfiguration();
+        if (credentials.getURI() != null && !credentials.getURI().isBlank()) {
+            try {
+                URI uri = new URI(credentials.getURI().trim());
+                this.pool = new JedisPool(cfg, uri, 5000);
+            } catch (URISyntaxException e) {
+                throw new RuntimeException("The Redis URI is invalid and a forwarding sink cannot be built:", e);
+            }
         } else {
-            this.pool = new JedisPool(jedisPoolConfig,
-                    credentials.getHost(),
-                    credentials.getPort(),
-                    5000,
-                    credentials.getPassword()
-            );
+            if (credentials.getHost() == null || credentials.getHost().isBlank()) {
+                throw new IllegalArgumentException("No Redis hostname or URI provided");
+            }
+
+            if (credentials.getPort() <= 0 || credentials.getPort() >= 65535) {
+                throw new IllegalArgumentException("Redis port must be within range");
+            }
+
+            String hostname = credentials.getHost();
+            int port = credentials.getPort();
+            String username = credentials.getUsername();
+            String password = credentials.getPassword();
+
+            // please let me know (or open a pull req) if
+            // there's a better way of doing this because i
+            // was not able to find one
+            boolean hasUsername = username != null && !username.isBlank();
+            boolean hasPassword = password != null && !password.isBlank();
+
+            if (hasUsername) {
+                if (hasPassword) {
+                    this.pool = new JedisPool(cfg, hostname, port, REDIS_TIMEOUT_MS, username, password);
+                } else {
+                    this.pool = new JedisPool(cfg, hostname, port, REDIS_TIMEOUT_MS, username);
+                }
+            } else {
+                if (hasPassword) {
+                    this.pool = new JedisPool(cfg, hostname, port, REDIS_TIMEOUT_MS, password);
+                } else {
+                    this.pool = new JedisPool(cfg, hostname, port, REDIS_TIMEOUT_MS);
+                }
+            }
         }
 
-        // Using a CompletableFuture here caused the vote to be received
-        // like 4 times instead of 1 - I shouldn't be using a Thread here
-        // because Bukkit doesn't like it, but I don't like Bukkit either
-        // at this point so fuck it
-        new Thread(() -> {
+        this.thread = new Thread(() -> {
             try (Jedis jedis = pool.getResource()) {
                 jedis.subscribe(this, channel);
             }
-        }, "Votifier Redis Forwarding Sink").start();
+        }, "Votifier Redis Forwarding Sink");
+
+        this.thread.start();
     }
 
-    public void handleMessage(String message) {
+    private void handleMessage(String message) {
         JsonObject object = GsonInst.GSON.fromJson(message, JsonObject.class);
         Vote vote = new Vote(object);
         listener.onForward(vote);
