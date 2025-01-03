@@ -1,8 +1,8 @@
 package com.vexsoftware.votifier.support.forwarding.redis;
 
-import com.google.gson.Gson;
 import com.vexsoftware.votifier.model.Vote;
 import com.vexsoftware.votifier.support.forwarding.ForwardingVoteSource;
+import com.vexsoftware.votifier.util.GsonInst;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
@@ -15,7 +15,6 @@ import java.time.Duration;
 public class RedisForwardingVoteSource implements ForwardingVoteSource {
 
     private final JedisPool pool;
-    private final Gson gson = new Gson();
     private final String channel;
 
     public RedisForwardingVoteSource(RedisCredentials credentials, RedisPoolConfiguration cfg) {
@@ -49,7 +48,7 @@ public class RedisForwardingVoteSource implements ForwardingVoteSource {
     @Override
     public void forward(Vote v) {
         try (Jedis jedis = pool.getResource()) {
-            jedis.publish(channel, gson.toJson(v.serialize()));
+            jedis.publish(channel, GsonInst.GSON.toJson(v.serialize()));
         }
     }
 

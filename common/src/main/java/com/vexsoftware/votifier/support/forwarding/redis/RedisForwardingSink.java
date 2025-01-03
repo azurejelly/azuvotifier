@@ -1,10 +1,10 @@
 package com.vexsoftware.votifier.support.forwarding.redis;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.vexsoftware.votifier.model.Vote;
 import com.vexsoftware.votifier.support.forwarding.ForwardedVoteListener;
 import com.vexsoftware.votifier.support.forwarding.ForwardingVoteSink;
+import com.vexsoftware.votifier.util.GsonInst;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
@@ -20,7 +20,6 @@ public class RedisForwardingSink extends JedisPubSub implements ForwardingVoteSi
     private final ForwardedVoteListener listener;
     private final String channel;
     private final JedisPool pool;
-    private final Gson gson = new Gson();
 
     public RedisForwardingSink(RedisCredentials credentials, RedisPoolConfiguration cfg, ForwardedVoteListener listener) {
         this.channel = credentials.getChannel();
@@ -62,7 +61,7 @@ public class RedisForwardingSink extends JedisPubSub implements ForwardingVoteSi
     }
 
     public void handleMessage(String message) {
-        JsonObject object = gson.fromJson(message, JsonObject.class);
+        JsonObject object = GsonInst.GSON.fromJson(message, JsonObject.class);
         Vote vote = new Vote(object);
         listener.onForward(vote);
     }
