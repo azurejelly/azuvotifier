@@ -179,7 +179,9 @@ public class VotifierPlugin implements VoteHandler, ProxyVotifierPlugin {
                         break;
                     }
                     default: {
-                        getLogger().info("No caching method '{}' known: votes that cannot be immediately delivered will be lost.", method);
+                        getLogger().info("No vote caching method named '{}' known." +
+                                " Votes that cannot be immediately delivered will be lost.", method);
+
                         break;
                     }
                 }
@@ -259,7 +261,7 @@ public class VotifierPlugin implements VoteHandler, ProxyVotifierPlugin {
                 return true;
             }
             case "redis": {
-                if (!fwd.containsTable("redis") || fwd.containsTable("redis.pool")) {
+                if (!fwd.containsTable("redis") || !fwd.containsTable("redis.pool")) {
                     getLogger().error(
                             "Cannot set up Redis forwarding as the 'redis' configuration section is missing "
                                     + "or incomplete. Defaulting to noop implementation."
