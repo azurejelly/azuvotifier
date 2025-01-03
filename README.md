@@ -1,4 +1,4 @@
-# azure's NuVotifier fork ![build](https://img.shields.io/github/actions/workflow/status/azurejelly/standalone-nuvotifier/build.yml)
+# AzuVotifier ![build](https://img.shields.io/github/actions/workflow/status/azurejelly/standalone-nuvotifier/build.yml)
 A NuVotifier fork with Redis forwarding support and a standalone server implementation. From the original README:
 > NuVotifier is a secure alternative to using the original Votifier project. 
 > NuVotifier will work in place of Votifier - any vote listener that supports 
