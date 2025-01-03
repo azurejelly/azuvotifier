@@ -1,8 +1,8 @@
 package com.vexsoftware.votifier.bungee;
 
 import com.vexsoftware.votifier.VoteHandler;
-import com.vexsoftware.votifier.bungee.commands.NVReloadCmd;
-import com.vexsoftware.votifier.bungee.commands.TestVoteCmd;
+import com.vexsoftware.votifier.bungee.commands.VotifierReloadCommand;
+import com.vexsoftware.votifier.bungee.commands.TestVoteCommand;
 import com.vexsoftware.votifier.bungee.forwarding.OnlineForwardPluginMessagingForwardingSource;
 import com.vexsoftware.votifier.bungee.forwarding.PluginMessagingForwardingSource;
 import com.vexsoftware.votifier.bungee.listeners.ProxyReloadListener;
@@ -396,8 +396,8 @@ public class NuVotifierBungee extends Plugin implements VoteHandler, ProxyVotifi
         this.pluginLogger = new JavaUtilLogger(getLogger());
 
         PluginManager pm = ProxyServer.getInstance().getPluginManager();
-        pm.registerCommand(this, new NVReloadCmd(this));
-        pm.registerCommand(this, new TestVoteCmd(this));
+        pm.registerCommand(this, new VotifierReloadCommand(this));
+        pm.registerCommand(this, new TestVoteCommand(this));
         pm.registerListener(this, new ProxyReloadListener(this));
 
         loadAndBind();

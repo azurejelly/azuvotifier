@@ -7,7 +7,7 @@ import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.plugin.Command;
 
-public class NVReloadCmd extends Command {
+public class VotifierReloadCommand extends Command {
 
     private final NuVotifierBungee plugin;
 
@@ -23,22 +23,24 @@ public class NVReloadCmd extends Command {
         PERMISSION.setColor(ChatColor.DARK_RED);
     }
 
-    public NVReloadCmd(NuVotifierBungee plugin) {
-        super("pnvreload", "nuvotifier.reload");
+    public VotifierReloadCommand(NuVotifierBungee plugin) {
+        super("pnvreload", "nuvotifier.reload", "bnvreload");
         this.plugin = plugin;
     }
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        if (sender.hasPermission("nuvotifier.reload")) {
-            sender.sendMessage(RELOADING);
-            if (plugin.reload()) {
-                sender.sendMessage(RELOADED);
-            } else {
-                sender.sendMessage(PROBLEM);
-            }
-        } else {
+        if (!sender.hasPermission("nuvotifier.reload")) {
             sender.sendMessage(PERMISSION);
+            return;
+        }
+
+        sender.sendMessage(RELOADING);
+
+        if (plugin.reload()) {
+            sender.sendMessage(RELOADED);
+        } else {
+            sender.sendMessage(PROBLEM);
         }
     }
 }

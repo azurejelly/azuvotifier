@@ -8,6 +8,8 @@ import org.jetbrains.annotations.NotNull;
  * {@code VotifierEvent} is a custom Bukkit event class that is sent
  * synchronously to CraftBukkit's main thread allowing other plugins to listen
  * for votes.
+ * <p>
+ * It will only be sent asynchronously when running under Folia.
  *
  * @author frelling
  */
