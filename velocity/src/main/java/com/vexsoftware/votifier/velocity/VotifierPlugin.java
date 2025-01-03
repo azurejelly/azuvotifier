@@ -76,8 +76,8 @@ public class VotifierPlugin implements VoteHandler, ProxyVotifierPlugin {
     private VotifierScheduler scheduler;
 
     private boolean loadAndBind() {
-        // Load configuration.
         Toml config;
+
         try {
             config = loadConfig();
         } catch (IOException e) {
@@ -94,34 +94,37 @@ public class VotifierPlugin implements VoteHandler, ProxyVotifierPlugin {
                 if (!rsaDirectory.mkdir()) {
                     throw new RuntimeException("Unable to create the RSA key folder " + rsaDirectory);
                 }
-                keyPair = RSAKeygen.generate(2048);
+
+                this.keyPair = RSAKeygen.generate(2048);
                 RSAIO.save(rsaDirectory, keyPair);
             } else {
-                keyPair = RSAIO.load(rsaDirectory);
+                this.keyPair = RSAIO.load(rsaDirectory);
             }
         } catch (Exception ex) {
             logger.error("Error creating or reading RSA tokens", ex);
             return false;
         }
 
-        if (config.contains("quiet"))
-            debug = !config.getBoolean("quiet");
-        else
-            debug = config.getBoolean("debug", true);
+        if (config.contains("quiet")) {
+            this.debug = !config.getBoolean("quiet");
+        } else {
+            this.debug = config.getBoolean("debug", true);
+        }
 
         // Load Votifier tokens.
         config.getTable("tokens").toMap().forEach((service, key) -> {
             if (key instanceof String) {
                 tokens.put(service, KeyCreator.createKeyFrom((String) key));
-                logger.info("Loaded token for website: " + service);
+                logger.info("Loaded token for website: {}", service);
             }
         });
 
         // Initialize the receiver.
         final String host = config.getString("host");
         final int port = Math.toIntExact(config.getLong("port"));
-        if (!debug)
+        if (!debug) {
             logger.info("QUIET mode enabled!");
+        }
 
         final boolean disableV1 = config.getBoolean("disable-v1-protocol", false);
         if (disableV1) {
@@ -131,125 +134,173 @@ public class VotifierPlugin implements VoteHandler, ProxyVotifierPlugin {
             logger.info("------------------------------------------------------------------------------");
         }
 
-        this.bootstrap = new VotifierServerBootstrap(host, port, this, disablev1);
-        this.bootstrap.start(err -> {
-        });
+        this.bootstrap = new VotifierServerBootstrap(host, port, this, disableV1);
+        this.bootstrap.start(err -> {});
 
-        Toml fwdCfg = config.getTable("forwarding");
-        String fwdMethod = fwdCfg.getString("method", "none").toLowerCase();
-        if ("none".equals(fwdMethod)) {
-            getLogger().info("Method none selected for vote forwarding: Votes will not be forwarded to backend servers.");
-        } else if ("pluginmessaging".equals(fwdMethod)) {
-            Toml pmCfg = fwdCfg.getTable("pluginMessaging");
-            String channel = pmCfg.getString("channel", "NuVotifier");
-            String cacheMethod = pmCfg.getString("cache", "file").toLowerCase();
-            VoteCache voteCache = null;
-            if ("none".equals(cacheMethod)) {
-                getLogger().info("Vote cache none selected for caching: votes that cannot be immediately delivered will be lost.");
-            } else if ("memory".equals(cacheMethod)) {
-                voteCache = new MemoryVoteCache(
-                        this,
-                        fwdCfg.getTable("memory-cache").getLong("cacheTime", -1L));
-                getLogger().info("Using in-memory cache for votes that are not able to be delivered.");
-            } else if ("file".equals(cacheMethod)) {
-                try {
-                    voteCache = new FileVoteCache(
-                            this,
-                            configDir.resolve(fwdCfg.getTable("file-cache").getString("name")).toFile(),
-                            fwdCfg.getTable("file-cache").getLong("cacheTime", -1L));
-                } catch (IOException e) {
-                    getLogger().error("Unload to load file cache. Votes will be lost!", e);
-                }
+        Toml fwd = config.getTable("forwarding");
+        String method = fwd.getString("method", "none").toLowerCase();
+
+        switch (method) {
+            case "none": {
+                getLogger().info("Method none selected for vote forwarding: Votes will not be forwarded to backend servers.");
+                return true;
             }
-            int dumpRate = pmCfg.getLong("dumpRate", 5L).intValue();
+            case "pluginmessaging": {
+                Toml table = fwd.getTable("pluginMessaging");
+                String channel = table.getString("channel", "NuVotifier");
+                String cacheMethod = table.getString("cache", "file").toLowerCase();
+                int dumpRate = table.getLong("dumpRate", 5L).intValue();
+                VoteCache cache = null;
 
-            ServerFilter filter = new ServerFilter(
-                    pmCfg.getList("excludedServers", Collections.emptyList()),
-                    pmCfg.getBoolean("whitelist", false)
-            );
+                switch (cacheMethod) {
+                    case "none": {
+                        getLogger().info("Vote cache none selected for caching: votes that cannot be immediately delivered will be lost.");
+                        break;
+                    }
+                    case "memory": {
+                        long time = fwd.getTable("memory-cache").getLong("cacheTime", -1L);
+                        cache = new MemoryVoteCache(this, time);
 
-            if (!pmCfg.getBoolean("onlySendToJoinedServer")) {
-                try {
-                    forwardingMethod = new PluginMessagingForwardingSource(channel, filter, this, voteCache, dumpRate);
-                    getLogger().info("Forwarding votes over PluginMessaging channel '" + channel + "' for vote forwarding!");
-                } catch (RuntimeException e) {
-                    getLogger().error("NuVotifier could not set up PluginMessaging for vote forwarding!", e);
+                        getLogger().info("Using in-memory cache for votes that are not able to be delivered.");
+                        break;
+                    }
+                    case "file": {
+                        try {
+                            String filename = fwd.getTable("file-cache").getString("name");
+                            File file = configDir.resolve(filename).toFile();
+                            long time = fwd.getTable("file-cache").getLong("cacheTime", -1L);
+
+                            cache = new FileVoteCache(this, file, time);
+                            getLogger().info("Using file cache for votes that are not able to be delivered.");
+                        } catch (IOException e) {
+                            getLogger().error("Unable to load file cache. Votes will be lost!", e);
+                        }
+
+                        break;
+                    }
+                    default: {
+                        getLogger().info("No caching method '{}' known: votes that cannot be immediately delivered will be lost.", method);
+                        break;
+                    }
                 }
-            } else {
-                try {
-                    String fallbackServer = pmCfg.getString("joinedServerFallback", null);
-                    if (fallbackServer != null && fallbackServer.isEmpty()) fallbackServer = null;
-                    forwardingMethod = new OnlineForwardPluginMessagingForwardingSource(channel, filter, this, voteCache, fallbackServer, dumpRate);
-                    getLogger().info("Forwarding votes over PluginMessaging channel '" + channel + "' for vote forwarding for online players!");
-                } catch (RuntimeException e) {
-                    getLogger().error("NuVotifier could not set up PluginMessaging for vote forwarding!", e);
+
+                ServerFilter filter = new ServerFilter(
+                        table.getList("excludedServers", Collections.emptyList()),
+                        table.getBoolean("whitelist", false)
+                );
+
+                if (!table.getBoolean("onlySendToJoinedServer")) {
+                    try {
+                        this.forwardingMethod = new PluginMessagingForwardingSource(
+                                channel, filter, this, cache, dumpRate
+                        );
+
+                        getLogger().info("Forwarding votes over plugin messaging channel '{}'!", channel);
+                    } catch (RuntimeException ex) {
+                        getLogger().error("NuVotifier could not set up plugin messaging for vote forwarding!", ex);
+                        return false;
+                    }
+                } else {
+                    try {
+                        String fallbackServer = table.getString("joinedServerFallback", null);
+                        if (fallbackServer != null && fallbackServer.isEmpty()) {
+                            fallbackServer = null;
+                        }
+
+                        this.forwardingMethod = new OnlineForwardPluginMessagingForwardingSource(
+                                channel, filter, this, cache, fallbackServer, dumpRate
+                        );
+
+                        getLogger().info("Forwarding votes over plugin messaging channel '{}' for online players!", channel);
+                    } catch (RuntimeException e) {
+                        getLogger().error("NuVotifier could not set up PluginMessaging for vote forwarding!", e);
+                        return false;
+                    }
                 }
+
+                return true;
             }
-        } else if ("proxy".equals(fwdMethod)) {
-            Toml serverSection = fwdCfg.getTable("proxy");
-            List<ProxyForwardingVoteSource.BackendServer> serverList = new ArrayList<>();
-            for (String s : serverSection.toMap().keySet()) {
-                Toml section = serverSection.getTable(s);
-                InetAddress address;
-                try {
-                    address = InetAddress.getByName(section.getString("address"));
-                } catch (UnknownHostException e) {
-                    getLogger().info("Address " + section.getString("address") + " couldn't be looked up. Ignoring!");
-                    continue;
+            case "proxy": {
+                Toml table = fwd.getTable("proxy");
+                List<ProxyForwardingVoteSource.BackendServer> serverList = new ArrayList<>();
+                for (String name : table.toMap().keySet()) {
+                    Toml section = table.getTable(name);
+                    InetAddress address;
+
+                    try {
+                        address = InetAddress.getByName(section.getString("address"));
+                    } catch (UnknownHostException e) {
+                        getLogger().info("Couldn't look up {}! Ignoring!", section.getString("address"));
+                        continue;
+                    }
+
+                    Key token = null;
+                    try {
+                        token = KeyCreator.createKeyFrom(section.getString("token", section.getString("key")));
+                    } catch (IllegalArgumentException ex) {
+                        getLogger().error("An exception occurred while attempting to add proxy target '{}' - " +
+                                "maybe your token is wrong? Votes will not be forwarded to this server!", name, ex);
+                    }
+
+                    if (token != null) {
+                        int serverPort = Math.toIntExact(section.getLong("port"));
+                        InetSocketAddress socket = new InetSocketAddress(address, serverPort);
+
+                        ProxyForwardingVoteSource.BackendServer server = new ProxyForwardingVoteSource.BackendServer(
+                                name, socket, token
+                        );
+
+                        serverList.add(server);
+                    }
                 }
 
-                Key token = null;
-                try {
-                    token = KeyCreator.createKeyFrom(section.getString("token", section.getString("key")));
-                } catch (IllegalArgumentException e) {
+                this.forwardingMethod = bootstrap.createForwardingSource(serverList, null);
+                getLogger().info("Forwarding votes from this NuVotifier instance to another NuVotifier server.");
+                return true;
+            }
+            case "redis": {
+                if (!fwd.containsTable("redis") || fwd.containsTable("redis.pool")) {
                     getLogger().error(
-                            "An exception occurred while attempting to add proxy target '" + s + "' - maybe your token is wrong? " +
-                                    "Votes will not be forwarded to this server!", e);
+                            "Cannot set up Redis forwarding as the 'redis' configuration section is missing "
+                                    + "or incomplete. Defaulting to noop implementation."
+                    );
+
+                    return false;
                 }
 
-                if (token != null) {
-                    ProxyForwardingVoteSource.BackendServer server = new ProxyForwardingVoteSource.BackendServer(s,
-                            new InetSocketAddress(address, Math.toIntExact(section.getLong("port"))),
-                            token);
-                    serverList.add(server);
-                }
+                Toml redis = fwd.getTable("redis");
+                Toml pool = redis.getTable("pool");
+
+                this.forwardingMethod = new RedisForwardingVoteSource(
+                        RedisCredentials.builder()
+                                .host(redis.getString("address"))
+                                .port(redis.getLong("port").intValue())
+                                .password(redis.getString("password"))
+                                .channel(redis.getString("channel"))
+                                .build(),
+
+                        RedisPoolConfiguration.builder()
+                                .timeout(pool.getLong("timeout").intValue())
+                                .maxTotal(pool.getLong("max-total").intValue())
+                                .maxIdle(pool.getLong("max-idle").intValue())
+                                .minIdle(pool.getLong("min-idle").intValue())
+                                .minEvictableIdleTime(pool.getLong("min-evictable-idle-time").intValue())
+                                .timeBetweenEvictionRuns(pool.getLong("time-between-eviction-runs").intValue())
+                                .numTestsPerEvictionRun(pool.getLong("num-tests-per-eviction-run").intValue())
+                                .blockWhenExhausted(pool.getBoolean("block-when-exhausted"))
+                                .build(),
+
+                        getPluginLogger()
+                );
+
+                getLogger().info("Forwarding votes from this NuVotifier instance through Redis.");
+                return true;
             }
-
-            forwardingMethod = bootstrap.createForwardingSource(serverList, null);
-            getLogger().info("Forwarding votes from this NuVotifier instance to another NuVotifier server.");
-        } else if ("redis".equals(fwdMethod)) {
-
-            Toml redisSection = fwdCfg.getTable("redis"),
-                    redisPoolSection = redisSection.getTable("pool");
-
-            // Load redis credentials
-            RedisCredentials redisCredentials = RedisCredentials.builder()
-                    .host(redisSection.getString("address"))
-                    .port(redisSection.getLong("port").intValue())
-                    .password(redisSection.getString("password"))
-                    .channel(redisSection.getString("channel"))
-                    .build();
-
-            // Load redis pool parameters
-            RedisPoolConfiguration redisPoolConfiguration = RedisPoolConfiguration.builder()
-                    .timeout(redisPoolSection.getLong("timeout").intValue())
-                    .maxTotal(redisPoolSection.getLong("max-total").intValue())
-                    .maxIdle(redisPoolSection.getLong("max-idle").intValue())
-                    .minIdle(redisPoolSection.getLong("min-idle").intValue())
-                    .minEvictableIdleTime(redisPoolSection.getLong("min-evictable-idle-time").intValue())
-                    .timeBetweenEvictionRuns(redisPoolSection.getLong("time-between-eviction-runs").intValue())
-                    .numTestsPerEvictionRun(redisPoolSection.getLong("num-tests-per-eviction-run").intValue())
-                    .blockWhenExhausted(redisPoolSection.getBoolean("block-when-exhausted"))
-                    .build();
-
-            this.forwardingMethod = new RedisForwardingVoteSource(
-                    redisCredentials, redisPoolConfiguration, getPluginLogger()
-            );
-        } else {
-            getLogger().error("No vote forwarding method '" + fwdMethod + "' known. Defaulting to noop implementation.");
+            default: {
+                getLogger().error("No vote forwarding method '{}' known. Defaulting to noop implementation.", method);
+                return false;
+            }
         }
-
-        return true;
     }
 
     void halt() {
@@ -281,6 +332,7 @@ public class VotifierPlugin implements VoteHandler, ProxyVotifierPlugin {
             } catch (Exception ex) {
                 getLogger().error("On reload, there was a problem loading, and we could not re-halt the server. Votifier is in an unstable state!", ex);
             }
+
             return false;
         }
     }
@@ -317,6 +369,7 @@ public class VotifierPlugin implements VoteHandler, ProxyVotifierPlugin {
         if (!Files.exists(configDir)) {
             Files.createDirectory(configDir);
         }
+
         Path configPath = configDir.resolve("config.toml");
         try (Reader reader = Files.newBufferedReader(configPath, StandardCharsets.UTF_8)) {
             return new Toml().read(reader);
@@ -326,8 +379,12 @@ public class VotifierPlugin implements VoteHandler, ProxyVotifierPlugin {
             getLogger().info("Configuring Votifier for the first time...");
 
             // Initialize the configuration file.
+            String cfgStr = new String(
+                    IOUtil.readAllBytes(
+                            Objects.requireNonNull(VotifierPlugin.class.getResourceAsStream("/config.toml"))
+                    ), StandardCharsets.UTF_8
+            );
 
-            String cfgStr = new String(IOUtil.readAllBytes(VotifierPlugin.class.getResourceAsStream("/config.toml")), StandardCharsets.UTF_8);
             String token = TokenUtil.newToken();
             cfgStr = cfgStr.replace("%ip%", server.getBoundAddress().getAddress().getHostAddress());
             cfgStr = cfgStr.replace("%default_token%", token);
@@ -346,12 +403,17 @@ public class VotifierPlugin implements VoteHandler, ProxyVotifierPlugin {
             getLogger().info("however, if you want NuVotifier to only listen to one interface for security ");
             getLogger().info("reasons (or you use a shared host), you may change this in the config.toml.");
             getLogger().info("------------------------------------------------------------------------------");
-            getLogger().info("Your default Votifier token is " + token + ".");
+            getLogger().info("Your default Votifier token is {}.", token);
             getLogger().info("You will need to provide this token when you submit your server to a voting");
             getLogger().info("list.");
             getLogger().info("------------------------------------------------------------------------------");
 
-            Files.copy(new ByteArrayInputStream(cfgStr.getBytes(StandardCharsets.UTF_8)), configPath, StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(
+                    new ByteArrayInputStream(cfgStr.getBytes(StandardCharsets.UTF_8)),
+                    configPath,
+                    StandardCopyOption.REPLACE_EXISTING
+            );
+
             return new Toml().read(cfgStr);
         }
     }
@@ -359,11 +421,6 @@ public class VotifierPlugin implements VoteHandler, ProxyVotifierPlugin {
     public Logger getLogger() {
         return logger;
     }
-
-    /**
-     * The current Votifier version.
-     */
-    private String version;
 
     /**
      * The server bootstrap.
@@ -383,7 +440,7 @@ public class VotifierPlugin implements VoteHandler, ProxyVotifierPlugin {
     /**
      * Keys used for websites.
      */
-    private Map<String, Key> tokens = new HashMap<>();
+    private final Map<String, Key> tokens = new HashMap<>();
 
     /**
      * Method used to forward votes to downstream servers
@@ -422,9 +479,9 @@ public class VotifierPlugin implements VoteHandler, ProxyVotifierPlugin {
     public void onVoteReceived(final Vote vote, VotifierSession.ProtocolVersion protocolVersion, String remoteAddress) {
         if (debug) {
             if (protocolVersion == VotifierSession.ProtocolVersion.ONE) {
-                logger.info("Got a protocol v1 vote record from " + remoteAddress + " -> " + vote);
+                logger.info("Got a protocol v1 vote record from {} -> {}", remoteAddress, vote);
             } else {
-                logger.info("Got a protocol v2 vote record from " + remoteAddress + " -> " + vote);
+                logger.info("Got a protocol v2 vote record from {} -> {}", remoteAddress, vote);
             }
         }
 
@@ -439,13 +496,13 @@ public class VotifierPlugin implements VoteHandler, ProxyVotifierPlugin {
     public void onError(Throwable throwable, boolean alreadyHandledVote, String remoteAddress) {
         if (debug) {
             if (alreadyHandledVote) {
-                logger.warn("Vote processed, however an exception " +
-                        "occurred with a vote from " + remoteAddress, throwable);
+                logger.warn("Vote processed, however an exception occurred with a vote from {}",
+                        remoteAddress, throwable);
             } else {
-                logger.warn("Unable to process vote from " + remoteAddress, throwable);
+                logger.warn("Unable to process vote from {}", remoteAddress, throwable);
             }
         } else if (!alreadyHandledVote) {
-            logger.warn("Unable to process vote from " + remoteAddress);
+            logger.warn("Unable to process vote from {}", remoteAddress);
         }
     }
 
