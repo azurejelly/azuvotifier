@@ -31,8 +31,8 @@ import com.vexsoftware.votifier.support.forwarding.redis.RedisPoolConfiguration;
 import com.vexsoftware.votifier.util.IOUtil;
 import com.vexsoftware.votifier.util.KeyCreator;
 import com.vexsoftware.votifier.util.TokenUtil;
-import com.vexsoftware.votifier.velocity.commands.VotifierReloadCommand;
 import com.vexsoftware.votifier.velocity.commands.TestVoteCommand;
+import com.vexsoftware.votifier.velocity.commands.VotifierReloadCommand;
 import com.vexsoftware.votifier.velocity.event.VotifierEvent;
 import com.vexsoftware.votifier.velocity.forwarding.OnlineForwardPluginMessagingForwardingSource;
 import com.vexsoftware.votifier.velocity.forwarding.PluginMessagingForwardingSource;
@@ -60,7 +60,7 @@ import java.util.stream.Collectors;
 
 @Plugin(id = "nuvotifier", name = "NuVotifier", version = "@version@", authors = "Ichbinjoe",
         description = "Safe, smart, and secure Votifier server plugin")
-public class VotifierPlugin implements VoteHandler, ProxyVotifierPlugin {
+public class NuVotifierVelocity implements VoteHandler, ProxyVotifierPlugin {
 
     @Inject
     public Logger logger;
@@ -383,7 +383,7 @@ public class VotifierPlugin implements VoteHandler, ProxyVotifierPlugin {
             // Initialize the configuration file.
             String cfgStr = new String(
                     IOUtil.readAllBytes(
-                            Objects.requireNonNull(VotifierPlugin.class.getResourceAsStream("/config.toml"))
+                            Objects.requireNonNull(NuVotifierVelocity.class.getResourceAsStream("/config.toml"))
                     ), StandardCharsets.UTF_8
             );
 

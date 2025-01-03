@@ -12,19 +12,19 @@ import com.vexsoftware.votifier.platform.BackendServer;
 import com.vexsoftware.votifier.support.forwarding.AbstractPluginMessagingForwardingSource;
 import com.vexsoftware.votifier.support.forwarding.ServerFilter;
 import com.vexsoftware.votifier.support.forwarding.cache.VoteCache;
+import com.vexsoftware.votifier.velocity.NuVotifierVelocity;
 import com.vexsoftware.votifier.velocity.platform.server.VelocityBackendServer;
 import com.vexsoftware.votifier.velocity.utils.VelocityUtil;
-import com.vexsoftware.votifier.velocity.VotifierPlugin;
 
 import java.util.Optional;
 
 public final class OnlineForwardPluginMessagingForwardingSource extends AbstractPluginMessagingForwardingSource {
 
     private final String fallbackServer;
-    private final VotifierPlugin plugin;
+    private final NuVotifierVelocity plugin;
     private final ChannelIdentifier velocityChannelId;
 
-    public OnlineForwardPluginMessagingForwardingSource(String channel, ServerFilter filter, VotifierPlugin plugin, VoteCache cache, String fallback, int dumpRate) {
+    public OnlineForwardPluginMessagingForwardingSource(String channel, ServerFilter filter, NuVotifierVelocity plugin, VoteCache cache, String fallback, int dumpRate) {
         super(channel, filter, plugin, cache, dumpRate);
         this.fallbackServer = fallback;
         this.plugin = plugin;

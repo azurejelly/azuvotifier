@@ -5,16 +5,16 @@ import com.velocitypowered.api.scheduler.ScheduledTask;
 import com.velocitypowered.api.scheduler.Scheduler;
 import com.vexsoftware.votifier.platform.scheduler.ScheduledVotifierTask;
 import com.vexsoftware.votifier.platform.scheduler.VotifierScheduler;
-import com.vexsoftware.votifier.velocity.VotifierPlugin;
+import com.vexsoftware.votifier.velocity.NuVotifierVelocity;
 
 import java.util.concurrent.TimeUnit;
 
 public class VelocityScheduler implements VotifierScheduler {
 
     private final ProxyServer server;
-    private final VotifierPlugin plugin;
+    private final NuVotifierVelocity plugin;
 
-    public VelocityScheduler(ProxyServer server, VotifierPlugin plugin) {
+    public VelocityScheduler(ProxyServer server, NuVotifierVelocity plugin) {
         this.server = server;
         this.plugin = plugin;
     }

@@ -7,16 +7,16 @@ import com.velocitypowered.api.proxy.messages.ChannelIdentifier;
 import com.vexsoftware.votifier.support.forwarding.AbstractPluginMessagingForwardingSource;
 import com.vexsoftware.votifier.support.forwarding.ServerFilter;
 import com.vexsoftware.votifier.support.forwarding.cache.VoteCache;
+import com.vexsoftware.votifier.velocity.NuVotifierVelocity;
 import com.vexsoftware.votifier.velocity.platform.server.VelocityBackendServer;
 import com.vexsoftware.votifier.velocity.utils.VelocityUtil;
-import com.vexsoftware.votifier.velocity.VotifierPlugin;
 
 public class PluginMessagingForwardingSource extends AbstractPluginMessagingForwardingSource {
 
-    private final VotifierPlugin plugin;
+    private final NuVotifierVelocity plugin;
     private final ChannelIdentifier velocityChannelId;
 
-    public PluginMessagingForwardingSource(String channel, ServerFilter filter, VotifierPlugin plugin, VoteCache cache, int dumpRate) {
+    public PluginMessagingForwardingSource(String channel, ServerFilter filter, NuVotifierVelocity plugin, VoteCache cache, int dumpRate) {
         super(channel, filter, plugin, cache, dumpRate);
         this.plugin = plugin;
         this.velocityChannelId = VelocityUtil.getId(channel);

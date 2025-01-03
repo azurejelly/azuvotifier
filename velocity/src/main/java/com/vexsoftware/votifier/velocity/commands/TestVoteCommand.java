@@ -5,15 +5,15 @@ import com.velocitypowered.api.command.SimpleCommand;
 import com.vexsoftware.votifier.model.Vote;
 import com.vexsoftware.votifier.net.VotifierSession;
 import com.vexsoftware.votifier.util.ArgsToVote;
-import com.vexsoftware.votifier.velocity.VotifierPlugin;
+import com.vexsoftware.votifier.velocity.NuVotifierVelocity;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
 public class TestVoteCommand implements SimpleCommand {
 
-    private final VotifierPlugin plugin;
+    private final NuVotifierVelocity plugin;
 
-    public TestVoteCommand(VotifierPlugin plugin) {
+    public TestVoteCommand(NuVotifierVelocity plugin) {
         this.plugin = plugin;
     }
 
