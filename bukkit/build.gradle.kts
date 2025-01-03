@@ -66,7 +66,7 @@ bukkit {
             description = "Sends a test vote to the server"
             permission = "nuvotifier.testvote"
             permissionMessage = "You do not have permission to run this command."
-            usage = "/testvote [username] [serviceName=?] [username=?] [address=?] [localTimestamp=?] [timestamp=?]"
+            usage = "/testvote [username] [serviceName] [username] [address] [localTimestamp] [timestamp]"
         }
     }
 
