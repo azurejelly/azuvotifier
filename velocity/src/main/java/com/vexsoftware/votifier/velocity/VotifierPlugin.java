@@ -237,8 +237,9 @@ public class VotifierPlugin implements VoteHandler, ProxyVotifierPlugin {
                     .blockWhenExhausted(redisPoolSection.getBoolean("block-when-exhausted"))
                     .build();
 
-            forwardingMethod = new RedisForwardingVoteSource(redisCredentials, redisPoolConfiguration);
-
+            this.forwardingMethod = new RedisForwardingVoteSource(
+                    redisCredentials, redisPoolConfiguration, getPluginLogger()
+            );
         } else {
             getLogger().error("No vote forwarding method '" + fwdMethod + "' known. Defaulting to noop implementation.");
         }

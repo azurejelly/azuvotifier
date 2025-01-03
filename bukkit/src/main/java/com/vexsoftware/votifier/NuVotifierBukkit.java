@@ -321,7 +321,8 @@ public class NuVotifierBukkit extends JavaPlugin implements VoteHandler, Votifie
                                 .blockWhenExhausted(poolSection.getBoolean("block-when-exhausted"))
                                 .build(),
 
-                        this
+                        this,
+                        this.getPluginLogger()
                 );
 
                 return true;

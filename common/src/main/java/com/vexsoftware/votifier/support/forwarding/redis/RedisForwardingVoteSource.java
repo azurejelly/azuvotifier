@@ -1,6 +1,7 @@
 package com.vexsoftware.votifier.support.forwarding.redis;
 
 import com.vexsoftware.votifier.model.Vote;
+import com.vexsoftware.votifier.platform.LoggingAdapter;
 import com.vexsoftware.votifier.support.forwarding.ForwardingVoteSource;
 import com.vexsoftware.votifier.util.GsonInst;
 import redis.clients.jedis.Jedis;
@@ -16,9 +17,11 @@ public class RedisForwardingVoteSource implements ForwardingVoteSource {
 
     private final JedisPool pool;
     private final String channel;
+    private final LoggingAdapter logger;
 
-    public RedisForwardingVoteSource(RedisCredentials credentials, RedisPoolConfiguration cfg) {
+    public RedisForwardingVoteSource(RedisCredentials credentials, RedisPoolConfiguration cfg, LoggingAdapter logger) {
         this.channel = credentials.getChannel();
+        this.logger = logger;
 
         JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
         jedisPoolConfig.setMaxTotal(cfg.getMaxTotal());
@@ -58,7 +61,7 @@ public class RedisForwardingVoteSource implements ForwardingVoteSource {
         try {
             pool.destroy();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            logger.error("Failed to destroy Redis pool", ex);
         }
     }
 }

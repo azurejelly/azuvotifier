@@ -372,7 +372,9 @@ public class NuVotifier extends Plugin implements VoteHandler, ProxyVotifierPlug
                                 .timeBetweenEvictionRuns(poolSection.getInt("time-between-eviction-runs"))
                                 .numTestsPerEvictionRun(poolSection.getInt("num-tests-per-eviction-run"))
                                 .blockWhenExhausted(poolSection.getBoolean("block-when-exhausted"))
-                                .build()
+                                .build(),
+
+                        getPluginLogger()
                 );
 
                 getLogger().info("Forwarding votes from this NuVotifier instance through Redis.");

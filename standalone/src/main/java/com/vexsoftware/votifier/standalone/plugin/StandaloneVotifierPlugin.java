@@ -98,7 +98,9 @@ public class StandaloneVotifierPlugin implements VotifierPlugin {
                     .blockWhenExhausted(pool.isBlockWhenExhausted())
                     .build();
 
-            this.forwardingMethod = new RedisForwardingVoteSource(redisCredentials, redisPoolConfiguration);
+            this.forwardingMethod = new RedisForwardingVoteSource(
+                    redisCredentials, redisPoolConfiguration, getPluginLogger()
+            );
         } else {
             List<ProxyForwardingVoteSource.BackendServer> serverList = new ArrayList<>();
             for (Map.Entry<String, BackendServer> entry : backendServers.entrySet()) {

@@ -2,6 +2,7 @@ package com.vexsoftware.votifier.support.forwarding.redis;
 
 import com.google.gson.JsonObject;
 import com.vexsoftware.votifier.model.Vote;
+import com.vexsoftware.votifier.platform.LoggingAdapter;
 import com.vexsoftware.votifier.support.forwarding.ForwardedVoteListener;
 import com.vexsoftware.votifier.support.forwarding.ForwardingVoteSink;
 import com.vexsoftware.votifier.util.GsonInst;
@@ -18,10 +19,17 @@ import java.time.Duration;
 public class RedisForwardingSink extends JedisPubSub implements ForwardingVoteSink {
 
     private final ForwardedVoteListener listener;
+    private final LoggingAdapter logger;
     private final String channel;
     private final JedisPool pool;
 
-    public RedisForwardingSink(RedisCredentials credentials, RedisPoolConfiguration cfg, ForwardedVoteListener listener) {
+    public RedisForwardingSink(
+            RedisCredentials credentials,
+            RedisPoolConfiguration cfg,
+            ForwardedVoteListener listener,
+            LoggingAdapter logger
+    ) {
+        this.logger = logger;
         this.channel = credentials.getChannel();
         this.listener = listener;
 
@@ -74,7 +82,7 @@ public class RedisForwardingSink extends JedisPubSub implements ForwardingVoteSi
             try {
                 handleMessage(message);
             } catch (Exception ex) {
-                ex.printStackTrace();
+                logger.error("Failed to handle Redis message", ex);
             }
         }
     }
@@ -84,7 +92,7 @@ public class RedisForwardingSink extends JedisPubSub implements ForwardingVoteSi
         try {
             pool.destroy();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            logger.error("Failed to destroy Redis pool", ex);
         }
     }
 }
