@@ -1,12 +1,13 @@
-package com.vexsoftware.votifier.bungee;
+package com.vexsoftware.votifier.bungee.scheduler;
 
+import com.vexsoftware.votifier.bungee.NuVotifierBungee;
 import com.vexsoftware.votifier.platform.scheduler.ScheduledVotifierTask;
 import com.vexsoftware.votifier.platform.scheduler.VotifierScheduler;
 import net.md_5.bungee.api.scheduler.ScheduledTask;
 
 import java.util.concurrent.TimeUnit;
 
-class BungeeScheduler implements VotifierScheduler {
+public class BungeeScheduler implements VotifierScheduler {
 
     private final NuVotifierBungee plugin;
 

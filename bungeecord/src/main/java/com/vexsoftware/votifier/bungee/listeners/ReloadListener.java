@@ -1,5 +1,6 @@
-package com.vexsoftware.votifier.bungee;
+package com.vexsoftware.votifier.bungee.listeners;
 
+import com.vexsoftware.votifier.bungee.NuVotifierBungee;
 import net.md_5.bungee.api.event.ProxyReloadEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
