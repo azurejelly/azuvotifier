@@ -18,12 +18,8 @@
 
 package com.vexsoftware.votifier;
 
-import com.vexsoftware.votifier.commands.VotifierReloadCommand;
 import com.vexsoftware.votifier.commands.TestVoteCommand;
-import com.vexsoftware.votifier.platform.forwarding.BukkitPluginMessagingForwardingSink;
-import com.vexsoftware.votifier.platform.scheduler.BukkitScheduler;
-import com.vexsoftware.votifier.support.forwarding.ForwardedVoteListener;
-import com.vexsoftware.votifier.support.forwarding.ForwardingVoteSink;
+import com.vexsoftware.votifier.commands.VotifierReloadCommand;
 import com.vexsoftware.votifier.model.Vote;
 import com.vexsoftware.votifier.model.VotifierEvent;
 import com.vexsoftware.votifier.net.VotifierServerBootstrap;
@@ -33,8 +29,14 @@ import com.vexsoftware.votifier.net.protocol.v1crypto.RSAKeygen;
 import com.vexsoftware.votifier.platform.JavaUtilLogger;
 import com.vexsoftware.votifier.platform.LoggingAdapter;
 import com.vexsoftware.votifier.platform.VotifierPlugin;
+import com.vexsoftware.votifier.platform.forwarding.BukkitPluginMessagingForwardingSink;
+import com.vexsoftware.votifier.platform.scheduler.BukkitScheduler;
 import com.vexsoftware.votifier.platform.scheduler.VotifierScheduler;
-import com.vexsoftware.votifier.support.forwarding.redis.*;
+import com.vexsoftware.votifier.support.forwarding.ForwardedVoteListener;
+import com.vexsoftware.votifier.support.forwarding.ForwardingVoteSink;
+import com.vexsoftware.votifier.support.forwarding.redis.RedisCredentials;
+import com.vexsoftware.votifier.support.forwarding.redis.RedisForwardingSink;
+import com.vexsoftware.votifier.support.forwarding.redis.RedisPoolConfiguration;
 import com.vexsoftware.votifier.util.IOUtil;
 import com.vexsoftware.votifier.util.KeyCreator;
 import com.vexsoftware.votifier.util.TokenUtil;
@@ -275,11 +277,11 @@ public class NuVotifierBukkit extends JavaPlugin implements VoteHandler, Votifie
                 try {
                     this.forwardingMethod = new BukkitPluginMessagingForwardingSink(this, channel, this);
                     getLogger().info("Receiving votes over plugin messaging channel '" + channel + "'.");
+                    return true;
                 } catch (RuntimeException e) {
                     getLogger().log(Level.SEVERE, "NuVotifier could not set up PluginMessaging for vote forwarding!", e);
+                    return false;
                 }
-
-                return true;
             }
             case "redis": {
                 ConfigurationSection redisSection = forwardingConfig.getConfigurationSection("redis");
@@ -289,7 +291,7 @@ public class NuVotifierBukkit extends JavaPlugin implements VoteHandler, Votifie
                                     + " Defaulting to noop implementation."
                     );
 
-                    return true;
+                    return false;
                 }
 
                 ConfigurationSection poolSection = redisSection.getConfigurationSection("pool-settings");
@@ -299,7 +301,7 @@ public class NuVotifierBukkit extends JavaPlugin implements VoteHandler, Votifie
                                     + " is missing. Defaulting to noop implementation."
                     );
 
-                    return true;
+                    return false;
                 }
 
                 this.forwardingMethod = new RedisForwardingSink(
@@ -322,14 +324,14 @@ public class NuVotifierBukkit extends JavaPlugin implements VoteHandler, Votifie
                                 .build(),
 
                         this,
-                        this.getPluginLogger()
+                        getPluginLogger()
                 );
 
                 return true;
             }
             default: {
                 getLogger().severe("No vote forwarding method '" + method + "' known. Defaulting to noop implementation.");
-                return true;
+                return false;
             }
         }
     }
