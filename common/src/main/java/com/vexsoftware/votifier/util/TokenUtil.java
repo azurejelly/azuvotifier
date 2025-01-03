@@ -5,7 +5,9 @@ import java.security.SecureRandom;
 
 public class TokenUtil {
 
-    private TokenUtil() {}
+    private TokenUtil() {
+        throw new UnsupportedOperationException("This class cannot be instantiated");
+    }
 
     private static final SecureRandom RANDOM = new SecureRandom();
 
