@@ -1,4 +1,4 @@
-package com.vexsoftware.votifier.bungee;
+package com.vexsoftware.votifier.bungee.platform;
 
 import com.vexsoftware.votifier.platform.BackendServer;
 import net.md_5.bungee.api.config.ServerInfo;

@@ -6,6 +6,7 @@ import com.vexsoftware.votifier.bungee.commands.TestVoteCmd;
 import com.vexsoftware.votifier.bungee.forwarding.OnlineForwardPluginMessagingForwardingSource;
 import com.vexsoftware.votifier.bungee.forwarding.PluginMessagingForwardingSource;
 import com.vexsoftware.votifier.bungee.listeners.ProxyReloadListener;
+import com.vexsoftware.votifier.bungee.platform.BungeeBackendServer;
 import com.vexsoftware.votifier.bungee.scheduler.BungeeScheduler;
 import com.vexsoftware.votifier.net.VotifierServerBootstrap;
 import com.vexsoftware.votifier.platform.BackendServer;
