@@ -18,8 +18,8 @@
 
 package com.vexsoftware.votifier;
 
-import com.vexsoftware.votifier.cmd.NVReloadCmd;
-import com.vexsoftware.votifier.cmd.TestVoteCmd;
+import com.vexsoftware.votifier.commands.NVReloadCmd;
+import com.vexsoftware.votifier.commands.TestVoteCmd;
 import com.vexsoftware.votifier.forwarding.BukkitPluginMessagingForwardingSink;
 import com.vexsoftware.votifier.support.forwarding.ForwardedVoteListener;
 import com.vexsoftware.votifier.support.forwarding.ForwardingVoteSink;

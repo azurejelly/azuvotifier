@@ -1,4 +1,4 @@
-package com.vexsoftware.votifier.cmd;
+package com.vexsoftware.votifier.commands;
 
 import com.vexsoftware.votifier.NuVotifierBukkit;
 import com.vexsoftware.votifier.model.Vote;
@@ -8,6 +8,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
 
 public class TestVoteCmd implements CommandExecutor {
 
@@ -18,9 +19,10 @@ public class TestVoteCmd implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(CommandSender sender, @NotNull Command c, @NotNull String l, String @NotNull [] args) {
         if (sender.hasPermission("nuvotifier.testvote")) {
             Vote v;
+
             try {
                 v = ArgsToVote.parse(args);
             } catch (IllegalArgumentException e) {
@@ -34,7 +36,7 @@ public class TestVoteCmd implements CommandExecutor {
         } else {
             sender.sendMessage(ChatColor.DARK_RED + "You do not have permission to do this!");
         }
-        return true;
 
+        return true;
     }
 }

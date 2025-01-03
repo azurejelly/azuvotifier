@@ -1,10 +1,11 @@
-package com.vexsoftware.votifier.cmd;
+package com.vexsoftware.votifier.commands;
 
 import com.vexsoftware.votifier.NuVotifierBukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
 
 public class NVReloadCmd implements CommandExecutor {
 
@@ -15,7 +16,7 @@ public class NVReloadCmd implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(CommandSender sender, @NotNull Command c, @NotNull String l, String @NotNull [] args) {
         if (sender.hasPermission("nuvotifier.reload")) {
             sender.sendMessage(ChatColor.GRAY + "Reloading NuVotifier...");
             if (plugin.reload()) {
