@@ -6,9 +6,9 @@ import net.md_5.bungee.event.EventHandler;
 
 public class ReloadListener implements Listener {
 
-    private final NuVotifier nuVotifier;
+    private final NuVotifierBungee nuVotifier;
 
-    public ReloadListener(NuVotifier nuVotifier) {
+    public ReloadListener(NuVotifierBungee nuVotifier) {
         this.nuVotifier = nuVotifier;
     }
 

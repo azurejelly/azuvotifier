@@ -1,6 +1,5 @@
 package com.vexsoftware.votifier.bungee;
 
-import com.google.common.collect.ImmutableList;
 import com.vexsoftware.votifier.VoteHandler;
 import com.vexsoftware.votifier.bungee.cmd.NVReloadCmd;
 import com.vexsoftware.votifier.bungee.cmd.TestVoteCmd;
@@ -22,7 +21,6 @@ import com.vexsoftware.votifier.net.VotifierSession;
 import com.vexsoftware.votifier.net.protocol.v1crypto.RSAIO;
 import com.vexsoftware.votifier.net.protocol.v1crypto.RSAKeygen;
 import com.vexsoftware.votifier.support.forwarding.redis.RedisCredentials;
-import com.vexsoftware.votifier.support.forwarding.redis.RedisForwardingSink;
 import com.vexsoftware.votifier.support.forwarding.redis.RedisForwardingVoteSource;
 import com.vexsoftware.votifier.support.forwarding.redis.RedisPoolConfiguration;
 import com.vexsoftware.votifier.util.IOUtil;
@@ -54,7 +52,7 @@ import java.util.concurrent.FutureTask;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
-public class NuVotifier extends Plugin implements VoteHandler, ProxyVotifierPlugin {
+public class NuVotifierBungee extends Plugin implements VoteHandler, ProxyVotifierPlugin {
 
     /**
      * The server channel.
@@ -217,7 +215,7 @@ public class NuVotifier extends Plugin implements VoteHandler, ProxyVotifierPlug
 
         // Must set up server asynchronously due to BungeeCord goofiness.
         FutureTask<?> initTask = new FutureTask<>(Executors.callable(() -> {
-            this.bootstrap = new VotifierServerBootstrap(host, port, NuVotifier.this, disableV1);
+            this.bootstrap = new VotifierServerBootstrap(host, port, NuVotifierBungee.this, disableV1);
             this.bootstrap.start(err -> {});
         }));
 

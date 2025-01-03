@@ -23,7 +23,7 @@ public final class OnlineForwardPluginMessagingForwardingSource extends Abstract
 
     public OnlineForwardPluginMessagingForwardingSource(
             String channel,
-            NuVotifier nuVotifier,
+            NuVotifierBungee nuVotifier,
             ServerFilter serverFilter,
             VoteCache cache,
             String fallback,

@@ -8,9 +8,9 @@ import java.util.concurrent.TimeUnit;
 
 class BungeeScheduler implements VotifierScheduler {
 
-    private final NuVotifier plugin;
+    private final NuVotifierBungee plugin;
 
-    public BungeeScheduler(NuVotifier plugin) {
+    public BungeeScheduler(NuVotifierBungee plugin) {
         this.plugin = plugin;
     }
 

@@ -1,6 +1,6 @@
 package com.vexsoftware.votifier.bungee.cmd;
 
-import com.vexsoftware.votifier.bungee.NuVotifier;
+import com.vexsoftware.votifier.bungee.NuVotifierBungee;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -9,7 +9,7 @@ import net.md_5.bungee.api.plugin.Command;
 
 public class NVReloadCmd extends Command {
 
-    private final NuVotifier plugin;
+    private final NuVotifierBungee plugin;
 
     private static final BaseComponent RELOADING = new TextComponent("Reloading NuVotifier...");
     private static final BaseComponent RELOADED = new TextComponent("NuVotifier has been reloaded!");
@@ -23,7 +23,7 @@ public class NVReloadCmd extends Command {
         PERMISSION.setColor(ChatColor.DARK_RED);
     }
 
-    public NVReloadCmd(NuVotifier plugin) {
+    public NVReloadCmd(NuVotifierBungee plugin) {
         super("pnvreload", "nuvotifier.reload");
         this.plugin = plugin;
     }

@@ -44,6 +44,6 @@ tasks {
 bungee {
     name = "NuVotifier"
     version = project.version.toString()
-    main = "com.vexsoftware.votifier.bungee.NuVotifier"
+    main = "com.vexsoftware.votifier.bungee.NuVotifierBungee"
     author = "azurejelly, Ichbinjoe, blakeman8192, Kramer, tuxed"
 }

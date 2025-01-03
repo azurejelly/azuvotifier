@@ -1,6 +1,6 @@
 package com.vexsoftware.votifier.bungee.cmd;
 
-import com.vexsoftware.votifier.bungee.NuVotifier;
+import com.vexsoftware.votifier.bungee.NuVotifierBungee;
 import com.vexsoftware.votifier.model.Vote;
 import com.vexsoftware.votifier.net.VotifierSession;
 import com.vexsoftware.votifier.util.ArgsToVote;
@@ -12,7 +12,7 @@ import net.md_5.bungee.api.plugin.Command;
 
 public class TestVoteCmd extends Command {
 
-    private final NuVotifier plugin;
+    private final NuVotifierBungee plugin;
 
     private static final BaseComponent PERMISSION = new TextComponent("You do not have permission to do this!");
     private static final BaseComponent USAGE = new TextComponent("Usage hint: /ptestvote [username] [serviceName=?] [username=?] [address=?] [localTimestamp=?] [timestamp=?]");
@@ -21,7 +21,7 @@ public class TestVoteCmd extends Command {
         USAGE.setColor(ChatColor.GRAY);
     }
 
-    public TestVoteCmd(NuVotifier plugin) {
+    public TestVoteCmd(NuVotifierBungee plugin) {
         super("ptestvote", "nuvotifier.testvote");
         this.plugin = plugin;
     }
