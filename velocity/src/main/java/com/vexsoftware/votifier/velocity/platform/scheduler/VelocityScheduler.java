@@ -9,7 +9,8 @@ import com.vexsoftware.votifier.velocity.VotifierPlugin;
 
 import java.util.concurrent.TimeUnit;
 
-class VelocityScheduler implements VotifierScheduler {
+public class VelocityScheduler implements VotifierScheduler {
+
     private final ProxyServer server;
     private final VotifierPlugin plugin;
 
@@ -33,6 +34,7 @@ class VelocityScheduler implements VotifierScheduler {
     }
 
     private static class TaskWrapper implements ScheduledVotifierTask {
+
         private final ScheduledTask task;
 
         private TaskWrapper(ScheduledTask task) {
