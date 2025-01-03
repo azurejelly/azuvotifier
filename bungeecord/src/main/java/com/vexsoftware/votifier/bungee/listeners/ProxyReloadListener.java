@@ -5,11 +5,11 @@ import net.md_5.bungee.api.event.ProxyReloadEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 
-public class ReloadListener implements Listener {
+public class ProxyReloadListener implements Listener {
 
     private final NuVotifierBungee nuVotifier;
 
-    public ReloadListener(NuVotifierBungee nuVotifier) {
+    public ProxyReloadListener(NuVotifierBungee nuVotifier) {
         this.nuVotifier = nuVotifier;
     }
 
