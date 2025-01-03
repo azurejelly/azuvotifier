@@ -13,12 +13,10 @@ import com.vexsoftware.votifier.velocity.utils.VelocityUtil;
 
 public class PluginMessagingForwardingSource extends AbstractPluginMessagingForwardingSource {
 
-    private final NuVotifierVelocity plugin;
     private final ChannelIdentifier velocityChannelId;
 
     public PluginMessagingForwardingSource(String channel, ServerFilter filter, NuVotifierVelocity plugin, VoteCache cache, int dumpRate) {
         super(channel, filter, plugin, cache, dumpRate);
-        this.plugin = plugin;
         this.velocityChannelId = VelocityUtil.getId(channel);
 
         plugin.getServer().getChannelRegistrar().register(velocityChannelId);

@@ -1,6 +1,5 @@
 package com.vexsoftware.votifier.velocity.platform.server;
 
-import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 import com.vexsoftware.votifier.platform.BackendServer;
 import com.vexsoftware.votifier.velocity.utils.VelocityUtil;

@@ -4,6 +4,7 @@ import com.velocitypowered.api.event.ResultedEvent;
 import com.vexsoftware.votifier.model.Vote;
 
 public class VotifierEvent implements ResultedEvent<ResultedEvent.GenericResult> {
+
     private final Vote vote;
     private GenericResult result;
 

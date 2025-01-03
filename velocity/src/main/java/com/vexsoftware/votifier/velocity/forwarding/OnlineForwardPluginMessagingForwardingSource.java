@@ -38,25 +38,28 @@ public final class OnlineForwardPluginMessagingForwardingSource extends Abstract
     public void forward(Vote v) {
         Optional<Player> p = plugin.getServer().getPlayer(v.getUsername());
         Optional<ServerConnection> sc = p.flatMap(Player::getCurrentServer);
-        if (sc.isPresent() &&
-                serverFilter.isAllowed(sc.get().getServerInfo().getName())
-        ) {
+
+        if (sc.isPresent() && serverFilter.isAllowed(sc.get().getServerInfo().getName())) {
             if (forwardSpecific(new VelocityBackendServer(sc.get().getServer()), v)) {
                 if (plugin.isDebug()) {
-                    plugin.getPluginLogger().info("Successfully forwarded vote " + v + " to server " + sc.get().getServerInfo().getName());
+                    plugin.getPluginLogger().info("Successfully forwarded vote " + v + " to server "
+                            + sc.get().getServerInfo().getName());
                 }
+
                 return;
             }
         }
 
-        Optional<RegisteredServer> fs = fallbackServer == null ?
-                Optional.empty() :
-                plugin.getServer().getServer(fallbackServer);
+        Optional<RegisteredServer> fs = fallbackServer == null
+                ? Optional.empty()
+                : plugin.getServer().getServer(fallbackServer);
+
         // nowhere to fall back to, yet still not online. lets save this vote yet!
-        if (!fs.isPresent())
+        if (fs.isEmpty()) {
             attemptToAddToPlayerCache(v, v.getUsername());
-        else if (!forwardSpecific(new VelocityBackendServer(fs.get()), v))
+        } else if (!forwardSpecific(new VelocityBackendServer(fs.get()), v)) {
             attemptToAddToCache(v, fallbackServer);
+        }
     }
 
     @Subscribe

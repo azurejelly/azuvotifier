@@ -19,6 +19,7 @@ public class VotifierReloadCommand implements SimpleCommand {
     public void execute(Invocation invocation) {
         CommandSource sender = invocation.source();
         sender.sendMessage(Component.text("Reloading NuVotifier...", NamedTextColor.GRAY));
+        
         if (plugin.reload()) {
             sender.sendMessage(Component.text("NuVotifier has been reloaded!", NamedTextColor.DARK_GREEN));
         } else {
