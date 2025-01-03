@@ -26,6 +26,7 @@ public class RedisForwardingVoteSource implements ForwardingVoteSource {
         jedisPoolConfig.setMinIdle(cfg.getMinIdle());
         jedisPoolConfig.setMinEvictableIdleTime(Duration.ofMillis(cfg.getMinEvictableIdleTime()));
         jedisPoolConfig.setTimeBetweenEvictionRuns(Duration.ofMillis(cfg.getTimeBetweenEvictionRuns()));
+        jedisPoolConfig.setNumTestsPerEvictionRun(cfg.getNumTestsPerEvictionRun());
         jedisPoolConfig.setBlockWhenExhausted(cfg.isBlockWhenExhausted());
 
         String password = credentials.getPassword();
