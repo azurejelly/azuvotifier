@@ -1,4 +1,4 @@
-package com.vexsoftware.votifier.bungee.scheduler;
+package com.vexsoftware.votifier.bungee.platform.scheduler;
 
 import com.vexsoftware.votifier.bungee.NuVotifierBungee;
 import com.vexsoftware.votifier.platform.scheduler.ScheduledVotifierTask;

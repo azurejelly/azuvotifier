@@ -1,4 +1,4 @@
-package com.vexsoftware.votifier.velocity;
+package com.vexsoftware.votifier.velocity.forwarding;
 
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.PluginMessageEvent;
@@ -7,6 +7,9 @@ import com.velocitypowered.api.proxy.messages.ChannelIdentifier;
 import com.vexsoftware.votifier.support.forwarding.AbstractPluginMessagingForwardingSource;
 import com.vexsoftware.votifier.support.forwarding.ServerFilter;
 import com.vexsoftware.votifier.support.forwarding.cache.VoteCache;
+import com.vexsoftware.votifier.velocity.platform.server.VelocityBackendServer;
+import com.vexsoftware.votifier.velocity.utils.VelocityUtil;
+import com.vexsoftware.votifier.velocity.VotifierPlugin;
 
 public class PluginMessagingForwardingSource extends AbstractPluginMessagingForwardingSource {
 

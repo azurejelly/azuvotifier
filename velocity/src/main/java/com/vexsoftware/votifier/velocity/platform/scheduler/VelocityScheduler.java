@@ -1,10 +1,11 @@
-package com.vexsoftware.votifier.velocity;
+package com.vexsoftware.votifier.velocity.platform.scheduler;
 
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.scheduler.ScheduledTask;
 import com.velocitypowered.api.scheduler.Scheduler;
 import com.vexsoftware.votifier.platform.scheduler.ScheduledVotifierTask;
 import com.vexsoftware.votifier.platform.scheduler.VotifierScheduler;
+import com.vexsoftware.votifier.velocity.VotifierPlugin;
 
 import java.util.concurrent.TimeUnit;
 

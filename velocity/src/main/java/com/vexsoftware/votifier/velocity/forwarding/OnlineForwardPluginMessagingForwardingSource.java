@@ -1,4 +1,4 @@
-package com.vexsoftware.votifier.velocity;
+package com.vexsoftware.votifier.velocity.forwarding;
 
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.PluginMessageEvent;
@@ -12,6 +12,9 @@ import com.vexsoftware.votifier.platform.BackendServer;
 import com.vexsoftware.votifier.support.forwarding.AbstractPluginMessagingForwardingSource;
 import com.vexsoftware.votifier.support.forwarding.ServerFilter;
 import com.vexsoftware.votifier.support.forwarding.cache.VoteCache;
+import com.vexsoftware.votifier.velocity.platform.server.VelocityBackendServer;
+import com.vexsoftware.votifier.velocity.utils.VelocityUtil;
+import com.vexsoftware.votifier.velocity.VotifierPlugin;
 
 import java.util.Optional;
 

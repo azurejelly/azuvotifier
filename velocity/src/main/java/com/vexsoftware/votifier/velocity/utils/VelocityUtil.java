@@ -1,4 +1,4 @@
-package com.vexsoftware.votifier.velocity;
+package com.vexsoftware.votifier.velocity.utils;
 
 import com.velocitypowered.api.proxy.messages.ChannelIdentifier;
 import com.velocitypowered.api.proxy.messages.LegacyChannelIdentifier;

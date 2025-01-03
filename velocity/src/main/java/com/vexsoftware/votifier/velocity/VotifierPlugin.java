@@ -34,6 +34,11 @@ import com.vexsoftware.votifier.util.TokenUtil;
 import com.vexsoftware.votifier.velocity.cmd.NVReloadCmd;
 import com.vexsoftware.votifier.velocity.cmd.TestVoteCmd;
 import com.vexsoftware.votifier.velocity.event.VotifierEvent;
+import com.vexsoftware.votifier.velocity.forwarding.OnlineForwardPluginMessagingForwardingSource;
+import com.vexsoftware.votifier.velocity.forwarding.PluginMessagingForwardingSource;
+import com.vexsoftware.votifier.velocity.platform.logger.SLF4JLogger;
+import com.vexsoftware.votifier.velocity.platform.VelocityBackendServer;
+import com.vexsoftware.votifier.velocity.platform.logger.VelocityScheduler;
 import org.slf4j.Logger;
 
 import java.io.ByteArrayInputStream;

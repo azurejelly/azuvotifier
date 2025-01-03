@@ -1,4 +1,4 @@
-package com.vexsoftware.votifier.forwarding;
+package com.vexsoftware.votifier.platform.forwarding;
 
 import com.vexsoftware.votifier.support.forwarding.AbstractPluginMessagingForwardingSink;
 import com.vexsoftware.votifier.support.forwarding.ForwardedVoteListener;
