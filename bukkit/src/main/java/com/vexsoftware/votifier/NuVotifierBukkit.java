@@ -21,6 +21,7 @@ package com.vexsoftware.votifier;
 import com.vexsoftware.votifier.commands.VotifierReloadCommand;
 import com.vexsoftware.votifier.commands.TestVoteCommand;
 import com.vexsoftware.votifier.forwarding.BukkitPluginMessagingForwardingSink;
+import com.vexsoftware.votifier.scheduler.BukkitScheduler;
 import com.vexsoftware.votifier.support.forwarding.ForwardedVoteListener;
 import com.vexsoftware.votifier.support.forwarding.ForwardingVoteSink;
 import com.vexsoftware.votifier.model.Vote;
