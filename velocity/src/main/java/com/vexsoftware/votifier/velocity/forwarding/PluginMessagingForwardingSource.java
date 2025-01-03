@@ -16,10 +16,11 @@ public class PluginMessagingForwardingSource extends AbstractPluginMessagingForw
     private final VotifierPlugin plugin;
     private final ChannelIdentifier velocityChannelId;
 
-    public PluginMessagingForwardingSource(String channel, ServerFilter serverFilter, VotifierPlugin plugin, VoteCache cache, int dumpRate) {
-        super(channel, serverFilter, plugin, cache, dumpRate);
+    public PluginMessagingForwardingSource(String channel, ServerFilter filter, VotifierPlugin plugin, VoteCache cache, int dumpRate) {
+        super(channel, filter, plugin, cache, dumpRate);
         this.plugin = plugin;
         this.velocityChannelId = VelocityUtil.getId(channel);
+
         plugin.getServer().getChannelRegistrar().register(velocityChannelId);
         plugin.getServer().getEventManager().register(plugin, this);
     }

@@ -24,11 +24,12 @@ public final class OnlineForwardPluginMessagingForwardingSource extends Abstract
     private final VotifierPlugin plugin;
     private final ChannelIdentifier velocityChannelId;
 
-    public OnlineForwardPluginMessagingForwardingSource(String channel, ServerFilter serverFilter, VotifierPlugin plugin, VoteCache cache, String fallbackServer, int dumpRate) {
-        super(channel, serverFilter, plugin, cache, dumpRate);
-        this.fallbackServer = fallbackServer;
+    public OnlineForwardPluginMessagingForwardingSource(String channel, ServerFilter filter, VotifierPlugin plugin, VoteCache cache, String fallback, int dumpRate) {
+        super(channel, filter, plugin, cache, dumpRate);
+        this.fallbackServer = fallback;
         this.plugin = plugin;
         this.velocityChannelId = VelocityUtil.getId(channel);
+
         plugin.getServer().getChannelRegistrar().register(velocityChannelId);
         plugin.getServer().getEventManager().register(plugin, this);
     }
