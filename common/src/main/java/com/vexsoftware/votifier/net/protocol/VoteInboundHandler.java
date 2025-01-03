@@ -14,6 +14,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 @ChannelHandler.Sharable
 public class VoteInboundHandler extends SimpleChannelInboundHandler<Vote> {
+
     private final VoteHandler handler;
     private final AtomicLong lastError;
     private final AtomicLong errorsSent;
@@ -36,7 +37,7 @@ public class VoteInboundHandler extends SimpleChannelInboundHandler<Vote> {
         } else {
             JsonObject object = new JsonObject();
             object.addProperty("status", "ok");
-            ctx.writeAndFlush(GsonInst.gson.toJson(object) + "\r\n").addListener(ChannelFutureListener.CLOSE);
+            ctx.writeAndFlush(GsonInst.GSON.toJson(object) + "\r\n").addListener(ChannelFutureListener.CLOSE);
         }
     }
 
@@ -52,7 +53,7 @@ public class VoteInboundHandler extends SimpleChannelInboundHandler<Vote> {
             object.addProperty("status", "error");
             object.addProperty("cause", cause.getClass().getSimpleName());
             object.addProperty("error", cause.getMessage());
-            ctx.writeAndFlush(GsonInst.gson.toJson(object) + "\r\n").addListener(ChannelFutureListener.CLOSE);
+            ctx.writeAndFlush(GsonInst.GSON.toJson(object) + "\r\n").addListener(ChannelFutureListener.CLOSE);
         } else {
             ctx.close();
         }

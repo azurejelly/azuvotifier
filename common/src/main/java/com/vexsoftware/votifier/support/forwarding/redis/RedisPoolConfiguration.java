@@ -5,18 +5,23 @@ package com.vexsoftware.votifier.support.forwarding.redis;
  */
 public class RedisPoolConfiguration {
 
-    private final int timeout, maxTotal, maxIdle, minIdle, minEvictableIdleTime, timeBetweenEvictionRuns,
-            numTestsPerEvictionRun;
+    private final int timeout;
+    private final int maxTotal;
+    private final int maxIdle;
+    private final int minIdle;
+    private final int minEvictableIdleTime;
+    private final int timeBetweenEvictionRuns;
+    private final int numTestsPerEvictionRun;
     private final boolean blockWhenExhausted;
 
-    private RedisPoolConfiguration(int timeout,
-                                  int minIdle,
-                                  int maxIdle,
-                                  int maxTotal,
-                                  int minEvictableIdleTime,
-                                  int timeBetweenEvictionRuns,
-                                  int numTestsPerEvictionRun,
-                                  boolean blockWhenExhausted) {
+    private RedisPoolConfiguration(
+            int timeout, int minIdle,
+            int maxIdle, int maxTotal,
+            int minEvictableIdleTime,
+            int timeBetweenEvictionRuns,
+            int numTestsPerEvictionRun,
+            boolean blockWhenExhausted
+    ) {
         this.timeout = timeout;
         this.minIdle = minIdle;
         this.maxIdle = maxIdle;

@@ -11,9 +11,9 @@ import net.md_5.bungee.event.EventHandler;
 
 public class PluginMessagingForwardingSource extends AbstractPluginMessagingForwardingSource implements Listener {
 
-    public PluginMessagingForwardingSource(String channel, ServerFilter serverFilter, NuVotifier nuVotifier, VoteCache cache, int dumpRate) {
-        super(channel, serverFilter, nuVotifier, cache, dumpRate);
-        ProxyServer.getInstance().getPluginManager().registerListener(nuVotifier, this);
+    public PluginMessagingForwardingSource(String channel, ServerFilter filter, NuVotifier votifier, VoteCache cache, int dumpRate) {
+        super(channel, filter, votifier, cache, dumpRate);
+        ProxyServer.getInstance().getPluginManager().registerListener(votifier, this);
     }
 
     protected PluginMessagingForwardingSource(String channel, NuVotifier nuVotifier, VoteCache voteCache, int dumpRate) {
@@ -23,11 +23,14 @@ public class PluginMessagingForwardingSource extends AbstractPluginMessagingForw
 
     @EventHandler
     public void onPluginMessage(PluginMessageEvent e) {
-        if (e.getTag().equals(channel)) e.setCancelled(true);
+        if (e.getTag().equals(channel)) {
+            e.setCancelled(true);
+        }
     }
 
     @EventHandler
-    public void onServerConnected(final ServerConnectedEvent e) { //Attempt to resend any votes that were previously cached.
+    public void onServerConnected(final ServerConnectedEvent e) {
+        // Attempt to resend any votes that were previously cached.
         onServerConnect(new BungeeBackendServer(e.getServer().getInfo()));
     }
 }

@@ -49,33 +49,50 @@ public class Vote {
     /**
      * The date and time of the vote.
      */
-    private String timeStamp;
+    private String timestamp;
 
+    /**
+     * Additional data sent with the vote.
+     */
     private byte[] additionalData;
 
-    @Deprecated
-    public Vote() {
-    }
-
-    public Vote(String serviceName, String username, String address, String timeStamp) {
+    public Vote(String serviceName, String username, String address, String timestamp) {
         this.serviceName = serviceName;
         this.username = username;
         this.address = address;
-        this.timeStamp = timeStamp;
+        this.timestamp = timestamp;
         this.additionalData = null;
     }
 
-    public Vote(String serviceName, String username, String address, String timeStamp, byte[] additionalData) {
+    public Vote(String serviceName, String username, String address, String timestamp, byte[] additionalData) {
         this.serviceName = serviceName;
         this.username = username;
         this.address = address;
-        this.timeStamp = timeStamp;
-        this.additionalData = additionalData == null ? null : additionalData.clone();
+        this.timestamp = timestamp;
+        this.additionalData = additionalData == null
+                ? null
+                : additionalData.clone();
     }
 
     public Vote(Vote vote) {
-        this(vote.getServiceName(), vote.getUsername(), vote.getAddress(), vote.getTimeStamp(),
-                vote.getAdditionalData() == null ? null : vote.getAdditionalData().clone());
+        this.serviceName = vote.getServiceName();
+        this.username = vote.getUsername();
+        this.address = vote.getAddress();
+        this.timestamp = vote.getTimeStamp();
+        this.additionalData = vote.getAdditionalData() == null
+                ? null
+                : vote.getAdditionalData().clone();
+    }
+
+    public Vote(JsonObject jsonObject) {
+        this.serviceName = jsonObject.get("serviceName").getAsString();
+        this.username = jsonObject.get("username").getAsString();
+        this.address = jsonObject.get("address").getAsString();
+        this.timestamp = getTimestamp(jsonObject.get("timestamp"));
+
+        if (jsonObject.has("additionalData")) {
+            this.additionalData = Base64.getDecoder().decode(jsonObject.get("additionalData").getAsString());
+        }
     }
 
     private static String getTimestamp(JsonElement object) {
@@ -86,25 +103,18 @@ public class Vote {
         }
     }
 
-    public Vote(JsonObject jsonObject) {
-        this(jsonObject.get("serviceName").getAsString(),
-                jsonObject.get("username").getAsString(),
-                jsonObject.get("address").getAsString(),
-                getTimestamp(jsonObject.get("timestamp")));
-        if (jsonObject.has("additionalData"))
-            additionalData = Base64.getDecoder().decode(jsonObject.get("additionalData").getAsString());
-    }
-
     @Override
     public String toString() {
         String data;
-        if (additionalData == null)
+
+        if (additionalData == null) {
             data = "null";
-        else
+        } else {
             data = Base64.getEncoder().encodeToString(additionalData);
+        }
 
         return "Vote (from:" + serviceName + " username:" + username
-                + " address:" + address + " timeStamp:" + timeStamp
+                + " address:" + address + " timestamp:" + timestamp
                 + " additionalData:" + data + ")";
     }
 
@@ -113,7 +123,6 @@ public class Vote {
      *
      * @param serviceName The new serviceName
      */
-    @Deprecated
     public void setServiceName(String serviceName) {
         this.serviceName = serviceName;
     }
@@ -132,7 +141,6 @@ public class Vote {
      *
      * @param username The new username
      */
-    @Deprecated
     public void setUsername(String username) {
         this.username = username;
     }
@@ -151,7 +159,6 @@ public class Vote {
      *
      * @param address The new address
      */
-    @Deprecated
     public void setAddress(String address) {
         this.address = address;
     }
@@ -168,11 +175,32 @@ public class Vote {
     /**
      * Sets the time stamp.
      *
-     * @param timeStamp The new time stamp
+     * @param timestamp The new timestamp
+     * @deprecated Use #setTimestamp(String) instead
      */
     @Deprecated
-    public void setTimeStamp(String timeStamp) {
-        this.timeStamp = timeStamp;
+    public void setTimeStamp(String timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    /**
+     * Sets the timestamp.
+     *
+     * @param timestamp The new timestamp
+     */
+    public void setTimestamp(String timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    /**
+     * Gets the time stamp.
+     *
+     * @return The time stamp
+     * @deprecated Use {@link #getTimestamp()} instead
+     */
+    @Deprecated
+    public String getTimeStamp() {
+        return timestamp;
     }
 
     /**
@@ -180,8 +208,8 @@ public class Vote {
      *
      * @return The time stamp
      */
-    public String getTimeStamp() {
-        return timeStamp;
+    public String getTimestamp() {
+        return timestamp;
     }
 
     /**
@@ -190,7 +218,9 @@ public class Vote {
      * @return Additional data sent with the vote
      */
     public byte[] getAdditionalData() {
-        return additionalData == null ? null : additionalData.clone();
+        return additionalData == null
+                ? null
+                : additionalData.clone();
     }
 
     public JsonObject serialize() {
@@ -198,23 +228,43 @@ public class Vote {
         ret.addProperty("serviceName", serviceName);
         ret.addProperty("username", username);
         ret.addProperty("address", address);
-        ret.addProperty("timestamp", timeStamp);
-        if (additionalData != null)
+        ret.addProperty("timestamp", timestamp);
+
+        if (additionalData != null) {
             ret.addProperty("additionalData", Base64.getEncoder().encodeToString(additionalData));
+        }
+
         return ret;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Vote)) return false;
+        if (this == o) {
+            return true;
+        }
+
+        if (!(o instanceof Vote)) {
+            return false;
+        }
 
         Vote vote = (Vote) o;
 
-        if (!serviceName.equals(vote.serviceName)) return false;
-        if (!username.equals(vote.username)) return false;
-        if (!address.equals(vote.address)) return false;
-        if (!timeStamp.equals(vote.timeStamp)) return false;
+        if (!serviceName.equals(vote.serviceName)) {
+            return false;
+        }
+
+        if (!username.equals(vote.username)) {
+            return false;
+        }
+
+        if (!address.equals(vote.address)) {
+            return false;
+        }
+
+        if (!timestamp.equals(vote.timestamp)) {
+            return false;
+        }
+
         return Arrays.equals(additionalData, vote.additionalData);
     }
 
@@ -223,7 +273,7 @@ public class Vote {
         int result = serviceName.hashCode();
         result = 31 * result + username.hashCode();
         result = 31 * result + address.hashCode();
-        result = 31 * result + timeStamp.hashCode();
+        result = 31 * result + timestamp.hashCode();
         return result;
     }
 }

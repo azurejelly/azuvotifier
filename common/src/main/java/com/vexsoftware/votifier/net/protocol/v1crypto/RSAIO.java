@@ -48,10 +48,9 @@ public class RSAIO {
         PublicKey publicKey = keyPair.getPublic();
 
         // Store the public and private keys.
-        X509EncodedKeySpec publicSpec = new X509EncodedKeySpec(
-                publicKey.getEncoded());
-        PKCS8EncodedKeySpec privateSpec = new PKCS8EncodedKeySpec(
-                privateKey.getEncoded());
+        X509EncodedKeySpec publicSpec = new X509EncodedKeySpec(publicKey.getEncoded());
+        PKCS8EncodedKeySpec privateSpec = new PKCS8EncodedKeySpec(privateKey.getEncoded());
+
         try (FileOutputStream publicOut = new FileOutputStream(directory + "/public.key");
              FileOutputStream privateOut = new FileOutputStream(directory + "/private.key")) {
 
@@ -65,6 +64,7 @@ public class RSAIO {
         byte[] contents = Files.readAllBytes(f.toPath());
         String strContents = new String(contents, StandardCharsets.US_ASCII);
         strContents = strContents.trim();
+
         try {
             return Base64.getDecoder().decode(strContents);
         } catch (IllegalArgumentException e) {
@@ -82,21 +82,19 @@ public class RSAIO {
      * @throws Exception If an error occurs
      */
     public static KeyPair load(File directory) throws Exception {
-        // Read the public key file.
+        // Read the public and private key files.
         byte[] encodedPublicKey = readB64File(directory, "public.key");
-
-        // Read the private key file.
         byte[] encodedPrivateKey = readB64File(directory, "private.key");
 
         // Instantiate and return the key pair.
         KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-        X509EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(
-                encodedPublicKey);
+
+        X509EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(encodedPublicKey);
         PublicKey publicKey = keyFactory.generatePublic(publicKeySpec);
-        PKCS8EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(
-                encodedPrivateKey);
+
+        PKCS8EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(encodedPrivateKey);
         PrivateKey privateKey = keyFactory.generatePrivate(privateKeySpec);
+
         return new KeyPair(publicKey, privateKey);
     }
-
 }

@@ -18,16 +18,16 @@ public class RedisForwardingVoteSource implements ForwardingVoteSource {
     private final Gson gson = new Gson();
     private final String channel;
 
-    public RedisForwardingVoteSource(RedisCredentials credentials, RedisPoolConfiguration configuration) {
+    public RedisForwardingVoteSource(RedisCredentials credentials, RedisPoolConfiguration cfg) {
         this.channel = credentials.getChannel();
 
         JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
-        jedisPoolConfig.setMaxTotal(configuration.getMaxTotal());
-        jedisPoolConfig.setMaxIdle(configuration.getMaxIdle());
-        jedisPoolConfig.setMinIdle(configuration.getMinIdle());
-        jedisPoolConfig.setMinEvictableIdleTime(Duration.ofMillis(configuration.getMinEvictableIdleTime()));
-        jedisPoolConfig.setTimeBetweenEvictionRuns(Duration.ofMillis(configuration.getTimeBetweenEvictionRuns()));
-        jedisPoolConfig.setBlockWhenExhausted(configuration.isBlockWhenExhausted());
+        jedisPoolConfig.setMaxTotal(cfg.getMaxTotal());
+        jedisPoolConfig.setMaxIdle(cfg.getMaxIdle());
+        jedisPoolConfig.setMinIdle(cfg.getMinIdle());
+        jedisPoolConfig.setMinEvictableIdleTime(Duration.ofMillis(cfg.getMinEvictableIdleTime()));
+        jedisPoolConfig.setTimeBetweenEvictionRuns(Duration.ofMillis(cfg.getTimeBetweenEvictionRuns()));
+        jedisPoolConfig.setBlockWhenExhausted(cfg.isBlockWhenExhausted());
 
         String password = credentials.getPassword();
         if (password == null || password.trim().isEmpty()) {

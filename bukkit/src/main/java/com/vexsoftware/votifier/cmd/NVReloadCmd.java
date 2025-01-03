@@ -26,6 +26,7 @@ public class NVReloadCmd implements CommandExecutor {
         } else {
             sender.sendMessage(ChatColor.DARK_RED + "You do not have permission to do this!");
         }
+
         return true;
     }
 }

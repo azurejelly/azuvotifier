@@ -1,12 +1,11 @@
 package com.vexsoftware.votifier.forwarding;
 
-import com.vexsoftware.votifier.NuVotifierBukkit;
 import com.vexsoftware.votifier.support.forwarding.AbstractPluginMessagingForwardingSink;
 import com.vexsoftware.votifier.support.forwarding.ForwardedVoteListener;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.messaging.PluginMessageListener;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.logging.Level;
 
@@ -15,31 +14,33 @@ import java.util.logging.Level;
  */
 public class BukkitPluginMessagingForwardingSink extends AbstractPluginMessagingForwardingSink implements PluginMessageListener {
 
-    public BukkitPluginMessagingForwardingSink(Plugin p, String channel, ForwardedVoteListener listener) {
+    private final Plugin plugin;
+    private final String channel;
+
+    public BukkitPluginMessagingForwardingSink(Plugin plugin, String channel, ForwardedVoteListener listener) {
         super(listener);
+
         if (channel == null) {
             throw new IllegalArgumentException("channel cannot be null");
         }
 
         this.channel = channel;
-        Bukkit.getMessenger().registerIncomingPluginChannel(p, channel, this);
-        this.p = p;
-    }
+        this.plugin = plugin;
 
-    private final Plugin p;
-    private final String channel;
+        plugin.getServer().getMessenger().registerIncomingPluginChannel(plugin, channel, this);
+    }
 
     @Override
     public void halt() {
-        Bukkit.getMessenger().unregisterIncomingPluginChannel(p, channel, this);
+        plugin.getServer().getMessenger().unregisterIncomingPluginChannel(plugin, channel, this);
     }
 
     @Override
-    public void onPluginMessageReceived(String s, Player player, byte[] bytes) {
+    public void onPluginMessageReceived(@NotNull String s, @NotNull Player player, byte @NotNull [] bytes) {
         try {
             this.handlePluginMessage(bytes);
         } catch (Exception e) {
-            p.getLogger().log(Level.SEVERE, "There was an unknown error when processing a forwarded vote.", e);
+            plugin.getLogger().log(Level.SEVERE, "There was an unknown error when processing a forwarded vote.", e);
         }
     }
 }

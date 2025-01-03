@@ -11,16 +11,16 @@ public class NVReloadCmd extends Command {
 
     private final NuVotifier plugin;
 
-    private static final BaseComponent reloadingNuVotifier = new TextComponent("Reloading NuVotifier...");
-    private static final BaseComponent nuvotifierHasBeenReloaded = new TextComponent("NuVotifier has been reloaded!");
-    private static final BaseComponent problem = new TextComponent("Looks like there was a problem reloading NuVotifier, check the console!");
-    private static final BaseComponent permission = new TextComponent("You do not have permission to do this!");
+    private static final BaseComponent RELOADING = new TextComponent("Reloading NuVotifier...");
+    private static final BaseComponent RELOADED = new TextComponent("NuVotifier has been reloaded!");
+    private static final BaseComponent PROBLEM = new TextComponent("Looks like there was a problem reloading NuVotifier, check the console!");
+    private static final BaseComponent PERMISSION = new TextComponent("You do not have permission to do this!");
 
     static {
-        reloadingNuVotifier.setColor(ChatColor.GRAY);
-        nuvotifierHasBeenReloaded.setColor(ChatColor.DARK_GREEN);
-        problem.setColor(ChatColor.DARK_RED);
-        permission.setColor(ChatColor.DARK_RED);
+        RELOADING.setColor(ChatColor.GRAY);
+        RELOADED.setColor(ChatColor.DARK_GREEN);
+        PROBLEM.setColor(ChatColor.DARK_RED);
+        PERMISSION.setColor(ChatColor.DARK_RED);
     }
 
     public NVReloadCmd(NuVotifier plugin) {
@@ -31,14 +31,14 @@ public class NVReloadCmd extends Command {
     @Override
     public void execute(CommandSender sender, String[] args) {
         if (sender.hasPermission("nuvotifier.reload")) {
-            sender.sendMessage(reloadingNuVotifier);
+            sender.sendMessage(RELOADING);
             if (plugin.reload()) {
-                sender.sendMessage(nuvotifierHasBeenReloaded);
+                sender.sendMessage(RELOADED);
             } else {
-                sender.sendMessage(problem);
+                sender.sendMessage(PROBLEM);
             }
         } else {
-            sender.sendMessage(permission);
+            sender.sendMessage(PERMISSION);
         }
     }
 }

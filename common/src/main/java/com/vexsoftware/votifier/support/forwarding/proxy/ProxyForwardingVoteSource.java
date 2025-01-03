@@ -24,13 +24,14 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 public class ProxyForwardingVoteSource implements ForwardingVoteSource {
+
     private static final int MAX_RETRIES = 5;
+    private static final StringDecoder STRING_DECODER = new StringDecoder(StandardCharsets.US_ASCII);
+
     private final VotifierPlugin plugin;
     private final Supplier<Bootstrap> nettyBootstrap;
     private final List<BackendServer> backendServers;
     private final VoteCache voteCache;
-
-    private static final StringDecoder STRING_DECODER = new StringDecoder(StandardCharsets.US_ASCII);
 
     public ProxyForwardingVoteSource(VotifierPlugin plugin, Supplier<Bootstrap> nettyBootstrap, List<BackendServer> backendServers, VoteCache voteCache) {
         this.plugin = plugin;
@@ -47,7 +48,10 @@ public class ProxyForwardingVoteSource implements ForwardingVoteSource {
     }
 
     private int fib(int t) {
-        if (t <= 1) return 1;
+        if (t <= 1) {
+            return 1;
+        }
+
         return fib(t - 2) + fib(t - 1);
     }
 
@@ -110,11 +114,10 @@ public class ProxyForwardingVoteSource implements ForwardingVoteSource {
     }
 
     @Override
-    public void halt() {
-
-    }
+    public void halt() {}
 
     public static class BackendServer {
+
         private final String name;
         private final InetSocketAddress address;
         private final Key key;

@@ -13,5 +13,4 @@ public interface ForwardedVoteListener {
      * @param v Vote that was forwarded
      */
     void onForward(Vote v);
-
 }

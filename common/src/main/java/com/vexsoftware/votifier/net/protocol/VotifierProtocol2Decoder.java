@@ -25,12 +25,12 @@ public class VotifierProtocol2Decoder extends MessageToMessageDecoder<String> {
 
     @Override
     protected void decode(ChannelHandlerContext ctx, String s, List<Object> list) throws Exception {
-        JsonObject voteMessage = GsonInst.gson.fromJson(s, JsonObject.class);
+        JsonObject voteMessage = GsonInst.GSON.fromJson(s, JsonObject.class);
         VotifierSession session = ctx.channel().attr(VotifierSession.KEY).get();
 
         // Deserialize the payload.
         String payload = voteMessage.get("payload").getAsString();
-        JsonObject votePayload = GsonInst.gson.fromJson(payload, JsonObject.class);
+        JsonObject votePayload = GsonInst.GSON.fromJson(payload, JsonObject.class);
 
         // Verify challenge.
         if (!votePayload.get("challenge").getAsString().equals(session.getChallenge())) {
@@ -58,6 +58,7 @@ public class VotifierProtocol2Decoder extends MessageToMessageDecoder<String> {
 
         // Stopgap: verify the "uuid" field is valid, if provided.
         if (votePayload.has("uuid")) {
+            //noinspection ResultOfMethodCallIgnored
             UUID.fromString(votePayload.get("uuid").getAsString());
         }
 

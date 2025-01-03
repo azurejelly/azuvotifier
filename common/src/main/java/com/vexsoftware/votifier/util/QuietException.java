@@ -1,8 +1,8 @@
 package com.vexsoftware.votifier.util;
 
 public class QuietException extends Exception {
-    public QuietException() {
-    }
+
+    public QuietException() {}
 
     public QuietException(String s) {
         super(s);

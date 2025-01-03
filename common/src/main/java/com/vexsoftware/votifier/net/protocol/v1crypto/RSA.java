@@ -57,5 +57,4 @@ public class RSA {
         cipher.init(Cipher.DECRYPT_MODE, key);
         return cipher.doFinal(data);
     }
-
 }

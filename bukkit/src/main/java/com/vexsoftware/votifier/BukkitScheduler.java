@@ -6,7 +6,8 @@ import org.bukkit.scheduler.BukkitTask;
 
 import java.util.concurrent.TimeUnit;
 
-class BukkitScheduler implements VotifierScheduler {
+public class BukkitScheduler implements VotifierScheduler {
+
     private final NuVotifierBukkit plugin;
 
     public BukkitScheduler(NuVotifierBukkit plugin) {
@@ -19,15 +20,22 @@ class BukkitScheduler implements VotifierScheduler {
 
     @Override
     public ScheduledVotifierTask delayedOnPool(Runnable runnable, int delay, TimeUnit unit) {
-        return new BukkitTaskWrapper(plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, runnable, toTicks(delay, unit)));
+        return new BukkitTaskWrapper(
+                plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, runnable, toTicks(delay, unit))
+        );
     }
 
     @Override
     public ScheduledVotifierTask repeatOnPool(Runnable runnable, int delay, int repeat, TimeUnit unit) {
-        return new BukkitTaskWrapper(plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, runnable, toTicks(delay, unit), toTicks(repeat, unit)));
+        return new BukkitTaskWrapper(
+                plugin.getServer().getScheduler().runTaskTimerAsynchronously(
+                        plugin, runnable, toTicks(delay, unit), toTicks(repeat, unit)
+                )
+        );
     }
 
     private static class BukkitTaskWrapper implements ScheduledVotifierTask {
+
         private final BukkitTask task;
 
         private BukkitTaskWrapper(BukkitTask task) {

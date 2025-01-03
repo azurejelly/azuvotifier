@@ -3,6 +3,7 @@ package com.vexsoftware.votifier.support.forwarding.proxy.client;
 import com.vexsoftware.votifier.model.Vote;
 
 public class VoteRequest {
+
     private final String challenge;
     private final Vote vote;
 

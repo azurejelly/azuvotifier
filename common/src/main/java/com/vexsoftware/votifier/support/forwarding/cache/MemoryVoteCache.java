@@ -23,21 +23,20 @@ public class MemoryVoteCache implements VoteCache {
 
     protected final ReentrantLock cacheLock = new ReentrantLock();
 
-    private final ScheduledVotifierTask sweepTask;
-
     public MemoryVoteCache(VotifierPlugin p, long voteTTL) {
-        voteCache = new HashMap<>();
-        playerVoteCache = new HashMap<>();
+        this.voteCache = new HashMap<>();
+        this.playerVoteCache = new HashMap<>();
 
         this.voteTTL = voteTTL;
-
         this.l = p.getPluginLogger();
-        this.sweepTask = p.getScheduler().repeatOnPool(this::sweep, 12, 12, TimeUnit.HOURS);
+
+        p.getScheduler().repeatOnPool(this::sweep, 12, 12, TimeUnit.HOURS);
     }
 
     @Override
     public Collection<String> getCachedServers() {
         cacheLock.lock();
+
         try {
             return Collections.unmodifiableCollection(new ArrayList<>(voteCache.keySet()));
         } finally {
@@ -49,6 +48,7 @@ public class MemoryVoteCache implements VoteCache {
     public void addToCache(Vote v, String server) {
         if (server == null) throw new NullPointerException();
         cacheLock.lock();
+
         try {
             voteCache.computeIfAbsent(server, k -> new HashSet<>()).add(new VoteWithRecordedTimestamp(v));
         } finally {
@@ -58,8 +58,12 @@ public class MemoryVoteCache implements VoteCache {
 
     @Override
     public void addToCachePlayer(Vote v, String player) {
-        if (player == null) throw new NullPointerException();
+        if (player == null) {
+            throw new IllegalArgumentException("player cannot be null");
+        }
+
         cacheLock.lock();
+
         try {
             playerVoteCache.computeIfAbsent(player, k -> new HashSet<>()).add(new VoteWithRecordedTimestamp(v));
         } finally {
@@ -69,8 +73,12 @@ public class MemoryVoteCache implements VoteCache {
 
     @Override
     public Collection<Vote> evictPlayer(String player) {
-        if (player == null) throw new NullPointerException();
+        if (player == null) {
+            throw new IllegalArgumentException("player cannot be null");
+        }
+
         cacheLock.lock();
+
         try {
             Collection<VoteWithRecordedTimestamp> playerVotes = playerVoteCache.remove(player);
             if (playerVotes != null) {
@@ -85,8 +93,12 @@ public class MemoryVoteCache implements VoteCache {
 
     @Override
     public Collection<Vote> evict(String server) {
-        if (server == null) throw new NullPointerException();
+        if (server == null) {
+            throw new IllegalArgumentException("server cannot be null");
+        }
+
         cacheLock.lock();
+
         try {
             Collection<VoteWithRecordedTimestamp> serverVotes = voteCache.remove(server);
             if (serverVotes != null) {
@@ -101,6 +113,7 @@ public class MemoryVoteCache implements VoteCache {
 
     public void sweep() {
         cacheLock.lock();
+
         try {
             sweep(voteCache);
             sweep(playerVoteCache);
@@ -114,6 +127,7 @@ public class MemoryVoteCache implements VoteCache {
             Iterator<VoteWithRecordedTimestamp> vi = entry.getValue().iterator();
             while (vi.hasNext()) {
                 VoteWithRecordedTimestamp v = vi.next();
+
                 if (hasTimedOut(v)) {
                     l.warn("Purging out of date vote.", v);
                     vi.remove();
@@ -123,13 +137,15 @@ public class MemoryVoteCache implements VoteCache {
     }
 
     protected boolean hasTimedOut(VoteWithRecordedTimestamp v) {
-        if (voteTTL == -1) return false;
+        if (voteTTL == -1) {
+            return false;
+        }
 
         long daysAsMillis = TimeUnit.DAYS.toMillis(voteTTL);
         return v.recorded + daysAsMillis < System.currentTimeMillis();
     }
 
-    static class VoteWithRecordedTimestamp extends Vote {
+    public static class VoteWithRecordedTimestamp extends Vote {
         private final long recorded;
 
         VoteWithRecordedTimestamp(Vote vote) {
@@ -139,6 +155,7 @@ public class MemoryVoteCache implements VoteCache {
 
         VoteWithRecordedTimestamp(JsonObject object) {
             super(object);
+
             if (object.has("recorded")) {
                 this.recorded = object.get("recorded").getAsLong();
             } else {
@@ -156,19 +173,26 @@ public class MemoryVoteCache implements VoteCache {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            if (!super.equals(o)) return false;
+            if (this == o) {
+                return true;
+            }
+
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+
+            if (!super.equals(o)) {
+                return false;
+            }
 
             VoteWithRecordedTimestamp that = (VoteWithRecordedTimestamp) o;
-
             return recorded == that.recorded;
         }
 
         @Override
         public int hashCode() {
             int result = super.hashCode();
-            result = 31 * result + (int) (recorded ^ (recorded >>> 32));
+            result = 31 * result + Long.hashCode(recorded);
             return result;
         }
     }

@@ -14,6 +14,7 @@ import java.nio.charset.StandardCharsets;
  */
 @ChannelHandler.Sharable
 public class VotifierGreetingHandler extends ChannelInboundHandlerAdapter {
+
     public static final VotifierGreetingHandler INSTANCE = new VotifierGreetingHandler();
 
     private VotifierGreetingHandler() {}

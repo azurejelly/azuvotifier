@@ -6,6 +6,7 @@ import net.md_5.bungee.api.config.ServerInfo;
 import java.util.Objects;
 
 public class BungeeBackendServer implements BackendServer {
+
     private final ServerInfo info;
 
     public BungeeBackendServer(ServerInfo info) {

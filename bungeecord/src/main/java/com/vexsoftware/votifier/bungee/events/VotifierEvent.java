@@ -9,11 +9,11 @@ import net.md_5.bungee.api.plugin.Event;
  * asynchronously allowing other plugins to listen for votes.
  */
 public class VotifierEvent extends Event implements Cancellable {
+
     /**
      * The vote.
      **/
     private final Vote vote;
-
     private boolean cancelled;
 
     public VotifierEvent(Vote vote) {

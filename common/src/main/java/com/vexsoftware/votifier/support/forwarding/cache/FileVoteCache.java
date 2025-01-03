@@ -26,9 +26,8 @@ public class FileVoteCache extends MemoryVoteCache {
         this.cacheFile = cacheFile;
         this.l = plugin.getPluginLogger();
 
-        load();
-
-        saveTask = plugin.getScheduler().repeatOnPool(() -> {
+        this.load();
+        this.saveTask = plugin.getScheduler().repeatOnPool(() -> {
             try {
                 save();
             } catch (IOException e) {
@@ -48,8 +47,9 @@ public class FileVoteCache extends MemoryVoteCache {
     private void load() throws IOException {
         // Load the cache from disk
         JsonObject object;
+
         try (BufferedReader reader = Files.newBufferedReader(cacheFile.toPath(), StandardCharsets.UTF_8)) {
-            object = GsonInst.gson.fromJson(reader, JsonObject.class);
+            object = GsonInst.GSON.fromJson(reader, JsonObject.class);
             if (object == null) {
                 // When the input is not malformed but instead empty, this returns null. Simply assume it is empty.
                 object = new JsonObject();
@@ -70,8 +70,10 @@ public class FileVoteCache extends MemoryVoteCache {
             resave = true;
         }
 
-        if (object.get("version").getAsInt() != 2)
-            throw new IllegalStateException("Could not read cache file! Unknown version '" + object.get("version").getAsInt() + "' read.");
+        if (object.get("version").getAsInt() != 2) {
+            throw new IllegalStateException("Could not read cache file! Unknown version '"
+                    + object.get("version").getAsInt() + "' read.");
+        }
 
         JsonObject players = object.getAsJsonObject("players");
         JsonObject servers = object.getAsJsonObject("servers");
@@ -86,10 +88,12 @@ public class FileVoteCache extends MemoryVoteCache {
 
         if (resave) {
             File replacementFile;
+
             for (int i = 0; ; i++) {
                 replacementFile = new File(cacheFile.getParentFile(), cacheFile.getName() + ".bak." + i);
-                if (!replacementFile.exists())
+                if (!replacementFile.exists()) {
                     break;
+                }
             }
 
             if (!cacheFile.renameTo(replacementFile)) {
@@ -104,14 +108,18 @@ public class FileVoteCache extends MemoryVoteCache {
 
     private Collection<VoteWithRecordedTimestamp> readVotes(JsonArray voteArray) {
         Collection<VoteWithRecordedTimestamp> votes = new HashSet<>(voteArray.size());
+
         for (int i = 0; i < voteArray.size(); i++) {
             JsonObject voteObject = voteArray.get(i).getAsJsonObject();
             VoteWithRecordedTimestamp v = new VoteWithRecordedTimestamp(voteObject);
-            if (hasTimedOut(v))
+
+            if (hasTimedOut(v)) {
                 l.warn("Purging out of date vote.", v);
-            else
+            } else {
                 votes.add(v);
+            }
         }
+
         return votes;
     }
 
@@ -128,7 +136,7 @@ public class FileVoteCache extends MemoryVoteCache {
         }
 
         try (BufferedWriter writer = Files.newBufferedWriter(cacheFile.toPath(), StandardCharsets.UTF_8)) {
-            GsonInst.gson.toJson(votesObject, writer);
+            GsonInst.GSON.toJson(votesObject, writer);
         }
     }
 

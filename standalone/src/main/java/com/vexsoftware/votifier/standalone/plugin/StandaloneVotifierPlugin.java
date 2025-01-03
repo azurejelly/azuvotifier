@@ -9,7 +9,7 @@ import com.vexsoftware.votifier.net.VotifierServerBootstrap;
 import com.vexsoftware.votifier.net.VotifierSession;
 import com.vexsoftware.votifier.platform.LoggingAdapter;
 import com.vexsoftware.votifier.platform.VotifierPlugin;
-import com.vexsoftware.votifier.platform.scheduler.ScheduledExecutorServiceVotifierScheduler;
+import com.vexsoftware.votifier.standalone.scheduler.StandaloneVotifierScheduler;
 import com.vexsoftware.votifier.platform.scheduler.VotifierScheduler;
 import com.vexsoftware.votifier.support.forwarding.ForwardingVoteSource;
 import com.vexsoftware.votifier.support.forwarding.proxy.ProxyForwardingVoteSource;
@@ -52,7 +52,7 @@ public class StandaloneVotifierPlugin implements VotifierPlugin {
         this.tokens = Map.copyOf(tokens);
         this.v1Key = v1Key;
         this.backendServers = backendServers;
-        this.scheduler = new ScheduledExecutorServiceVotifierScheduler(Executors.newScheduledThreadPool(1));
+        this.scheduler = new StandaloneVotifierScheduler(Executors.newScheduledThreadPool(1));
         this.disableV1Protocol = disableV1Protocol;
         this.redis = redis;
     }

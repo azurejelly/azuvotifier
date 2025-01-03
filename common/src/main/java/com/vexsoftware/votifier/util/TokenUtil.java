@@ -4,9 +4,8 @@ import java.math.BigInteger;
 import java.security.SecureRandom;
 
 public class TokenUtil {
-    private TokenUtil() {
 
-    }
+    private TokenUtil() {}
 
     private static final SecureRandom RANDOM = new SecureRandom();
 

@@ -12,6 +12,7 @@ import java.security.Key;
 import java.util.Base64;
 
 public class VotifierProtocol2Encoder extends MessageToByteEncoder<VoteRequest> {
+
     private static final short MAGIC = 0x733A;
 
     private final Key key;

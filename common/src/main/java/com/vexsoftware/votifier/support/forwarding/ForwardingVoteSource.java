@@ -15,8 +15,7 @@ public interface ForwardingVoteSource {
     void forward(Vote v);
 
     /**
-     * Stop or close any oustanding network interfaces. Occurs on the onDisable method of a plugin.
+     * Stop or close any outstanding network interfaces. Occurs on the onDisable method of a plugin.
      */
     void halt();
-
 }

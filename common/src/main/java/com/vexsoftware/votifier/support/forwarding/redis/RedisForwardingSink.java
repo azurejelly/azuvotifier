@@ -11,28 +11,28 @@ import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.JedisPubSub;
 
 import java.time.Duration;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * @author AkramL
  */
 public class RedisForwardingSink extends JedisPubSub implements ForwardingVoteSink {
 
-    public RedisForwardingSink(RedisCredentials credentials,
-                               RedisPoolConfiguration poolConfiguration,
-                               ForwardedVoteListener listener) {
+    private final ForwardedVoteListener listener;
+    private final String channel;
+    private final JedisPool pool;
+    private final Gson gson = new Gson();
 
+    public RedisForwardingSink(RedisCredentials credentials, RedisPoolConfiguration cfg, ForwardedVoteListener listener) {
         this.channel = credentials.getChannel();
         this.listener = listener;
 
         JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
-
-        jedisPoolConfig.setMaxTotal(poolConfiguration.getMaxTotal());
-        jedisPoolConfig.setMaxIdle(poolConfiguration.getMaxIdle());
-        jedisPoolConfig.setMinIdle(poolConfiguration.getMinIdle());
-        jedisPoolConfig.setMinEvictableIdleTime(Duration.ofMillis(poolConfiguration.getMinEvictableIdleTime()));
-        jedisPoolConfig.setTimeBetweenEvictionRuns(Duration.ofMillis(poolConfiguration.getTimeBetweenEvictionRuns()));
-        jedisPoolConfig.setBlockWhenExhausted(poolConfiguration.isBlockWhenExhausted());
+        jedisPoolConfig.setMaxTotal(cfg.getMaxTotal());
+        jedisPoolConfig.setMaxIdle(cfg.getMaxIdle());
+        jedisPoolConfig.setMinIdle(cfg.getMinIdle());
+        jedisPoolConfig.setMinEvictableIdleTime(Duration.ofMillis(cfg.getMinEvictableIdleTime()));
+        jedisPoolConfig.setTimeBetweenEvictionRuns(Duration.ofMillis(cfg.getTimeBetweenEvictionRuns()));
+        jedisPoolConfig.setBlockWhenExhausted(cfg.isBlockWhenExhausted());
 
         String password = credentials.getPassword();
         if (password == null || password.trim().isEmpty()) {
@@ -52,7 +52,7 @@ public class RedisForwardingSink extends JedisPubSub implements ForwardingVoteSi
 
         // Using a CompletableFuture here caused the vote to be received
         // like 4 times instead of 1 - I shouldn't be using a Thread here
-        // because Bukkit doesn't like it but I don't like Bukkit either
+        // because Bukkit doesn't like it, but I don't like Bukkit either
         // at this point so fuck it
         new Thread(() -> {
             try (Jedis jedis = pool.getResource()) {
@@ -60,11 +60,6 @@ public class RedisForwardingSink extends JedisPubSub implements ForwardingVoteSi
             }
         }, "Votifier Redis Forwarding Sink").start();
     }
-
-    private final ForwardedVoteListener listener;
-    private final String channel;
-    private final JedisPool pool;
-    private final Gson gson = new Gson();
 
     public void handleMessage(String message) {
         JsonObject object = gson.fromJson(message, JsonObject.class);

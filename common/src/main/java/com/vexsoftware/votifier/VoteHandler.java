@@ -11,5 +11,4 @@ public interface VoteHandler {
     default void onError(Throwable throwable, boolean voteAlreadyCompleted, String remoteAddress) {
         throw new RuntimeException("Unimplemented onError handler");
     }
-
 }

@@ -14,11 +14,11 @@ public class TestVoteCmd extends Command {
 
     private final NuVotifier plugin;
 
-    private static final BaseComponent permission = new TextComponent("You do not have permission to do this!");
-    private static final BaseComponent usage = new TextComponent("Usage hint: /ptestvote [username] [serviceName=?] [username=?] [address=?] [localTimestamp=?] [timestamp=?]");
+    private static final BaseComponent PERMISSION = new TextComponent("You do not have permission to do this!");
+    private static final BaseComponent USAGE = new TextComponent("Usage hint: /ptestvote [username] [serviceName=?] [username=?] [address=?] [localTimestamp=?] [timestamp=?]");
 
     static {
-        usage.setColor(ChatColor.GRAY);
+        USAGE.setColor(ChatColor.GRAY);
     }
 
     public TestVoteCmd(NuVotifier plugin) {
@@ -36,16 +36,16 @@ public class TestVoteCmd extends Command {
                 TextComponent c = new TextComponent("Error while parsing arguments to create test vote: " + e.getMessage());
                 c.setColor(ChatColor.DARK_RED);
                 sender.sendMessage(c);
-                sender.sendMessage(usage);
+                sender.sendMessage(USAGE);
                 return;
             }
 
             plugin.onVoteReceived(v, VotifierSession.ProtocolVersion.TEST, "localhost.test");
-            TextComponent c = new TextComponent("Test vote executed: " + v.toString());
+            TextComponent c = new TextComponent("Test vote executed: " + v);
             c.setColor(ChatColor.GREEN);
             sender.sendMessage(c);
         } else {
-            sender.sendMessage(permission);
+            sender.sendMessage(PERMISSION);
         }
     }
 }

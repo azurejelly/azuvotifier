@@ -45,6 +45,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
@@ -80,7 +81,7 @@ public class NuVotifierBukkit extends JavaPlugin implements VoteHandler, Votifie
     /**
      * Keys used for websites.
      */
-    private Map<String, Key> tokens = new HashMap<>();
+    private final Map<String, Key> tokens = new HashMap<>();
 
     private ForwardingVoteSink forwardingMethod;
     private VotifierScheduler scheduler;
@@ -90,15 +91,16 @@ public class NuVotifierBukkit extends JavaPlugin implements VoteHandler, Votifie
     private boolean loadAndBind() {
         try {
             Class.forName("io.papermc.paper.threadedregions.scheduler.AsyncScheduler");
-            isFolia = true;
+            this.isFolia = true;
 
             getLogger().info("Using Folia; VotifierEvent will be fired asynchronously.");
         } catch (ClassNotFoundException e) {
-            isFolia = false;
+            this.isFolia = false;
         }
 
-        scheduler = new BukkitScheduler(this);
-        pluginLogger = new JavaUtilLogger(getLogger());
+        this.scheduler = new BukkitScheduler(this);
+        this.pluginLogger = new JavaUtilLogger(getLogger());
+
         if (!getDataFolder().exists()) {
             if (!getDataFolder().mkdir()) {
                 throw new RuntimeException("Unable to create the plugin data folder " + getDataFolder());
@@ -115,11 +117,12 @@ public class NuVotifierBukkit extends JavaPlugin implements VoteHandler, Votifie
          * assigned to the server.
          */
         String hostAddr = Bukkit.getServer().getIp();
-        if (hostAddr == null || hostAddr.length() == 0)
+        if (hostAddr.isEmpty()) {
             hostAddr = "0.0.0.0";
+        }
 
         /*
-         * Create configuration file if it does not exists; otherwise, load it
+         * Create configuration file if it does not exist; otherwise, load it
          */
         if (!config.exists()) {
             try {
@@ -132,24 +135,32 @@ public class NuVotifierBukkit extends JavaPlugin implements VoteHandler, Votifie
                 }
 
                 // Load and manually replace variables in the configuration.
-                String cfgStr = new String(IOUtil.readAllBytes(getResource("bukkitConfig.yml")), StandardCharsets.UTF_8);
+                InputStream defaults = getResource("bukkitConfig.yml");
+                if (defaults == null) {
+                    throw new IOException("Unable to obtain the default configuration file!");
+                }
+
+                String cfgStr = new String(IOUtil.readAllBytes(defaults), StandardCharsets.UTF_8);
                 String token = TokenUtil.newToken();
                 cfgStr = cfgStr.replace("%default_token%", token).replace("%ip%", hostAddr);
-                Files.copy(new ByteArrayInputStream(cfgStr.getBytes(StandardCharsets.UTF_8)), config.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+                Files.copy(
+                        new ByteArrayInputStream(cfgStr.getBytes(StandardCharsets.UTF_8)),
+                        config.toPath(), StandardCopyOption.REPLACE_EXISTING
+                );
 
                 /*
-                 * Remind hosted server admins to be sure they have the right
-                 * port number.
+                 * Remind hosted server admins to be sure they have the right port number.
                  */
                 getLogger().info("------------------------------------------------------------------------------");
-                getLogger().info("Assigning NuVotifier to listen on port 8192. If you are hosting Craftbukkit on a");
-                getLogger().info("shared server please check with your hosting provider to verify that this port");
-                getLogger().info("is available for your use. Chances are that your hosting provider will assign");
-                getLogger().info("a different port, which you need to specify in config.yml");
+                getLogger().info("Assigning NuVotifier to listen on port 8192. If you are running this server");
+                getLogger().info("on a shared hosting, make sure to check with your hosting provider to verify");
+                getLogger().info("that this port is available for your use. Chances are your hosting provider");
+                getLogger().info("will assign a different port, which you'll need to change in the NuVotifier");
+                getLogger().info("config.yml file.");
                 getLogger().info("------------------------------------------------------------------------------");
-                getLogger().info("Your default NuVotifier token is " + token + ".");
-                getLogger().info("You will need to provide this token when you submit your server to a voting");
-                getLogger().info("list.");
+                getLogger().info("Your default NuVotifier token is '" + token + "'. You'll need to provide");
+                getLogger().info("this token when submitting your server to a voting list.");
                 getLogger().info("------------------------------------------------------------------------------");
             } catch (Exception ex) {
                 getLogger().log(Level.SEVERE, "Error creating configuration file", ex);
@@ -164,31 +175,30 @@ public class NuVotifierBukkit extends JavaPlugin implements VoteHandler, Votifie
         cfg = YamlConfiguration.loadConfiguration(config);
 
         /*
-         * Create RSA directory and keys if it does not exist; otherwise, read
-         * keys.
+         * Create RSA directory and keys if it does not exist; otherwise, read keys.
          */
         try {
             if (!rsaDirectory.exists()) {
                 if (!rsaDirectory.mkdir()) {
                     throw new RuntimeException("Unable to create the RSA key folder " + rsaDirectory);
                 }
-                keyPair = RSAKeygen.generate(2048);
+
+                this.keyPair = RSAKeygen.generate(2048);
                 RSAIO.save(rsaDirectory, keyPair);
             } else {
-                keyPair = RSAIO.load(rsaDirectory);
+                this.keyPair = RSAIO.load(rsaDirectory);
             }
         } catch (Exception ex) {
-            getLogger().log(Level.SEVERE,
-                    "Error reading configuration file or RSA tokens", ex);
+            getLogger().log(Level.SEVERE, "Error reading configuration file or RSA tokens", ex);
             return false;
         }
 
         // the quiet flag always runs priority to the debug flag
         if (cfg.isBoolean("quiet")) {
-            debug = !cfg.getBoolean("quiet");
+            this.debug = !cfg.getBoolean("quiet");
         } else {
             // otherwise, default to being noisy
-            debug = cfg.getBoolean("debug", true);
+            this.debug = cfg.getBoolean("debug", true);
         }
 
         // Load Votifier tokens.
@@ -205,13 +215,14 @@ public class NuVotifierBukkit extends JavaPlugin implements VoteHandler, Votifie
             tokenSection = cfg.createSection("tokens");
             tokenSection.set("default", token);
             tokens.put("default", KeyCreator.createKeyFrom(token));
+
             try {
                 cfg.save(config);
             } catch (IOException e) {
-                getLogger().log(Level.SEVERE,
-                        "Error generating Votifier token", e);
+                getLogger().log(Level.SEVERE, "Error saving Votifier token", e);
                 return false;
             }
+
             getLogger().info("------------------------------------------------------------------------------");
             getLogger().info("No tokens were found in your configuration, so we've generated one for you.");
             getLogger().info("Your default Votifier token is " + token + ".");
@@ -223,19 +234,20 @@ public class NuVotifierBukkit extends JavaPlugin implements VoteHandler, Votifie
         // Initialize the receiver.
         final String host = cfg.getString("host", hostAddr);
         final int port = cfg.getInt("port", 8192);
-        if (!debug)
+        if (!debug) {
             getLogger().info("QUIET mode enabled!");
+        }
 
         if (port >= 0) {
-            final boolean disablev1 = cfg.getBoolean("disable-v1-protocol");
-            if (disablev1) {
+            final boolean disableV1 = cfg.getBoolean("disable-v1-protocol");
+            if (disableV1) {
                 getLogger().info("------------------------------------------------------------------------------");
                 getLogger().info("Votifier protocol v1 parsing has been disabled. Most voting websites do not");
                 getLogger().info("currently support the modern Votifier protocol in NuVotifier.");
                 getLogger().info("------------------------------------------------------------------------------");
             }
 
-            this.bootstrap = new VotifierServerBootstrap(host, port, this, disablev1);
+            this.bootstrap = new VotifierServerBootstrap(host, port, this, disableV1);
             this.bootstrap.start(error -> {});
         } else {
             getLogger().info("------------------------------------------------------------------------------");
@@ -246,49 +258,78 @@ public class NuVotifierBukkit extends JavaPlugin implements VoteHandler, Votifie
         }
 
         ConfigurationSection forwardingConfig = cfg.getConfigurationSection("forwarding");
-        if (forwardingConfig != null) {
-            String method = forwardingConfig.getString("method", "none").toLowerCase(); //Default to lower case for case-insensitive searches
-            if ("none".equals(method)) {
+        if (forwardingConfig == null) {
+            return true;
+        }
+
+        String method = forwardingConfig.getString("method", "none");
+        switch (method) {
+            case "none": {
                 getLogger().info("Method none selected for vote forwarding: Votes will not be received from a forwarder.");
-            } else if ("pluginmessaging".equals(method)) {
+                return true;
+            }
+            case "pluginmessaging": {
                 String channel = forwardingConfig.getString("pluginMessaging.channel", "NuVotifier");
+
                 try {
-                    forwardingMethod = new BukkitPluginMessagingForwardingSink(this, channel, this);
-                    getLogger().info("Receiving votes over PluginMessaging channel '" + channel + "'.");
+                    this.forwardingMethod = new BukkitPluginMessagingForwardingSink(this, channel, this);
+                    getLogger().info("Receiving votes over plugin messaging channel '" + channel + "'.");
                 } catch (RuntimeException e) {
                     getLogger().log(Level.SEVERE, "NuVotifier could not set up PluginMessaging for vote forwarding!", e);
                 }
-            } else if ("redis".equals(method)) {
-                ConfigurationSection redisSection = forwardingConfig.getConfigurationSection("redis"),
-                        redisPoolSection = redisSection.getConfigurationSection("pool-settings");
 
-                // Load redis credentials
-                RedisCredentials redisCredentials = RedisCredentials.builder()
-                        .host(redisSection.getString("address"))
-                        .port(redisSection.getInt("port"))
-                        .password(redisSection.getString("password"))
-                        .channel(redisSection.getString("channel"))
-                        .build();
+                return true;
+            }
+            case "redis": {
+                ConfigurationSection redisSection = forwardingConfig.getConfigurationSection("redis");
+                if (redisSection == null) {
+                    getLogger().severe(
+                            "Cannot set up Redis forwarding as the 'redis' configuration section is missing."
+                                    + " Defaulting to noop implementation."
+                    );
 
-                // Load redis pool parameters
-                RedisPoolConfiguration redisPoolConfiguration = RedisPoolConfiguration.builder()
-                        .timeout(redisPoolSection.getInt("timeout"))
-                        .maxTotal(redisPoolSection.getInt("max-total"))
-                        .maxIdle(redisPoolSection.getInt("max-idle"))
-                        .minIdle(redisPoolSection.getInt("min-idle"))
-                        .minEvictableIdleTime(redisPoolSection.getInt("min-evictable-idle-time"))
-                        .timeBetweenEvictionRuns(redisPoolSection.getInt("time-between-eviction-runs"))
-                        .numTestsPerEvictionRun(redisPoolSection.getInt("num-tests-per-eviction-run"))
-                        .blockWhenExhausted(redisPoolSection.getBoolean("block-when-exhausted"))
-                        .build();
+                    return true;
+                }
 
-                forwardingMethod = new RedisForwardingSink(redisCredentials, redisPoolConfiguration, this);
+                ConfigurationSection poolSection = redisSection.getConfigurationSection("pool-settings");
+                if (poolSection == null) {
+                    getLogger().severe(
+                            "Cannot set up Redis forwarding as the 'redis.pool-settings' configuration section"
+                                    + " is missing. Defaulting to noop implementation."
+                    );
 
-            } else {
+                    return true;
+                }
+
+                this.forwardingMethod = new RedisForwardingSink(
+                        RedisCredentials.builder()
+                                .host(redisSection.getString("address"))
+                                .port(redisSection.getInt("port"))
+                                .password(redisSection.getString("password"))
+                                .channel(redisSection.getString("channel"))
+                                .build(),
+
+                        RedisPoolConfiguration.builder()
+                                .timeout(poolSection.getInt("timeout"))
+                                .maxTotal(poolSection.getInt("max-total"))
+                                .maxIdle(poolSection.getInt("max-idle"))
+                                .minIdle(poolSection.getInt("min-idle"))
+                                .minEvictableIdleTime(poolSection.getInt("min-evictable-idle-time"))
+                                .timeBetweenEvictionRuns(poolSection.getInt("time-between-eviction-runs"))
+                                .numTestsPerEvictionRun(poolSection.getInt("num-tests-per-eviction-run"))
+                                .blockWhenExhausted(poolSection.getBoolean("block-when-exhausted"))
+                                .build(),
+
+                        this
+                );
+
+                return true;
+            }
+            default: {
                 getLogger().severe("No vote forwarding method '" + method + "' known. Defaulting to noop implementation.");
+                return true;
             }
         }
-        return true;
     }
 
     private void halt() {
@@ -338,6 +379,7 @@ public class NuVotifierBukkit extends JavaPlugin implements VoteHandler, Votifie
             } catch (Exception ex) {
                 getLogger().log(Level.SEVERE, "On reload, there was a problem loading, and we could not re-halt the server. Votifier is in an unstable state!", ex);
             }
+
             return false;
         }
     }
@@ -373,8 +415,10 @@ public class NuVotifierBukkit extends JavaPlugin implements VoteHandler, Votifie
     @Override
     public void onVoteReceived(final Vote vote, VotifierSession.ProtocolVersion protocolVersion, String remoteAddress) {
         if (debug) {
-            getLogger().info("Got a " + protocolVersion.humanReadable + " vote record from " + remoteAddress + " -> " + vote);
+            getLogger().info("Got a " + protocolVersion.humanReadable
+                    + " vote record from " + remoteAddress + " -> " + vote);
         }
+
         fireVotifierEvent(vote);
     }
 
@@ -397,6 +441,7 @@ public class NuVotifierBukkit extends JavaPlugin implements VoteHandler, Votifie
         if (debug) {
             getLogger().info("Got a forwarded vote -> " + v);
         }
+
         fireVotifierEvent(v);
     }
 

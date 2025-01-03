@@ -4,18 +4,21 @@ import com.vexsoftware.votifier.util.TokenUtil;
 import io.netty.util.AttributeKey;
 
 public class VotifierSession {
+
     public static final AttributeKey<VotifierSession> KEY = AttributeKey.valueOf("votifier_session");
+
     private ProtocolVersion version = ProtocolVersion.UNKNOWN;
     private final String challenge;
     private boolean hasCompletedVote = false;
 
     public VotifierSession() {
-        challenge = TokenUtil.newToken();
+        this.challenge = TokenUtil.newToken();
     }
 
     public void setVersion(ProtocolVersion version) {
-        if (this.version != ProtocolVersion.UNKNOWN)
+        if (this.version != ProtocolVersion.UNKNOWN) {
             throw new IllegalStateException("Protocol version already switched");
+        }
 
         this.version = version;
     }
@@ -29,8 +32,9 @@ public class VotifierSession {
     }
 
     public void completeVote() {
-        if (hasCompletedVote)
+        if (hasCompletedVote) {
             throw new IllegalStateException("Protocol completed vote twice!");
+        }
 
         hasCompletedVote = true;
     }
@@ -46,6 +50,7 @@ public class VotifierSession {
         TEST("test");
 
         public final String humanReadable;
+
         ProtocolVersion(String hr) {
             this.humanReadable = hr;
         }

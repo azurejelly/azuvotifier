@@ -1,14 +1,18 @@
-package com.vexsoftware.votifier.platform.scheduler;
+package com.vexsoftware.votifier.standalone.scheduler;
+
+import com.vexsoftware.votifier.platform.scheduler.ScheduledVotifierTask;
+import com.vexsoftware.votifier.platform.scheduler.VotifierScheduler;
 
 import java.util.Objects;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class ScheduledExecutorServiceVotifierScheduler implements VotifierScheduler {
+public class StandaloneVotifierScheduler implements VotifierScheduler {
+
     private final ScheduledExecutorService service;
 
-    public ScheduledExecutorServiceVotifierScheduler(ScheduledExecutorService service) {
+    public StandaloneVotifierScheduler(ScheduledExecutorService service) {
         this.service = Objects.requireNonNull(service, "service");
     }
 
@@ -23,6 +27,7 @@ public class ScheduledExecutorServiceVotifierScheduler implements VotifierSchedu
     }
 
     private static class ScheduledVotifierTaskWrapper implements ScheduledVotifierTask {
+
         private final Future<?> future;
 
         private ScheduledVotifierTaskWrapper(Future<?> future) {

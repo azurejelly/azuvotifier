@@ -16,15 +16,16 @@ import java.util.List;
  * Attempts to determine if original protocol or protocol v2 is being used.
  */
 public class VotifierProtocolDifferentiator extends ByteToMessageDecoder {
+
     private static final QuietException V2_ONLY = new QuietException("This server only accepts well-formed Votifier v2 packets.");
-
     private static final short PROTOCOL_2_MAGIC = 0x733A;
-    private final boolean testMode;
-    private final boolean allowv1;
 
-    public VotifierProtocolDifferentiator(boolean testMode, boolean allowv1) {
+    private final boolean testMode;
+    private final boolean allowV1;
+
+    public VotifierProtocolDifferentiator(boolean testMode, boolean allowV1) {
         this.testMode = testMode;
-        this.allowv1 = allowv1;
+        this.allowV1 = allowV1;
     }
 
     @Override
@@ -33,7 +34,7 @@ public class VotifierProtocolDifferentiator extends ByteToMessageDecoder {
         int readable = buf.readableBytes();
 
         if (readable < 2) {
-            // Some retarded voting sites (PMC?) seem to send empty buffers for no good reason.
+            // Some voting sites seem to send empty buffers for no good reason.
             return;
         }
 
@@ -52,9 +53,10 @@ public class VotifierProtocolDifferentiator extends ByteToMessageDecoder {
                 ctx.pipeline().remove(this);
             }
         } else {
-            if (!allowv1) {
+            if (!allowV1) {
                 throw V2_ONLY;
             }
+
             // Probably Protocol v1 Vote Message
             session.setVersion(VotifierSession.ProtocolVersion.ONE);
             if (!testMode) {

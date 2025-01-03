@@ -7,6 +7,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.CorruptedFrameException;
 
 public class VotifierProtocol2HandshakeHandler extends SimpleChannelInboundHandler<String> {
+
     private final Vote toSend;
     private final VotifierResponseHandler responseHandler;
     private final VotifierPlugin nuVotifier;

@@ -36,7 +36,7 @@ public class VotifierProtocol2DecoderTest {
         JSONObject object = new JSONObject();
         JsonObject payload = vote.serialize();
         payload.addProperty("challenge", SESSION.getChallenge());
-        String payloadEncoded = GsonInst.gson.toJson(payload);
+        String payloadEncoded = GsonInst.GSON.toJson(payload);
         object.put("payload", payloadEncoded);
         Mac mac = Mac.getInstance("HmacSHA256");
         mac.init(key);
@@ -70,7 +70,7 @@ public class VotifierProtocol2DecoderTest {
         JSONObject object = new JSONObject();
         JsonObject payload = vote.serialize();
         payload.addProperty("challenge", SESSION.getChallenge());
-        object.put("payload", GsonInst.gson.toJson(payload));
+        object.put("payload", GsonInst.GSON.toJson(payload));
         // We "forget" the signature.
 
         assertThrows(DecoderException.class, () -> channel.writeInbound(object.toString()));
@@ -85,7 +85,7 @@ public class VotifierProtocol2DecoderTest {
         Vote vote = new Vote("Test", "test", "test", "0");
         JSONObject object = new JSONObject();
         JsonObject payload = vote.serialize();
-        String payloadEncoded = GsonInst.gson.toJson(payload);
+        String payloadEncoded = GsonInst.GSON.toJson(payload);
         // We "forget" the challenge.
         object.put("payload", payloadEncoded);
         Mac mac = Mac.getInstance("HmacSHA256");
@@ -108,7 +108,7 @@ public class VotifierProtocol2DecoderTest {
         // We provide the wrong challenge.
         payload.addProperty("challenge", "not a challenge for me");
         object.put("payload", payload.toString());
-        String payloadEncoded = GsonInst.gson.toJson(payload);
+        String payloadEncoded = GsonInst.GSON.toJson(payload);
         Mac mac = Mac.getInstance("HmacSHA256");
         mac.init(TestVotifierPlugin.getI().getTokens().get("default"));
         object.put("signature",

@@ -18,40 +18,52 @@ import net.md_5.bungee.event.EventHandler;
  * @date 12/31/2015
  */
 public final class OnlineForwardPluginMessagingForwardingSource extends AbstractPluginMessagingForwardingSource implements Listener {
-    public OnlineForwardPluginMessagingForwardingSource(String channel, NuVotifier nuVotifier, ServerFilter serverFilter,
-                                                        VoteCache cache, String fallbackServer, int dumpRate) {
+
+    private final String fallback;
+
+    public OnlineForwardPluginMessagingForwardingSource(
+            String channel,
+            NuVotifier nuVotifier,
+            ServerFilter serverFilter,
+            VoteCache cache,
+            String fallback,
+            int dumpRate
+    ) {
         super(channel, serverFilter, nuVotifier, cache, dumpRate);
-        this.fallbackServer = fallbackServer;
+
+        this.fallback = fallback;
         ProxyServer.getInstance().getPluginManager().registerListener(nuVotifier, this);
     }
-
-    private final String fallbackServer;
 
     @Override
     public void forward(Vote v) {
         ProxiedPlayer p = ProxyServer.getInstance().getPlayer(v.getUsername());
-        if (p != null && p.getServer() != null &&
-                serverFilter.isAllowed(p.getServer().getInfo().getName())) {
+        if (p != null && p.getServer() != null && serverFilter.isAllowed(p.getServer().getInfo().getName())) {
             if (forwardSpecific(new BungeeBackendServer(p.getServer().getInfo()), v)) {
                 if (plugin.isDebug()) {
-                    plugin.getPluginLogger().info("Successfully forwarded vote " + v + " to server " + p.getServer().getInfo().getName());
+                    plugin.getPluginLogger().info("Successfully forwarded vote " + v
+                            + " to server " + p.getServer().getInfo().getName());
                 }
+
                 return;
             }
         }
 
-        ServerInfo serverInfo = ProxyServer.getInstance().getServers().get(fallbackServer);
+        ServerInfo serverInfo = ProxyServer.getInstance().getServers().get(fallback);
 
         // nowhere to fall back to, yet still not online. lets save this vote yet!
-        if (serverInfo == null)
+        if (serverInfo == null) {
             attemptToAddToPlayerCache(v, v.getUsername());
-        else if (!forwardSpecific(new BungeeBackendServer(serverInfo), v))
-            attemptToAddToCache(v, fallbackServer);
+        } else if (!forwardSpecific(new BungeeBackendServer(serverInfo), v)) {
+            attemptToAddToCache(v, fallback);
+        }
     }
 
     @EventHandler
     public void onPluginMessage(PluginMessageEvent e) {
-        if (e.getTag().equals(channel)) e.setCancelled(true);
+        if (e.getTag().equals(channel)) {
+            e.setCancelled(true);
+        }
     }
 
     @EventHandler

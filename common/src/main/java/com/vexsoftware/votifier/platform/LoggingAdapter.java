@@ -1,6 +1,7 @@
 package com.vexsoftware.votifier.platform;
 
 public interface LoggingAdapter {
+
     void error(String s);
     void error(String s, Object... o);
     void error(String s, Throwable e, Object... o);

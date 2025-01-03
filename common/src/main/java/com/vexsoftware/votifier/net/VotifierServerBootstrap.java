@@ -21,7 +21,6 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.concurrent.FastThreadLocalThread;
-import io.netty.util.concurrent.GlobalEventExecutor;
 
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
@@ -32,6 +31,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 public class VotifierServerBootstrap {
+
     private static final boolean USE_EPOLL = Epoll.isAvailable();
 
     private final String host;
@@ -48,6 +48,7 @@ public class VotifierServerBootstrap {
         this.port = port;
         this.plugin = plugin;
         this.v1Disable = v1Disable;
+
         if (USE_EPOLL) {
             this.bossLoopGroup = new EpollEventLoopGroup(1, createThreadFactory("Votifier epoll boss"));
             this.eventLoopGroup = new EpollEventLoopGroup(3, createThreadFactory("Votifier epoll worker"));
@@ -96,7 +97,8 @@ public class VotifierServerBootstrap {
                         if (socketAddress == null) {
                             socketAddress = new InetSocketAddress(host, port);
                         }
-                        plugin.getPluginLogger().error("Votifier was not able to bind to " + socketAddress.toString(), future.cause());
+
+                        plugin.getPluginLogger().error("Votifier was not able to bind to " + socketAddress, future.cause());
                         error.accept(future.cause());
                     }
                 });

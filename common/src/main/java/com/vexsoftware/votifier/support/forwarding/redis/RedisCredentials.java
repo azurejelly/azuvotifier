@@ -5,13 +5,12 @@ package com.vexsoftware.votifier.support.forwarding.redis;
  */
 public class RedisCredentials {
 
-    private final String host, password, channel;
+    private final String host;
+    private final String password;
+    private final String channel;
     private final int port;
 
-    private RedisCredentials(String host,
-                             int port,
-                             String password,
-                             String channel) {
+    private RedisCredentials(String host, int port, String password, String channel) {
         this.host = host;
         this.port = port;
         this.password = password;
@@ -40,11 +39,12 @@ public class RedisCredentials {
 
     public static class Builder {
 
-        private String host, password, channel;
+        private String host;
+        private String password;
+        private String channel;
         private int port;
 
-        private Builder() {
-        }
+        private Builder() {}
 
         public Builder host(String host) {
             this.host = host;
@@ -69,7 +69,5 @@ public class RedisCredentials {
         public RedisCredentials build() {
             return new RedisCredentials(host, port, password, channel);
         }
-
     }
-
 }
