@@ -6,26 +6,25 @@ import com.vexsoftware.votifier.platform.BackendServer;
 import com.vexsoftware.votifier.velocity.utils.VelocityUtil;
 
 public class VelocityBackendServer implements BackendServer {
-    private final ProxyServer server;
-    private final RegisteredServer rs;
 
-    public VelocityBackendServer(ProxyServer server, RegisteredServer rs) {
+    private final RegisteredServer server;
+
+    public VelocityBackendServer(RegisteredServer server) {
         this.server = server;
-        this.rs = rs;
     }
 
     @Override
     public String getName() {
-        return rs.getServerInfo().getName();
+        return server.getServerInfo().getName();
     }
 
     @Override
     public boolean sendPluginMessage(String channel, byte[] data) {
-        return rs.sendPluginMessage(VelocityUtil.getId(channel), data);
+        return server.sendPluginMessage(VelocityUtil.getId(channel), data);
     }
 
     @Override
     public String toString() {
-        return rs.getServerInfo().getName();
+        return server.getServerInfo().getName();
     }
 }

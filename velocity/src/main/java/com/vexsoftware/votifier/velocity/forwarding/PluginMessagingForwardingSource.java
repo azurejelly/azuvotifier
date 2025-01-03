@@ -27,7 +27,7 @@ public class PluginMessagingForwardingSource extends AbstractPluginMessagingForw
 
     @Subscribe
     public void onServerConnected(final ServerConnectedEvent e) { //Attempt to resend any votes that were previously cached.
-        onServerConnect(new VelocityBackendServer(plugin.getServer(), e.getServer()));
+        onServerConnect(new VelocityBackendServer(e.getServer()));
     }
 
     @Subscribe

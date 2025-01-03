@@ -41,7 +41,7 @@ public final class OnlineForwardPluginMessagingForwardingSource extends Abstract
         if (sc.isPresent() &&
                 serverFilter.isAllowed(sc.get().getServerInfo().getName())
         ) {
-            if (forwardSpecific(new VelocityBackendServer(plugin.getServer(), sc.get().getServer()), v)) {
+            if (forwardSpecific(new VelocityBackendServer(sc.get().getServer()), v)) {
                 if (plugin.isDebug()) {
                     plugin.getPluginLogger().info("Successfully forwarded vote " + v + " to server " + sc.get().getServerInfo().getName());
                 }
@@ -55,13 +55,13 @@ public final class OnlineForwardPluginMessagingForwardingSource extends Abstract
         // nowhere to fall back to, yet still not online. lets save this vote yet!
         if (!fs.isPresent())
             attemptToAddToPlayerCache(v, v.getUsername());
-        else if (!forwardSpecific(new VelocityBackendServer(plugin.getServer(), fs.get()), v))
+        else if (!forwardSpecific(new VelocityBackendServer(fs.get()), v))
             attemptToAddToCache(v, fallbackServer);
     }
 
     @Subscribe
     public void onServerConnected(final ServerConnectedEvent e) { //Attempt to resend any votes that were previously cached.
-        BackendServer server = new VelocityBackendServer(plugin.getServer(), e.getServer());
+        BackendServer server = new VelocityBackendServer(e.getServer());
         onServerConnect(server);
         handlePlayerSwitch(server, e.getPlayer().getUsername());
     }

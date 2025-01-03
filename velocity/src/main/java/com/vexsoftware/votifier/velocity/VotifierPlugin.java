@@ -123,8 +123,8 @@ public class VotifierPlugin implements VoteHandler, ProxyVotifierPlugin {
         if (!debug)
             logger.info("QUIET mode enabled!");
 
-        final boolean disablev1 = config.getBoolean("disable-v1-protocol", false);
-        if (disablev1) {
+        final boolean disableV1 = config.getBoolean("disable-v1-protocol", false);
+        if (disableV1) {
             logger.info("------------------------------------------------------------------------------");
             logger.info("Votifier protocol v1 parsing has been disabled. Most voting websites do not");
             logger.info("currently support the modern Votifier protocol in NuVotifier.");
@@ -451,11 +451,14 @@ public class VotifierPlugin implements VoteHandler, ProxyVotifierPlugin {
 
     @Override
     public Collection<BackendServer> getAllBackendServers() {
-        return server.getAllServers().stream().map(s -> new VelocityBackendServer(server, s)).collect(Collectors.toList());
+        return server.getAllServers()
+                .stream()
+                .map(VelocityBackendServer::new)
+                .collect(Collectors.toList());
     }
 
     @Override
     public Optional<BackendServer> getServer(String name) {
-        return server.getServer(name).map(s -> new VelocityBackendServer(server, s));
+        return server.getServer(name).map(VelocityBackendServer::new);
     }
 }
