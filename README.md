@@ -36,7 +36,8 @@ $ java -jar nuvotifier-standalone.jar --help
 ### Standalone with Docker
 A Docker image is available at [Docker Hub](https://hub.docker.com/r/azurejelly/standalone-nuvotifier). To pull it, run:
 ```shell
-$ docker pull azurejelly/standalone-nuvotifier:latest
+$ docker pull azurejelly/standalone-nuvotifier:latest   # for the latest stable release
+$ docker pull azurejelly/standalone-nuvotifier:unstable # for the latest commit on master
 ```
 
 You can run the image using a command like:
