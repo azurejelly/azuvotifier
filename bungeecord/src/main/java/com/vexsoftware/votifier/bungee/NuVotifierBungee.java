@@ -186,7 +186,7 @@ public class NuVotifierBungee extends Plugin implements VoteHandler, ProxyVotifi
             try {
                 ConfigurationProvider.getProvider(YamlConfiguration.class).save(configuration, config);
             } catch (IOException e) {
-                throw new RuntimeException("Error generating Votifier token", e);
+                throw new RuntimeException("Error saving Votifier token", e);
             }
 
             getLogger().info("------------------------------------------------------------------------------");
@@ -207,8 +207,9 @@ public class NuVotifierBungee extends Plugin implements VoteHandler, ProxyVotifi
             this.debug = configuration.getBoolean("debug", true);
         }
 
-        if (!debug)
+        if (!debug) {
             getLogger().info("QUIET mode enabled!");
+        }
 
         final boolean disableV1 = configuration.getBoolean("disable-v1-protocol");
         if (disableV1) {
@@ -232,8 +233,8 @@ public class NuVotifierBungee extends Plugin implements VoteHandler, ProxyVotifi
             throw new RuntimeException("Unable to start server", ex);
         }
 
-        Configuration fwdCfg = configuration.getSection("forwarding");
-        String method = fwdCfg.getString("method", "none").toLowerCase();
+        Configuration fwd = configuration.getSection("forwarding");
+        String method = fwd.getString("method", "none").toLowerCase();
         switch (method) {
             case "none": {
                 getLogger().info("Method none selected for vote forwarding:" +
@@ -242,14 +243,14 @@ public class NuVotifierBungee extends Plugin implements VoteHandler, ProxyVotifi
                 break;
             }
             case "pluginmessaging": {
-                Configuration section = fwdCfg.getSection("pluginMessaging");
+                Configuration section = fwd.getSection("pluginMessaging");
                 String channel = section.getString("channel", "NuVotifier");
                 String cacheMethod = section.getString("cache", "file").toLowerCase();
                 VoteCache cache = null;
 
                 switch (cacheMethod) {
                     case "none": {
-                        getLogger().info("Vote cache none selected for caching:" +
+                        getLogger().info("Vote cache 'none' selected:" +
                                 "votes that cannot be immediately delivered will be lost.");
 
                         break;
@@ -289,34 +290,26 @@ public class NuVotifierBungee extends Plugin implements VoteHandler, ProxyVotifi
                 );
 
                 if (!section.getBoolean("onlySendToJoinedServer")) {
-                    try {
-                        this.forwardingMethod = new PluginMessagingForwardingSource(channel, filter, this, cache, dumpRate);
-                        getLogger().info("Forwarding votes over plugin messaging channel '" + channel + "'!");
-                    } catch (RuntimeException e) {
-                        getLogger().log(Level.SEVERE, "NuVotifier could not set up plugin messaging for vote forwarding:", e);
-                    }
+                    this.forwardingMethod = new PluginMessagingForwardingSource(channel, filter, this, cache, dumpRate);
+                    getLogger().info("Forwarding votes over plugin messaging channel '" + channel + "'!");
                 } else {
-                    try {
-                        String fallback = section.getString("joinedServerFallback", null);
-                        if (fallback != null && fallback.isEmpty()) {
-                            fallback = null;
-                        }
-
-                        this.forwardingMethod = new OnlineForwardPluginMessagingForwardingSource(
-                                channel, this, filter, cache, fallback, dumpRate
-                        );
-
-                        getLogger().info("Forwarding votes over plugin messaging channel '" + channel
-                                + "' for online players!");
-                    } catch (RuntimeException e) {
-                        getLogger().log(Level.SEVERE, "NuVotifier could not set up plugin messaging for vote forwarding:", e);
+                    String fallback = section.getString("joinedServerFallback", null);
+                    if (fallback != null && fallback.isEmpty()) {
+                        fallback = null;
                     }
+
+                    this.forwardingMethod = new OnlineForwardPluginMessagingForwardingSource(
+                            channel, this, filter, cache, fallback, dumpRate
+                    );
+
+                    getLogger().info("Forwarding votes over plugin messaging channel '" + channel
+                            + "' for online players!");
                 }
 
                 break;
             }
             case "proxy": {
-                Configuration proxySection = fwdCfg.getSection("proxy");
+                Configuration proxySection = fwd.getSection("proxy");
                 List<ProxyForwardingVoteSource.BackendServer> serverList = new ArrayList<>();
                 for (String s : proxySection.getKeys()) {
                     Configuration section = proxySection.getSection(s);
@@ -355,7 +348,12 @@ public class NuVotifierBungee extends Plugin implements VoteHandler, ProxyVotifi
                 getLogger().info("Forwarding votes from this NuVotifier instance to another NuVotifier server.");
             }
             case "redis": {
-                Configuration redisSection = fwdCfg.getSection("redis");
+                if (!fwd.contains("redis") || !fwd.contains("redis.pool-settings")) {
+                    throw new RuntimeException("Redis configuration is missing or incomplete! " +
+                            "Defaulting to noop implementation.");
+                }
+
+                Configuration redisSection = fwd.getSection("redis");
                 Configuration poolSection = redisSection.getSection("pool-settings");
 
                 this.forwardingMethod = new RedisForwardingVoteSource(
@@ -384,7 +382,7 @@ public class NuVotifierBungee extends Plugin implements VoteHandler, ProxyVotifi
                 break;
             }
             default: {
-                getLogger().severe("No vote forwarding method '" + method+ "' known." +
+                getLogger().severe("No vote forwarding method '" + method+ "' known. " +
                         "Defaulting to noop implementation.");
             }
         }
@@ -395,12 +393,16 @@ public class NuVotifierBungee extends Plugin implements VoteHandler, ProxyVotifi
         this.scheduler = new BungeeScheduler(this);
         this.pluginLogger = new JavaUtilLogger(getLogger());
 
-        PluginManager pm = ProxyServer.getInstance().getPluginManager();
-        pm.registerCommand(this, new VotifierReloadCommand(this));
-        pm.registerCommand(this, new TestVoteCommand(this));
-        pm.registerListener(this, new ProxyReloadListener(this));
+        PluginManager pluginManager = ProxyServer.getInstance().getPluginManager();
+        pluginManager.registerCommand(this, new VotifierReloadCommand(this));
+        pluginManager.registerCommand(this, new TestVoteCommand(this));
+        pluginManager.registerListener(this, new ProxyReloadListener(this));
 
-        loadAndBind();
+        try {
+            loadAndBind();
+        } catch (Exception ex) {
+            getLogger().log(Level.SEVERE, "Failed to load Votifier:", ex);
+        }
     }
 
     private void halt() {
