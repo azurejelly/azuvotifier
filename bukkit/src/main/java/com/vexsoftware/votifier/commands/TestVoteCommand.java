@@ -20,21 +20,19 @@ public class TestVoteCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, @NotNull Command c, @NotNull String l, String @NotNull [] args) {
-        if (sender.hasPermission("nuvotifier.testvote")) {
-            Vote v;
-
-            try {
-                v = ArgsToVote.parse(args);
-            } catch (IllegalArgumentException e) {
-                sender.sendMessage(ChatColor.DARK_RED + "Error while parsing arguments to create test vote: " + e.getMessage());
-                sender.sendMessage(ChatColor.GRAY + "Usage hint: /testvote [username] [serviceName=?] [username=?] [address=?] [localTimestamp=?] [timestamp=?]");
-                return true;
-            }
-
-            plugin.onVoteReceived(v, VotifierSession.ProtocolVersion.TEST, "localhost.test");
-            sender.sendMessage(ChatColor.GREEN + "Test vote executed: " + v.toString());
-        } else {
+        if (!sender.hasPermission("nuvotifier.testvote")) {
             sender.sendMessage(ChatColor.DARK_RED + "You do not have permission to do this!");
+            return true;
+        }
+
+        Vote vote;
+        try {
+            vote = ArgsToVote.parse(args);
+            plugin.onVoteReceived(vote, VotifierSession.ProtocolVersion.TEST, "localhost.test");
+            sender.sendMessage(ChatColor.GREEN + "Test vote executed: " + vote);
+        } catch (IllegalArgumentException e) {
+            sender.sendMessage(ChatColor.DARK_RED + "Error while parsing arguments to create test vote: " + e.getMessage());
+            sender.sendMessage(ChatColor.GRAY + "Usage hint: /testvote [username] [serviceName] [username] [address] [localTimestamp] [timestamp]");
         }
 
         return true;

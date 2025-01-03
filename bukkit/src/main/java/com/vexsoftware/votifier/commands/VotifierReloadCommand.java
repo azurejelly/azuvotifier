@@ -17,15 +17,19 @@ public class VotifierReloadCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, @NotNull Command c, @NotNull String l, String @NotNull [] args) {
-        if (sender.hasPermission("nuvotifier.reload")) {
-            sender.sendMessage(ChatColor.GRAY + "Reloading NuVotifier...");
-            if (plugin.reload()) {
-                sender.sendMessage(ChatColor.DARK_GREEN + "NuVotifier has been reloaded!");
-            } else {
-                sender.sendMessage(ChatColor.DARK_RED + "Looks like there was a problem reloading NuVotifier, check the console!");
-            }
-        } else {
+        if (!sender.hasPermission("nuvotifier.reload")) {
             sender.sendMessage(ChatColor.DARK_RED + "You do not have permission to do this!");
+            return true;
+        }
+
+        sender.sendMessage(ChatColor.GRAY + "Reloading NuVotifier...");
+
+        if (plugin.reload()) {
+            sender.sendMessage(ChatColor.DARK_GREEN + "NuVotifier has been reloaded!");
+        } else {
+            sender.sendMessage(
+                    ChatColor.DARK_RED + "Looks like there was a problem reloading NuVotifier, check the console!"
+            );
         }
 
         return true;
