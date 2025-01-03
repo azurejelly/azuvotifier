@@ -1,4 +1,4 @@
-package com.vexsoftware.votifier.bungee.cmd;
+package com.vexsoftware.votifier.bungee.commands;
 
 import com.vexsoftware.votifier.bungee.NuVotifierBungee;
 import com.vexsoftware.votifier.model.Vote;

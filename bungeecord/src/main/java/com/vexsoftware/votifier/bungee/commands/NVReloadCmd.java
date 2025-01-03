@@ -1,4 +1,4 @@
-package com.vexsoftware.votifier.bungee.cmd;
+package com.vexsoftware.votifier.bungee.commands;
 
 import com.vexsoftware.votifier.bungee.NuVotifierBungee;
 import net.md_5.bungee.api.ChatColor;

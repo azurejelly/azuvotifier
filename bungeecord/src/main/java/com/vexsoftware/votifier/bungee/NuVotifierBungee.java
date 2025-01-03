@@ -1,8 +1,8 @@
 package com.vexsoftware.votifier.bungee;
 
 import com.vexsoftware.votifier.VoteHandler;
-import com.vexsoftware.votifier.bungee.cmd.NVReloadCmd;
-import com.vexsoftware.votifier.bungee.cmd.TestVoteCmd;
+import com.vexsoftware.votifier.bungee.commands.NVReloadCmd;
+import com.vexsoftware.votifier.bungee.commands.TestVoteCmd;
 import com.vexsoftware.votifier.net.VotifierServerBootstrap;
 import com.vexsoftware.votifier.platform.BackendServer;
 import com.vexsoftware.votifier.platform.JavaUtilLogger;
