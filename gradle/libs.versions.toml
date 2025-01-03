@@ -5,7 +5,7 @@ pluginyml-bukkit = { id = "net.minecrell.plugin-yml.bukkit", version.ref = "plug
 pluginyml-bungee = { id = "net.minecrell.plugin-yml.bungee", version.ref = "plugin-yml" }
 
 [versions]
-netty = "4.1.112.Final"
+netty = "4.1.116.Final"
 mockito = "4.3.1"
 junit-jupiter = "5.10.0"
 slf4j = "2.0.16"
