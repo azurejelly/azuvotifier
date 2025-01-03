@@ -24,7 +24,9 @@ redis:
   enabled: false
   address: 127.0.0.1
   port: 6379
+  username: ""
   password: ""
+  uri: "" # will have priority over the other options
   channel: nuvotifier:votes
   pool-settings:
     timeout: 5000

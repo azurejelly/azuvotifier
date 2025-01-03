@@ -1,5 +1,6 @@
 package com.vexsoftware.votifier.platform.forwarding;
 
+import com.vexsoftware.votifier.platform.LoggingAdapter;
 import com.vexsoftware.votifier.support.forwarding.AbstractPluginMessagingForwardingSink;
 import com.vexsoftware.votifier.support.forwarding.ForwardedVoteListener;
 import org.bukkit.entity.Player;
@@ -17,8 +18,13 @@ public class BukkitPluginMessagingForwardingSink extends AbstractPluginMessaging
     private final Plugin plugin;
     private final String channel;
 
-    public BukkitPluginMessagingForwardingSink(Plugin plugin, String channel, ForwardedVoteListener listener) {
-        super(listener);
+    public BukkitPluginMessagingForwardingSink(
+            Plugin plugin,
+            String channel,
+            ForwardedVoteListener listener,
+            LoggingAdapter logger
+    ) {
+        super(listener, logger);
 
         if (channel == null) {
             throw new IllegalArgumentException("channel cannot be null");

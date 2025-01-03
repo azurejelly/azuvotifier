@@ -36,7 +36,6 @@ import com.vexsoftware.votifier.support.forwarding.ForwardedVoteListener;
 import com.vexsoftware.votifier.support.forwarding.ForwardingVoteSink;
 import com.vexsoftware.votifier.support.forwarding.redis.RedisCredentials;
 import com.vexsoftware.votifier.support.forwarding.redis.RedisForwardingSink;
-import com.vexsoftware.votifier.support.forwarding.redis.RedisPoolConfiguration;
 import com.vexsoftware.votifier.util.IOUtil;
 import com.vexsoftware.votifier.util.KeyCreator;
 import com.vexsoftware.votifier.util.TokenUtil;
@@ -275,7 +274,10 @@ public class NuVotifierBukkit extends JavaPlugin implements VoteHandler, Votifie
                 String channel = forwardingConfig.getString("pluginMessaging.channel", "NuVotifier");
 
                 try {
-                    this.forwardingMethod = new BukkitPluginMessagingForwardingSink(this, channel, this);
+                    this.forwardingMethod = new BukkitPluginMessagingForwardingSink(
+                            this, channel, this, getPluginLogger()
+                    );
+
                     getLogger().info("Receiving votes over plugin messaging channel '" + channel + "'.");
                     return true;
                 } catch (RuntimeException e) {
@@ -294,33 +296,14 @@ public class NuVotifierBukkit extends JavaPlugin implements VoteHandler, Votifie
                     return false;
                 }
 
-                ConfigurationSection poolSection = redisSection.getConfigurationSection("pool-settings");
-                if (poolSection == null) {
-                    getLogger().severe(
-                            "Cannot set up Redis forwarding as the 'redis.pool-settings' configuration section"
-                                    + " is missing. Defaulting to noop implementation."
-                    );
-
-                    return false;
-                }
-
                 this.forwardingMethod = new RedisForwardingSink(
                         RedisCredentials.builder()
                                 .host(redisSection.getString("address"))
                                 .port(redisSection.getInt("port"))
+                                .username(redisSection.getString("username"))
                                 .password(redisSection.getString("password"))
+                                .uri(redisSection.getString("uri"))
                                 .channel(redisSection.getString("channel"))
-                                .build(),
-
-                        RedisPoolConfiguration.builder()
-                                .timeout(poolSection.getInt("timeout"))
-                                .maxTotal(poolSection.getInt("max-total"))
-                                .maxIdle(poolSection.getInt("max-idle"))
-                                .minIdle(poolSection.getInt("min-idle"))
-                                .minEvictableIdleTime(poolSection.getInt("min-evictable-idle-time"))
-                                .timeBetweenEvictionRuns(poolSection.getInt("time-between-eviction-runs"))
-                                .numTestsPerEvictionRun(poolSection.getInt("num-tests-per-eviction-run"))
-                                .blockWhenExhausted(poolSection.getBoolean("block-when-exhausted"))
                                 .build(),
 
                         this,

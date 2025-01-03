@@ -1,21 +1,19 @@
 package com.vexsoftware.votifier.standalone.plugin;
 
-import com.vexsoftware.votifier.standalone.config.redis.RedisVotifierConfiguration;
-import com.vexsoftware.votifier.standalone.config.redis.pool.RedisPoolVotifierConfiguration;
-import com.vexsoftware.votifier.standalone.config.server.BackendServer;
-import com.vexsoftware.votifier.standalone.logger.StandaloneVotifierLoggingAdapter;
 import com.vexsoftware.votifier.model.Vote;
 import com.vexsoftware.votifier.net.VotifierServerBootstrap;
 import com.vexsoftware.votifier.net.VotifierSession;
 import com.vexsoftware.votifier.platform.LoggingAdapter;
 import com.vexsoftware.votifier.platform.VotifierPlugin;
-import com.vexsoftware.votifier.standalone.scheduler.StandaloneVotifierScheduler;
 import com.vexsoftware.votifier.platform.scheduler.VotifierScheduler;
+import com.vexsoftware.votifier.standalone.config.redis.RedisVotifierConfiguration;
+import com.vexsoftware.votifier.standalone.config.server.BackendServer;
+import com.vexsoftware.votifier.standalone.logger.StandaloneVotifierLoggingAdapter;
+import com.vexsoftware.votifier.standalone.scheduler.StandaloneVotifierScheduler;
 import com.vexsoftware.votifier.support.forwarding.ForwardingVoteSource;
 import com.vexsoftware.votifier.support.forwarding.proxy.ProxyForwardingVoteSource;
 import com.vexsoftware.votifier.support.forwarding.redis.RedisCredentials;
 import com.vexsoftware.votifier.support.forwarding.redis.RedisForwardingVoteSource;
-import com.vexsoftware.votifier.support.forwarding.redis.RedisPoolConfiguration;
 import com.vexsoftware.votifier.util.KeyCreator;
 
 import java.net.InetAddress;
@@ -23,7 +21,9 @@ import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.security.Key;
 import java.security.KeyPair;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
@@ -82,24 +82,14 @@ public class StandaloneVotifierPlugin implements VotifierPlugin {
             RedisCredentials redisCredentials = RedisCredentials.builder()
                     .host(redis.getAddress())
                     .port(redis.getPort())
+                    .username(redis.getUsername())
                     .password(redis.getPassword())
+                    .uri(redis.getUri())
                     .channel(redis.getChannel())
                     .build();
 
-            RedisPoolVotifierConfiguration pool = redis.getPoolSettings();
-            RedisPoolConfiguration redisPoolConfiguration = RedisPoolConfiguration.builder()
-                    .timeout(pool.getTimeout())
-                    .maxTotal(pool.getMaxTotal())
-                    .maxIdle(pool.getMaxIdle())
-                    .minIdle(pool.getMinIdle())
-                    .minEvictableIdleTime(pool.getMinEvictableIdleTime())
-                    .timeBetweenEvictionRuns(pool.getTimeBetweenEvictionRuns())
-                    .numTestsPerEvictionRun(pool.getNumTestsPerEvictionRun())
-                    .blockWhenExhausted(pool.isBlockWhenExhausted())
-                    .build();
-
             this.forwardingMethod = new RedisForwardingVoteSource(
-                    redisCredentials, redisPoolConfiguration, getPluginLogger()
+                    redisCredentials, getPluginLogger()
             );
         } else {
             List<ProxyForwardingVoteSource.BackendServer> serverList = new ArrayList<>();

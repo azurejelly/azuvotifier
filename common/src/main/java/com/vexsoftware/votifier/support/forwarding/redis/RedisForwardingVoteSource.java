@@ -8,10 +8,13 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
-import java.time.Duration;
+import java.net.URI;
+import java.net.URISyntaxException;
+
+import static com.vexsoftware.votifier.util.RedisPoolUtils.getJedisConfiguration;
 
 /**
- * @author AkramL
+ * @author AkramL, azurejelly
  */
 public class RedisForwardingVoteSource implements ForwardingVoteSource {
 
@@ -19,33 +22,53 @@ public class RedisForwardingVoteSource implements ForwardingVoteSource {
     private final String channel;
     private final LoggingAdapter logger;
 
-    public RedisForwardingVoteSource(RedisCredentials credentials, RedisPoolConfiguration cfg, LoggingAdapter logger) {
+    private static final int REDIS_TIMEOUT_MS = 5000;
+
+    public RedisForwardingVoteSource(RedisCredentials credentials, LoggingAdapter logger) {
         this.channel = credentials.getChannel();
         this.logger = logger;
 
-        JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
-        jedisPoolConfig.setMaxTotal(cfg.getMaxTotal());
-        jedisPoolConfig.setMaxIdle(cfg.getMaxIdle());
-        jedisPoolConfig.setMinIdle(cfg.getMinIdle());
-        jedisPoolConfig.setMinEvictableIdleTime(Duration.ofMillis(cfg.getMinEvictableIdleTime()));
-        jedisPoolConfig.setTimeBetweenEvictionRuns(Duration.ofMillis(cfg.getTimeBetweenEvictionRuns()));
-        jedisPoolConfig.setNumTestsPerEvictionRun(cfg.getNumTestsPerEvictionRun());
-        jedisPoolConfig.setBlockWhenExhausted(cfg.isBlockWhenExhausted());
-
-        String password = credentials.getPassword();
-        if (password == null || password.trim().isEmpty()) {
-            this.pool = new JedisPool(jedisPoolConfig,
-                    credentials.getHost(),
-                    credentials.getPort(),
-                    5000
-            );
+        JedisPoolConfig cfg = getJedisConfiguration();
+        if (credentials.getURI() != null && !credentials.getURI().isBlank()) {
+            try {
+                URI uri = new URI(credentials.getURI().trim());
+                this.pool = new JedisPool(cfg, uri, 5000);
+            } catch (URISyntaxException e) {
+                throw new RuntimeException("The Redis URI is invalid and a forwarding sink cannot be built:", e);
+            }
         } else {
-            this.pool = new JedisPool(jedisPoolConfig,
-                    credentials.getHost(),
-                    credentials.getPort(),
-                    5000,
-                    credentials.getPassword()
-            );
+            if (credentials.getHost() == null || credentials.getHost().isBlank()) {
+                throw new IllegalArgumentException("No Redis hostname or URI provided");
+            }
+
+            if (credentials.getPort() <= 0 || credentials.getPort() >= 65535) {
+                throw new IllegalArgumentException("Redis port must be within range");
+            }
+
+            String hostname = credentials.getHost();
+            int port = credentials.getPort();
+            String username = credentials.getUsername();
+            String password = credentials.getPassword();
+
+            // please let me know (or open a pull req) if
+            // there's a better way of doing this because i
+            // was not able to find one
+            boolean hasUsername = username != null && !username.isBlank();
+            boolean hasPassword = password != null && !password.isBlank();
+
+            if (hasUsername) {
+                if (hasPassword) {
+                    this.pool = new JedisPool(cfg, hostname, port, REDIS_TIMEOUT_MS, username, password);
+                } else {
+                    this.pool = new JedisPool(cfg, hostname, port, REDIS_TIMEOUT_MS, username);
+                }
+            } else {
+                if (hasPassword) {
+                    this.pool = new JedisPool(cfg, hostname, port, REDIS_TIMEOUT_MS, password);
+                } else {
+                    this.pool = new JedisPool(cfg, hostname, port, REDIS_TIMEOUT_MS);
+                }
+            }
         }
     }
 

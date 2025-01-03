@@ -83,15 +83,7 @@ token = "MyKeyHere"
 [forwarding.redis]
 address = "127.0.0.1"
 port = 6379
-password = "" # If you use NOAUTH redis authentication, keep this option empty.
+username = ""
+password = ""
+uri = "" # will have priority over the other options
 channel = "nuvotifier:votes"
-
-[forwarding.redis.pool]
-timeout = 5000
-max-total = 128
-max-idle = 128
-min-idle = 16
-min-evictable-idle-time = 60000
-time-between-eviction-runs = 30000
-num-tests-per-eviction-run = 3
-block-when-exhausted = true
