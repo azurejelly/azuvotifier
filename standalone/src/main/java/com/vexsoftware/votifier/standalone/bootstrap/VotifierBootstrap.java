@@ -3,12 +3,12 @@ package com.vexsoftware.votifier.standalone.bootstrap;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
+import com.vexsoftware.votifier.net.protocol.v1crypto.RSAIO;
+import com.vexsoftware.votifier.net.protocol.v1crypto.RSAKeygen;
 import com.vexsoftware.votifier.standalone.config.VotifierConfiguration;
 import com.vexsoftware.votifier.standalone.config.options.CommandArguments;
 import com.vexsoftware.votifier.standalone.plugin.StandaloneVotifierPlugin;
 import com.vexsoftware.votifier.standalone.plugin.builder.VotifierServerBuilder;
-import com.vexsoftware.votifier.net.protocol.v1crypto.RSAIO;
-import com.vexsoftware.votifier.net.protocol.v1crypto.RSAKeygen;
 import com.vexsoftware.votifier.util.TokenUtil;
 import org.apache.commons.cli.*;
 import org.slf4j.Logger;
@@ -88,7 +88,7 @@ public class VotifierBootstrap {
             this.configFile = new File(directory, "config.yml");
 
             if (!configFile.exists()) {
-                InputStream resource = this.getClass().getClassLoader().getResourceAsStream("config.yml");
+                InputStream resource = this.getClass().getClassLoader().getResourceAsStream("standaloneConfig.yml");
                 if (resource == null) {
                     logger.error("Failed to find default configuration file in JAR.");
                     System.exit(1);
