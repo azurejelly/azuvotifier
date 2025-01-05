@@ -1,10 +1,10 @@
-package com.vexsoftware.votifier.standalone.config.options;
+package com.vexsoftware.votifier.standalone.options;
 
 import org.apache.commons.cli.Option;
 
 import java.io.File;
 
-public class CommandArguments {
+public final class VotifierOptions {
 
     public static final Option HOST = Option.builder("h")
             .desc("The address NuVotifier should bind to.")
@@ -29,4 +29,8 @@ public class CommandArguments {
             .type(File.class)
             .longOpt("config")
             .build();
+
+    private VotifierOptions() {
+        throw new UnsupportedOperationException();
+    }
 }

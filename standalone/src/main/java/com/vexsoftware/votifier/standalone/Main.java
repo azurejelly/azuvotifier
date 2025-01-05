@@ -6,7 +6,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import com.vexsoftware.votifier.net.protocol.v1crypto.RSAIO;
 import com.vexsoftware.votifier.net.protocol.v1crypto.RSAKeygen;
 import com.vexsoftware.votifier.standalone.config.VotifierConfiguration;
-import com.vexsoftware.votifier.standalone.config.options.CommandArguments;
+import com.vexsoftware.votifier.standalone.options.VotifierOptions;
 import com.vexsoftware.votifier.standalone.platform.server.StandaloneVotifierServer;
 import com.vexsoftware.votifier.standalone.platform.server.builder.VotifierServerBuilder;
 import com.vexsoftware.votifier.util.TokenUtil;
@@ -48,9 +48,9 @@ public class Main {
         LOGGER.info("Initializing Votifier...");
 
         Options options = new Options();
-        options.addOption(CommandArguments.CONFIG_FOLDER);
-        options.addOption(CommandArguments.HOST);
-        options.addOption(CommandArguments.PORT);
+        options.addOption(VotifierOptions.CONFIG_FOLDER);
+        options.addOption(VotifierOptions.HOST);
+        options.addOption(VotifierOptions.PORT);
 
         ObjectMapper mapper = new ObjectMapper(new YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER));
         mapper.findAndRegisterModules();
@@ -64,9 +64,9 @@ public class Main {
             System.exit(1);
         }
 
-        if (commandLine.hasOption(CommandArguments.CONFIG_FOLDER)) {
+        if (commandLine.hasOption(VotifierOptions.CONFIG_FOLDER)) {
             try {
-                this.directory = commandLine.getParsedOptionValue(CommandArguments.CONFIG_FOLDER);
+                this.directory = commandLine.getParsedOptionValue(VotifierOptions.CONFIG_FOLDER);
                 if (!this.directory.exists() && !this.directory.mkdirs()) {
                     LOGGER.error("Failed to create configuration directory at '{}'", this.directory.getAbsolutePath());
                     System.exit(1);
@@ -109,13 +109,13 @@ public class Main {
             System.exit(1);
         }
 
-        String address = commandLine.hasOption(CommandArguments.HOST)
-                ? commandLine.getOptionValue(CommandArguments.HOST)
+        String address = commandLine.hasOption(VotifierOptions.HOST)
+                ? commandLine.getOptionValue(VotifierOptions.HOST)
                 : config.getHost();
 
         try {
-            if (commandLine.hasOption(CommandArguments.PORT)) {
-                String str = commandLine.getOptionValue(CommandArguments.PORT);
+            if (commandLine.hasOption(VotifierOptions.PORT)) {
+                String str = commandLine.getOptionValue(VotifierOptions.PORT);
                 this.socket = new InetSocketAddress(address, Integer.parseInt(str));
             } else {
                 this.socket = new InetSocketAddress(address, config.getPort());
