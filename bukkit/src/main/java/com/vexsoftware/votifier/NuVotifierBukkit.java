@@ -296,6 +296,7 @@ public class NuVotifierBukkit extends JavaPlugin implements VoteHandler, Votifie
                     return false;
                 }
 
+                String channel = redisSection.getString("channel");
                 this.forwardingMethod = new RedisForwardingSink(
                         RedisCredentials.builder()
                                 .host(redisSection.getString("address"))
@@ -303,13 +304,14 @@ public class NuVotifierBukkit extends JavaPlugin implements VoteHandler, Votifie
                                 .username(redisSection.getString("username"))
                                 .password(redisSection.getString("password"))
                                 .uri(redisSection.getString("uri"))
-                                .channel(redisSection.getString("channel"))
+                                .channel(channel)
                                 .build(),
 
                         this,
                         getPluginLogger()
                 );
 
+                getPluginLogger().info("Receiving votes over Redis channel '" + channel + "'.");
                 return true;
             }
             default: {
