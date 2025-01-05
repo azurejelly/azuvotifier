@@ -92,7 +92,7 @@ public class NuVotifierBukkit extends JavaPlugin implements VoteHandler, Votifie
 
     private boolean loadAndBind() {
         try {
-            Class.forName("io.papermc.paper.threadedregions.scheduler.AsyncScheduler");
+            Class.forName("io.papermc.paper.threadedregions.RegionizedServer");
             this.isFolia = true;
 
             getLogger().info("Using Folia; VotifierEvent will be fired asynchronously.");
