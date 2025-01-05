@@ -1,4 +1,4 @@
-package com.vexsoftware.votifier.standalone.plugin;
+package com.vexsoftware.votifier.standalone.platform.server;
 
 import com.vexsoftware.votifier.model.Vote;
 import com.vexsoftware.votifier.net.VotifierServerBootstrap;
@@ -8,8 +8,8 @@ import com.vexsoftware.votifier.platform.VotifierPlugin;
 import com.vexsoftware.votifier.platform.scheduler.VotifierScheduler;
 import com.vexsoftware.votifier.standalone.config.redis.RedisVotifierConfiguration;
 import com.vexsoftware.votifier.standalone.config.server.BackendServer;
-import com.vexsoftware.votifier.standalone.logger.StandaloneVotifierLoggingAdapter;
-import com.vexsoftware.votifier.standalone.scheduler.StandaloneVotifierScheduler;
+import com.vexsoftware.votifier.standalone.platform.logger.StandaloneVotifierLoggingAdapter;
+import com.vexsoftware.votifier.standalone.platform.scheduler.StandaloneVotifierScheduler;
 import com.vexsoftware.votifier.support.forwarding.ForwardingVoteSource;
 import com.vexsoftware.votifier.support.forwarding.proxy.ProxyForwardingVoteSource;
 import com.vexsoftware.votifier.support.forwarding.redis.RedisCredentials;
@@ -27,7 +27,7 @@ import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
-public class StandaloneVotifierPlugin implements VotifierPlugin {
+public class StandaloneVotifierServer implements VotifierPlugin {
 
     private final RedisVotifierConfiguration redis;
     private final boolean debug;
@@ -39,8 +39,9 @@ public class StandaloneVotifierPlugin implements VotifierPlugin {
     private final boolean disableV1Protocol;
     private ForwardingVoteSource forwardingMethod;
     private VotifierServerBootstrap bootstrap;
+    private volatile boolean running;
 
-    public StandaloneVotifierPlugin(
+    public StandaloneVotifierServer(
             boolean debug, Map<String, Key> tokens,
             KeyPair v1Key, InetSocketAddress bind,
             Map<String, BackendServer> backendServers,
@@ -101,7 +102,7 @@ public class StandaloneVotifierPlugin implements VotifierPlugin {
                 try {
                     address = InetAddress.getByName(server.getAddress());
                 } catch (UnknownHostException ex) {
-                    getPluginLogger().warn("Could not look up getAddress {} for server '{}'. Ignoring!", server.getAddress(), key);
+                    getPluginLogger().warn("Couldn't look up {} for server '{}'. Ignoring!", server.getAddress(), key);
                     continue;
                 }
 

@@ -1,4 +1,4 @@
-package com.vexsoftware.votifier.standalone.logger;
+package com.vexsoftware.votifier.standalone.platform.logger;
 
 import com.vexsoftware.votifier.platform.LoggingAdapter;
 import org.slf4j.Logger;

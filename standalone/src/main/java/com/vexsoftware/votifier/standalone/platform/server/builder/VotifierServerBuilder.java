@@ -1,9 +1,9 @@
-package com.vexsoftware.votifier.standalone.plugin.builder;
+package com.vexsoftware.votifier.standalone.platform.server.builder;
 
+import com.vexsoftware.votifier.net.protocol.v1crypto.RSAIO;
 import com.vexsoftware.votifier.standalone.config.redis.RedisVotifierConfiguration;
 import com.vexsoftware.votifier.standalone.config.server.BackendServer;
-import com.vexsoftware.votifier.standalone.plugin.StandaloneVotifierPlugin;
-import com.vexsoftware.votifier.net.protocol.v1crypto.RSAIO;
+import com.vexsoftware.votifier.standalone.platform.server.StandaloneVotifierServer;
 import com.vexsoftware.votifier.util.KeyCreator;
 
 import java.io.File;
@@ -71,9 +71,9 @@ public class VotifierServerBuilder {
         return this;
     }
 
-    public StandaloneVotifierPlugin create() {
+    public StandaloneVotifierServer create() {
         Objects.requireNonNull(bind, "need an address to bind to");
         Objects.requireNonNull(servers, "need a list of servers to forward votes for");
-        return new StandaloneVotifierPlugin(debug, keyMap, v1Key, bind, servers, disableV1Protocol, redis);
+        return new StandaloneVotifierServer(debug, keyMap, v1Key, bind, servers, disableV1Protocol, redis);
     }
 }
