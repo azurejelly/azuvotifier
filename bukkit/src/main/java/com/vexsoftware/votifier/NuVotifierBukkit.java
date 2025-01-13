@@ -255,7 +255,7 @@ public class NuVotifierBukkit extends JavaPlugin implements VoteHandler, Votifie
             getLogger().info("------------------------------------------------------------------------------");
             getLogger().info("Your Votifier port is less than 0, so we assume you do NOT want to start the");
             getLogger().info("votifier port server! Votifier will not listen for votes over any port, and");
-            getLogger().info("will only listen for pluginMessaging forwarded votes!");
+            getLogger().info("will only listen for forwarded votes!");
             getLogger().info("------------------------------------------------------------------------------");
         }
 
