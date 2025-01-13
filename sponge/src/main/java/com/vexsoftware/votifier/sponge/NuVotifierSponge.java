@@ -12,6 +12,7 @@ import com.vexsoftware.votifier.platform.VotifierPlugin;
 import com.vexsoftware.votifier.platform.scheduler.VotifierScheduler;
 import com.vexsoftware.votifier.sponge.commands.TestVoteCommand;
 import com.vexsoftware.votifier.sponge.commands.VotifierReloadCommand;
+import com.vexsoftware.votifier.sponge.configuration.SpongeConfig;
 import com.vexsoftware.votifier.sponge.configuration.loader.ConfigLoader;
 import com.vexsoftware.votifier.sponge.event.VotifierEvent;
 import com.vexsoftware.votifier.sponge.platform.forwarding.SpongePluginMessagingForwardingSink;
@@ -19,6 +20,8 @@ import com.vexsoftware.votifier.sponge.platform.logger.SLF4JLogger;
 import com.vexsoftware.votifier.sponge.platform.scheduler.SpongeScheduler;
 import com.vexsoftware.votifier.support.forwarding.ForwardedVoteListener;
 import com.vexsoftware.votifier.support.forwarding.ForwardingVoteSink;
+import com.vexsoftware.votifier.support.forwarding.redis.RedisCredentials;
+import com.vexsoftware.votifier.support.forwarding.redis.RedisForwardingSink;
 import com.vexsoftware.votifier.util.KeyCreator;
 import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
@@ -133,20 +136,44 @@ public class NuVotifierSponge implements VoteHandler, VotifierPlugin, ForwardedV
             getLogger().info("------------------------------------------------------------------------------");
         }
 
-        if (ConfigLoader.getSpongeConfig().forwarding != null) {
-            String method = ConfigLoader.getSpongeConfig().forwarding.method.toLowerCase(); //Default to lower case for case-insensitive searches
-            if ("none".equals(method)) {
-                getLogger().info("Method none selected for vote forwarding: Votes will not be received from a forwarder.");
-            } else if ("pluginmessaging".equals(method)) {
-                String channel = ConfigLoader.getSpongeConfig().forwarding.pluginMessaging.channel;
-                try {
-                    this.forwardingMethod = new SpongePluginMessagingForwardingSink(this, channel, this);
-                    getLogger().info("Receiving votes over PluginMessaging channel '{}'.", channel);
-                } catch (RuntimeException e) {
-                    logger.error("NuVotifier could not set up PluginMessaging for vote forwarding!", e);
+        SpongeConfig config = ConfigLoader.getSpongeConfig();
+
+        if (config.forwarding != null) {
+            String method = config.forwarding.method.toLowerCase();
+            switch (method) {
+                case "none": {
+                    logger.info("Method none selected for vote forwarding: Votes will not be received from a forwarder.");
+                    break;
                 }
-            } else {
-                logger.error("No vote forwarding method '{}' known. Defaulting to noop implementation.", method);
+                case "pluginmessaging": {
+                    String channel = config.forwarding.pluginMessaging.channel;
+
+                    try {
+                        this.forwardingMethod = new SpongePluginMessagingForwardingSink(this, channel, this);
+                        getLogger().info("Receiving votes over plugin messaging channel '{}'", channel);
+                    } catch (RuntimeException ex) {
+                        logger.error("NuVotifier could not set up plugin messaging for vote forwarding!", ex);
+                    }
+
+                    break;
+                }
+                case "redis": {
+                    String channel = config.forwarding.redis.channel;
+                    RedisCredentials credentials = RedisCredentials.builder()
+                            .host(config.forwarding.redis.address)
+                            .port(config.forwarding.redis.port)
+                            .username(config.forwarding.redis.username)
+                            .password(config.forwarding.redis.password)
+                            .uri(config.forwarding.redis.uri)
+                            .channel(channel)
+                            .build();
+
+                    this.forwardingMethod = new RedisForwardingSink(credentials, this, loggerAdapter);
+                    logger.info("Receiving votes over Redis channel '{}'.", channel);
+                }
+                default: {
+                    logger.error("No vote forwarding method '{}' known. Defaulting to noop implementation.", method);
+                }
             }
         }
         return true;
