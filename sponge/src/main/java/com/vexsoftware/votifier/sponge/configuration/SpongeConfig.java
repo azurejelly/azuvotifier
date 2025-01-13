@@ -39,14 +39,40 @@ public class SpongeConfig {
 
         @Setting(comment = "Sets whether to set up a remote method for fowarding. Supported methods:\n" +
                 "- none - Does not set up a forwarding method.\n" +
-                "- pluginMessaging - Sets up plugin messaging")
+                "- pluginMessaging - Sets up plugin messaging.\n" +
+                "- redis - Sets up Redis forwarding.")
         public String method = "none";
 
         @Setting
         public PluginMessaging pluginMessaging = new PluginMessaging();
 
+        @Setting
+        public Redis redis = new Redis();
+
         @ConfigSerializable
         public static class PluginMessaging {
+
+            @Setting
+            public String channel = "nuvotifier:votes";
+        }
+
+        @ConfigSerializable
+        public static class Redis {
+
+            @Setting
+            public String address = "127.0.0.1";
+
+            @Setting
+            public int port = 6379;
+
+            @Setting
+            public String username = "";
+
+            @Setting
+            public String password = "";
+
+            @Setting
+            public String uri = "";
 
             @Setting
             public String channel = "nuvotifier:votes";
