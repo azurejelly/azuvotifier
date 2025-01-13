@@ -17,3 +17,6 @@ project(":nuvotifier-velocity").projectDir = file("velocity")
 
 include("nuvotifier-standalone")
 project(":nuvotifier-standalone").projectDir = file("standalone")
+
+include("nuvotifier-sponge")
+project(":nuvotifier-sponge").projectDir = file("sponge")
