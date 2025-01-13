@@ -1,6 +1,6 @@
 package com.vexsoftware.votifier.sponge.commands;
 
-import com.vexsoftware.votifier.sponge.NuVotifier;
+import com.vexsoftware.votifier.sponge.NuVotifierSponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -11,9 +11,9 @@ import org.spongepowered.api.text.format.TextColors;
 
 public class VotifierReloadCommand implements CommandExecutor {
 
-    private final NuVotifier plugin;
+    private final NuVotifierSponge plugin;
 
-    public VotifierReloadCommand(NuVotifier plugin) {
+    public VotifierReloadCommand(NuVotifierSponge plugin) {
         this.plugin = plugin;
     }
 

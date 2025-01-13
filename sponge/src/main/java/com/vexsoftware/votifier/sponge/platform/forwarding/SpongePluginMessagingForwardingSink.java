@@ -1,7 +1,7 @@
 package com.vexsoftware.votifier.sponge.platform.forwarding;
 
 import com.vexsoftware.votifier.platform.LoggingAdapter;
-import com.vexsoftware.votifier.sponge.NuVotifier;
+import com.vexsoftware.votifier.sponge.NuVotifierSponge;
 import com.vexsoftware.votifier.support.forwarding.AbstractPluginMessagingForwardingSink;
 import com.vexsoftware.votifier.support.forwarding.ForwardedVoteListener;
 import org.spongepowered.api.Platform;
@@ -16,7 +16,7 @@ public class SpongePluginMessagingForwardingSink extends AbstractPluginMessaging
     private final LoggingAdapter logger;
     private final ChannelBinding.RawDataChannel channelBinding;
 
-    public SpongePluginMessagingForwardingSink(NuVotifier plugin, String channel, ForwardedVoteListener listener) {
+    public SpongePluginMessagingForwardingSink(NuVotifierSponge plugin, String channel, ForwardedVoteListener listener) {
         super(listener, plugin.getPluginLogger());
 
         this.channelBinding = Sponge.getChannelRegistrar().getChannel(channel)

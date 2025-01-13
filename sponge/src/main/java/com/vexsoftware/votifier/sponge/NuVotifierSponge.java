@@ -40,7 +40,7 @@ import java.util.Map;
 
 @Plugin(id = "nuvotifier", name = "NuVotifier", version = "@version@", authors = "Ichbinjoe",
         description = "Safe, smart, and secure Votifier server plugin")
-public class NuVotifier implements VoteHandler, VotifierPlugin, ForwardedVoteListener {
+public class NuVotifierSponge implements VoteHandler, VotifierPlugin, ForwardedVoteListener {
 
     @Inject
     public Logger logger;
@@ -101,9 +101,9 @@ public class NuVotifier implements VoteHandler, VotifierPlugin, ForwardedVoteLis
         this.debug = ConfigLoader.getSpongeConfig().debug;
 
         // Load Votifier tokens.
-        ConfigLoader.getSpongeConfig().tokens.forEach((s, s2) -> {
-            tokens.put(s, KeyCreator.createKeyFrom(s2));
-            logger.info("Loaded token for website: {}", s);
+        ConfigLoader.getSpongeConfig().tokens.forEach((w, t) -> {
+            tokens.put(w, KeyCreator.createKeyFrom(t));
+            logger.info("Loaded token for website: {}", w);
         });
 
         // Initialize the receiver.

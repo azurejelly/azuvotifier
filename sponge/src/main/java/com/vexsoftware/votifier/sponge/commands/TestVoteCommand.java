@@ -2,7 +2,7 @@ package com.vexsoftware.votifier.sponge.commands;
 
 import com.vexsoftware.votifier.model.Vote;
 import com.vexsoftware.votifier.net.VotifierSession;
-import com.vexsoftware.votifier.sponge.NuVotifier;
+import com.vexsoftware.votifier.sponge.NuVotifierSponge;
 import com.vexsoftware.votifier.util.ArgsToVote;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -16,9 +16,9 @@ import java.util.Collection;
 
 public class TestVoteCommand implements CommandExecutor {
 
-    private final NuVotifier plugin;
+    private final NuVotifierSponge plugin;
 
-    public TestVoteCommand(NuVotifier plugin) {
+    public TestVoteCommand(NuVotifierSponge plugin) {
         this.plugin = plugin;
     }
 
