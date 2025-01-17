@@ -26,8 +26,8 @@ sponge {
         entrypoint("com.vexsoftware.votifier.sponge.NuVotifier")
         description("Safe, smart, and secure Votifier server plugin")
         links {
-            source("https://github.com/NuVotifier/NuVotifier")
-            issues("https://github.com/NuVotifier/NuVotifier")
+            source("https://github.com/azurejelly/azuvotifier")
+            issues("https://github.com/azurejelly/azuvotifier/issues")
         }
         contributor("Ichbinjoe") {
             description("Lead Developer")
