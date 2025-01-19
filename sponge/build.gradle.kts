@@ -23,7 +23,7 @@ sponge {
 
     plugin("nuvotifier") {
         displayName("NuVotifier")
-        entrypoint("com.vexsoftware.votifier.sponge.NuVotifier")
+        entrypoint("com.vexsoftware.votifier.sponge.NuVotifierSponge")
         description("Safe, smart, and secure Votifier server plugin")
         links {
             source("https://github.com/azurejelly/azuvotifier")
