@@ -13,7 +13,7 @@ A NuVotifier fork with Redis forwarding support and a standalone server implemen
 You can get the latest release directly from [GitHub](https://github.com/azurejelly/azuvotifier/releases) or [Modrinth](https://modrinth.com/plugin/azuvotifier).
 Then, follow the instructions for your server software or the standalone version:
 
-### Bukkit, BungeeCord and Velocity
+### Bukkit, Sponge, BungeeCord and Velocity
 Drag and drop the downloaded JAR into your `plugins/` folder. You should've downloaded the JAR that has your server software in its name.
 If you've done everything right, it should work out of the box. If it doesn't, feel free to ask for help [here](https://github.com/azurejelly/azuvotifier/issues).
 
