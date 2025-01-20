@@ -52,6 +52,7 @@ tasks {
         relocate("org.slf4j", "$reloc.slf4j")
         relocate("io.netty", "$reloc.netty")
         relocate("com.google.gson", "$reloc.gson")
+        relocate("com.google.errorprone", "$reloc.errorprone")
 
         exclude("GradleStart**")
         exclude(".cache");
