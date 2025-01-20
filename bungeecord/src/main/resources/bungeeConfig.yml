@@ -76,12 +76,3 @@ forwarding:
     password: ""
     uri: "" # will have priority over the other options
     channel: nuvotifier:votes
-    pool-settings:
-      timeout: 5000
-      max-total: 128
-      max-idle: 128
-      min-idle: 16
-      min-evictable-idle-time: 60000
-      time-between-eviction-runs: 30000
-      num-tests-per-eviction-run: 3
-      block-when-exhausted: true
