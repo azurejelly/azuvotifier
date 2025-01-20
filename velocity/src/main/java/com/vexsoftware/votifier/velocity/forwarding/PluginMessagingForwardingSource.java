@@ -13,14 +13,13 @@ import com.vexsoftware.votifier.velocity.utils.VelocityUtil;
 
 public class PluginMessagingForwardingSource extends AbstractPluginMessagingForwardingSource {
 
+    private final NuVotifierVelocity plugin;
     private final ChannelIdentifier velocityChannelId;
 
     public PluginMessagingForwardingSource(String channel, ServerFilter filter, NuVotifierVelocity plugin, VoteCache cache, int dumpRate) {
         super(channel, filter, plugin, cache, dumpRate);
+        this.plugin = plugin;
         this.velocityChannelId = VelocityUtil.getId(channel);
-
-        plugin.getServer().getChannelRegistrar().register(velocityChannelId);
-        plugin.getServer().getEventManager().register(plugin, this);
     }
 
     @Subscribe
@@ -33,5 +32,12 @@ public class PluginMessagingForwardingSource extends AbstractPluginMessagingForw
         if (e.getIdentifier().equals(velocityChannelId)) {
             e.setResult(PluginMessageEvent.ForwardResult.handled());
         }
+    }
+
+    @Override
+    public void init() {
+        plugin.getServer().getChannelRegistrar().register(velocityChannelId);
+        plugin.getServer().getEventManager().register(plugin, this);
+        plugin.getLogger().info("Forwarding votes over plugin messaging channel '{}'", channel);
     }
 }

@@ -4,42 +4,43 @@ import com.vexsoftware.votifier.platform.LoggingAdapter;
 import com.vexsoftware.votifier.sponge.NuVotifierSponge;
 import com.vexsoftware.votifier.support.forwarding.AbstractPluginMessagingForwardingSink;
 import com.vexsoftware.votifier.support.forwarding.ForwardedVoteListener;
-import org.spongepowered.api.Platform;
+import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.Sponge;
-import org.spongepowered.api.network.ChannelBinding;
-import org.spongepowered.api.network.ChannelBuf;
-import org.spongepowered.api.network.RawDataListener;
-import org.spongepowered.api.network.RemoteConnection;
+import org.spongepowered.api.network.ServerConnectionState;
+import org.spongepowered.api.network.channel.ChannelBuf;
+import org.spongepowered.api.network.channel.raw.RawDataChannel;
+import org.spongepowered.api.network.channel.raw.play.RawPlayDataHandler;
 
-public class SpongePluginMessagingForwardingSink extends AbstractPluginMessagingForwardingSink implements RawDataListener {
+public class SpongePluginMessagingForwardingSink
+        extends AbstractPluginMessagingForwardingSink
+        implements RawPlayDataHandler<ServerConnectionState.Game> {
 
     private final LoggingAdapter logger;
-    private final ChannelBinding.RawDataChannel channelBinding;
+    private final RawDataChannel channel;
 
     public SpongePluginMessagingForwardingSink(NuVotifierSponge plugin, String channel, ForwardedVoteListener listener) {
         super(listener, plugin.getPluginLogger());
 
-        this.channelBinding = Sponge.getChannelRegistrar().getChannel(channel)
-                .map((b) -> {
-                    if (b instanceof ChannelBinding.RawDataChannel) {
-                        return (ChannelBinding.RawDataChannel) b;
-                    } else {
-                        throw new IllegalStateException("Found an indexed channel - this is a problem.");
-                    }
-                }).orElseGet(() -> Sponge.getChannelRegistrar().createRawChannel(plugin, channel));
-
-        this.channelBinding.addListener(Platform.Type.SERVER, this);
+        this.channel = Sponge.game().channelManager().ofType(ResourceKey.resolve(channel), RawDataChannel.class);
         this.logger = plugin.getPluginLogger();
     }
 
     @Override
-    public void halt() {
-        channelBinding.removeListener(this);
+    public void init() {
+        this.channel.play().addHandler(ServerConnectionState.Game.class, this);
+        this.logger.info("Receiving votes over plugin messaging channel '{}'", channel.key().asString());
     }
 
     @Override
-    public void handlePayload(ChannelBuf channelBuf, RemoteConnection remoteConnection, Platform.Type type) {
-        byte[] msgDirBuf = channelBuf.readBytes(channelBuf.available());
+    public void halt() {
+        if (channel != null) {
+            channel.play().removeHandler(this);
+        }
+    }
+
+    @Override
+    public void handlePayload(ChannelBuf buf, ServerConnectionState.Game state) {
+        byte[] msgDirBuf = buf.readBytes(buf.available());
         try {
             this.handlePluginMessage(msgDirBuf);
         } catch (Exception e) {

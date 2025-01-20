@@ -1,12 +1,12 @@
 package com.vexsoftware.votifier.support.forwarding.proxy;
 
+import com.vexsoftware.votifier.model.Vote;
 import com.vexsoftware.votifier.platform.VotifierPlugin;
 import com.vexsoftware.votifier.support.forwarding.ForwardingVoteSource;
 import com.vexsoftware.votifier.support.forwarding.cache.VoteCache;
 import com.vexsoftware.votifier.support.forwarding.proxy.client.VotifierProtocol2Encoder;
 import com.vexsoftware.votifier.support.forwarding.proxy.client.VotifierProtocol2HandshakeHandler;
 import com.vexsoftware.votifier.support.forwarding.proxy.client.VotifierResponseHandler;
-import com.vexsoftware.votifier.model.Vote;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelInitializer;
@@ -38,6 +38,11 @@ public class ProxyForwardingVoteSource implements ForwardingVoteSource {
         this.nettyBootstrap = nettyBootstrap;
         this.backendServers = backendServers;
         this.voteCache = voteCache;
+    }
+
+    @Override
+    public void init() {
+        /* noop */
     }
 
     @Override

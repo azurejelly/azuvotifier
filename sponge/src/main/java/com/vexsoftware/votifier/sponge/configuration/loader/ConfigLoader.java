@@ -1,12 +1,12 @@
 package com.vexsoftware.votifier.sponge.configuration.loader;
 
-import com.google.common.reflect.TypeToken;
 import com.vexsoftware.votifier.sponge.NuVotifierSponge;
 import com.vexsoftware.votifier.sponge.configuration.SpongeConfig;
-import ninja.leaping.configurate.ConfigurationNode;
-import ninja.leaping.configurate.ConfigurationOptions;
-import ninja.leaping.configurate.loader.ConfigurationLoader;
-import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
+import io.leangen.geantyref.TypeToken;
+import org.spongepowered.configurate.ConfigurationNode;
+import org.spongepowered.configurate.ConfigurationOptions;
+import org.spongepowered.configurate.yaml.NodeStyle;
+import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,25 +15,29 @@ public class ConfigLoader {
 
     private static SpongeConfig spongeConfig;
 
-    public static void loadConfig(NuVotifierSponge pl) {
-        if (!pl.getConfigDir().exists()) {
-            if (!pl.getConfigDir().mkdirs()) {
-                throw new RuntimeException("Unable to create the plugin data folder " + pl.getConfigDir());
+    public static void loadConfig(NuVotifierSponge plugin) {
+        if (!plugin.getConfigDir().toFile().exists()) {
+            if (!plugin.getConfigDir().toFile().mkdirs()) {
+                throw new RuntimeException("Unable to create the plugin data folder " + plugin.getConfigDir());
             }
         }
 
         try {
-            File config = new File(pl.getConfigDir(), "config.yml");
+            File config = new File(plugin.getConfigDir().toFile(), "config.yml");
             if (!config.exists() && !config.createNewFile()) {
                 throw new IOException("Unable to create the config file at " + config);
             }
 
-            ConfigurationLoader<ConfigurationNode> loader = YAMLConfigurationLoader.builder().setFile(config).build();
-            ConfigurationNode configNode = loader.load(ConfigurationOptions.defaults().setShouldCopyDefaults(true));
-            spongeConfig = configNode.getValue(TypeToken.of(SpongeConfig.class), new SpongeConfig());
-            loader.save(configNode);
+            YamlConfigurationLoader loader = YamlConfigurationLoader.builder()
+                    .file(config)
+                    .nodeStyle(NodeStyle.BLOCK)
+                    .build();
+
+            ConfigurationNode node = loader.load(ConfigurationOptions.defaults().shouldCopyDefaults(true));
+            spongeConfig = node.get(TypeToken.get(SpongeConfig.class), new SpongeConfig());
+            loader.save(node);
         } catch (Exception e) {
-            pl.getLogger().error("Could not load config.", e);
+            plugin.getLogger().error("Could not load config.", e);
         }
     }
 

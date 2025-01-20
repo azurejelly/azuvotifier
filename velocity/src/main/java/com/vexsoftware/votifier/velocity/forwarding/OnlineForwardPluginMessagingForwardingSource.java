@@ -29,9 +29,13 @@ public final class OnlineForwardPluginMessagingForwardingSource extends Abstract
         this.fallbackServer = fallback;
         this.plugin = plugin;
         this.velocityChannelId = VelocityUtil.getId(channel);
+    }
 
+    @Override
+    public void init() {
         plugin.getServer().getChannelRegistrar().register(velocityChannelId);
         plugin.getServer().getEventManager().register(plugin, this);
+        plugin.getLogger().info("Forwarding votes over plugin messaging channel '{}' for online players", channel);
     }
 
     @Override

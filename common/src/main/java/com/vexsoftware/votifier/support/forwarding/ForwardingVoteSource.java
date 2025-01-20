@@ -8,6 +8,11 @@ import com.vexsoftware.votifier.model.Vote;
 public interface ForwardingVoteSource {
 
     /**
+     * Initializes the forwarding vote source. Occurs on the onEnable method of a plugin.
+     */
+    void init();
+
+    /**
      * Forwards a vote to all servers set up to receive votes.
      *
      * @param v Vote to forward to servers

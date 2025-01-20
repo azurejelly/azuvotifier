@@ -290,19 +290,15 @@ public class NuVotifierBungee extends Plugin implements VoteHandler, ProxyVotifi
 
                 if (!section.getBoolean("onlySendToJoinedServer")) {
                     this.forwardingMethod = new PluginMessagingForwardingSource(channel, filter, this, cache, dumpRate);
-                    getLogger().info("Forwarding votes over plugin messaging channel '" + channel + "'!");
+                    this.forwardingMethod.init();
                 } else {
                     String fallback = section.getString("joinedServerFallback", null);
                     if (fallback != null && fallback.isEmpty()) {
                         fallback = null;
                     }
 
-                    this.forwardingMethod = new OnlineForwardPluginMessagingForwardingSource(
-                            channel, this, filter, cache, fallback, dumpRate
-                    );
-
-                    getLogger().info("Forwarding votes over plugin messaging channel '" + channel
-                            + "' for online players!");
+                    this.forwardingMethod = new OnlineForwardPluginMessagingForwardingSource(channel, this, filter, cache, fallback, dumpRate);
+                    this.forwardingMethod.init();
                 }
 
                 break;
@@ -366,7 +362,7 @@ public class NuVotifierBungee extends Plugin implements VoteHandler, ProxyVotifi
                         getPluginLogger()
                 );
 
-                getLogger().info("Forwarding votes from this NuVotifier instance through Redis.");
+                this.forwardingMethod.init();
                 break;
             }
             default: {

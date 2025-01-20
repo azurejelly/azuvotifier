@@ -196,25 +196,25 @@ public class NuVotifierVelocity implements VoteHandler, ProxyVotifierPlugin {
                                 channel, filter, this, cache, dumpRate
                         );
 
-                        getLogger().info("Forwarding votes over plugin messaging channel '{}'!", channel);
-                    } catch (RuntimeException ex) {
-                        getLogger().error("NuVotifier could not set up plugin messaging for vote forwarding!", ex);
+                        this.forwardingMethod.init();
+                    } catch (RuntimeException e) {
+                        getLogger().error("Could not set up plugin messaging for vote forwarding", e);
                         return false;
                     }
                 } else {
-                    try {
-                        String fallbackServer = table.getString("joinedServerFallback", null);
-                        if (fallbackServer != null && fallbackServer.isEmpty()) {
-                            fallbackServer = null;
-                        }
+                    String fallbackServer = table.getString("joinedServerFallback", null);
+                    if (fallbackServer != null && fallbackServer.isEmpty()) {
+                        fallbackServer = null;
+                    }
 
+                    try {
                         this.forwardingMethod = new OnlineForwardPluginMessagingForwardingSource(
                                 channel, filter, this, cache, fallbackServer, dumpRate
                         );
 
-                        getLogger().info("Forwarding votes over plugin messaging channel '{}' for online players!", channel);
+                        this.forwardingMethod.init();
                     } catch (RuntimeException e) {
-                        getLogger().error("NuVotifier could not set up PluginMessaging for vote forwarding!", e);
+                        getLogger().error("Could not set up plugin messaging for vote forwarding", e);
                         return false;
                     }
                 }
@@ -271,21 +271,26 @@ public class NuVotifierVelocity implements VoteHandler, ProxyVotifierPlugin {
 
                 Toml redis = fwd.getTable("redis");
 
-                this.forwardingMethod = new RedisForwardingVoteSource(
-                        RedisCredentials.builder()
-                                .host(redis.getString("address"))
-                                .port(redis.getLong("port").intValue())
-                                .username(redis.getString("username"))
-                                .password(redis.getString("password"))
-                                .uri(redis.getString("uri"))
-                                .channel(redis.getString("channel"))
-                                .build(),
+                try {
+                    this.forwardingMethod = new RedisForwardingVoteSource(
+                            RedisCredentials.builder()
+                                    .host(redis.getString("address"))
+                                    .port(redis.getLong("port").intValue())
+                                    .username(redis.getString("username"))
+                                    .password(redis.getString("password"))
+                                    .uri(redis.getString("uri"))
+                                    .channel(redis.getString("channel"))
+                                    .build(),
 
-                        getPluginLogger()
-                );
+                            getPluginLogger()
+                    );
 
-                getLogger().info("Forwarding votes from this NuVotifier instance through Redis.");
-                return true;
+                    this.forwardingMethod.init();
+                    return true;
+                } catch (RuntimeException ex) {
+                    logger.error("Could not set up Redis for vote forwarding", ex);
+                    return false;
+                }
             }
             default: {
                 getLogger().error("No vote forwarding method '{}' known. Defaulting to noop implementation.", method);

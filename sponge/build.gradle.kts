@@ -13,7 +13,7 @@ repositories {
 }
 
 sponge {
-    apiVersion("7.2.0")
+    apiVersion("12.0.0")
     loader {
         name(PluginLoaders.JAVA_PLAIN)
         version("1.0")
@@ -23,6 +23,7 @@ sponge {
 
     plugin("nuvotifier") {
         displayName("NuVotifier")
+        version(project.version.toString())
         entrypoint("com.vexsoftware.votifier.sponge.NuVotifierSponge")
         description("Safe, smart, and secure Votifier server plugin")
         links {

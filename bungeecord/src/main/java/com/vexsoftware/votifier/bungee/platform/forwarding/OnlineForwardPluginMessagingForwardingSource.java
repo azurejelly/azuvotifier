@@ -21,20 +21,25 @@ import net.md_5.bungee.event.EventHandler;
  */
 public final class OnlineForwardPluginMessagingForwardingSource extends AbstractPluginMessagingForwardingSource implements Listener {
 
+    private final NuVotifierBungee plugin;
     private final String fallback;
 
     public OnlineForwardPluginMessagingForwardingSource(
             String channel,
-            NuVotifierBungee nuVotifier,
+            NuVotifierBungee plugin,
             ServerFilter serverFilter,
             VoteCache cache,
             String fallback,
             int dumpRate
     ) {
-        super(channel, serverFilter, nuVotifier, cache, dumpRate);
+        super(channel, serverFilter, plugin, cache, dumpRate);
+        this.plugin = plugin;
         this.fallback = fallback;
+    }
 
-        ProxyServer.getInstance().getPluginManager().registerListener(nuVotifier, this);
+    @Override
+    public void init() {
+        ProxyServer.getInstance().getPluginManager().registerListener(plugin, this);
     }
 
     @Override

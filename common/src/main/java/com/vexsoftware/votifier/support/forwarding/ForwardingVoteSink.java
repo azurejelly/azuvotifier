@@ -6,6 +6,11 @@ package com.vexsoftware.votifier.support.forwarding;
 public interface ForwardingVoteSink {
 
     /**
+     * Initialize the forwarding sink. Occurs on the onEnable method of a plugin.
+     */
+    void init();
+
+    /**
      * Stop or close any outstanding network interfaces. Occurs on the onDisable method of a plugin.
      */
     void halt();

@@ -33,6 +33,9 @@ public class PMForwardingSinkTest {
 
         AbstractPluginMessagingForwardingSink sink = new AbstractPluginMessagingForwardingSink(vl, null) {
             @Override
+            public void init() {}
+
+            @Override
             public void halt() {}
         };
 

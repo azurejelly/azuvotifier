@@ -20,6 +20,14 @@ forwarding:
   # Sets whether to set up a remote method for fowarding. Supported methods:
   # - none - Does not set up a forwarding method.
   # - pluginMessaging - Sets up plugin messaging
+  # - redis - Sets up redis forwarding.
   method: none
   pluginMessaging:
     channel: nuvotifier:votes
+  redis:
+    address: "127.0.0.1"
+    port: 6379
+    username: ""
+    password: ""
+    uri: ""
+    channel: "nuvotifier:votes"

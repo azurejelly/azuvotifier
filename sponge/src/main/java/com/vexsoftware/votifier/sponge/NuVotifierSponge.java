@@ -16,41 +16,46 @@ import com.vexsoftware.votifier.sponge.configuration.SpongeConfig;
 import com.vexsoftware.votifier.sponge.configuration.loader.ConfigLoader;
 import com.vexsoftware.votifier.sponge.event.VotifierEvent;
 import com.vexsoftware.votifier.sponge.platform.forwarding.SpongePluginMessagingForwardingSink;
-import com.vexsoftware.votifier.sponge.platform.logger.SLF4JLogger;
+import com.vexsoftware.votifier.sponge.platform.logger.Log4JLogger;
 import com.vexsoftware.votifier.sponge.platform.scheduler.SpongeScheduler;
 import com.vexsoftware.votifier.support.forwarding.ForwardedVoteListener;
 import com.vexsoftware.votifier.support.forwarding.ForwardingVoteSink;
 import com.vexsoftware.votifier.support.forwarding.redis.RedisCredentials;
 import com.vexsoftware.votifier.support.forwarding.redis.RedisForwardingSink;
 import com.vexsoftware.votifier.util.KeyCreator;
-import org.slf4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.spongepowered.api.Server;
 import org.spongepowered.api.Sponge;
-import org.spongepowered.api.command.args.GenericArguments;
-import org.spongepowered.api.command.spec.CommandSpec;
+import org.spongepowered.api.command.Command;
 import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.event.Listener;
-import org.spongepowered.api.event.game.GameReloadEvent;
-import org.spongepowered.api.event.game.state.GameStartedServerEvent;
-import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
-import org.spongepowered.api.plugin.Plugin;
-import org.spongepowered.api.text.Text;
+import org.spongepowered.api.event.lifecycle.RefreshGameEvent;
+import org.spongepowered.api.event.lifecycle.RegisterCommandEvent;
+import org.spongepowered.api.event.lifecycle.StartedEngineEvent;
+import org.spongepowered.api.event.lifecycle.StoppingEngineEvent;
+import org.spongepowered.api.scheduler.Task;
+import org.spongepowered.plugin.PluginContainer;
+import org.spongepowered.plugin.builtin.jvm.Plugin;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.security.Key;
 import java.security.KeyPair;
 import java.util.HashMap;
 import java.util.Map;
 
-@Plugin(id = "nuvotifier", name = "NuVotifier", version = "@version@", authors = "Ichbinjoe",
-        description = "Safe, smart, and secure Votifier server plugin")
+@Plugin("nuvotifier")
 public class NuVotifierSponge implements VoteHandler, VotifierPlugin, ForwardedVoteListener {
 
     @Inject
-    public Logger logger;
+    private Logger logger;
+
+    @Inject
+    private PluginContainer container;
 
     @Inject
     @ConfigDir(sharedRoot = false)
-    public File configDir;
+    public Path configDir;
 
     /**
      * The server bootstrap.
@@ -84,7 +89,7 @@ public class NuVotifierSponge implements VoteHandler, VotifierPlugin, ForwardedV
          * Create RSA directory and keys if it does not exist; otherwise, read
          * keys.
          */
-        File rsaDirectory = new File(configDir, "rsa");
+        File rsaDirectory = new File(configDir.toFile(), "rsa");
         try {
             if (!rsaDirectory.exists()) {
                 if (!rsaDirectory.mkdir()) {
@@ -143,19 +148,19 @@ public class NuVotifierSponge implements VoteHandler, VotifierPlugin, ForwardedV
             switch (method) {
                 case "none": {
                     logger.info("Method none selected for vote forwarding: Votes will not be received from a forwarder.");
-                    break;
+                    return true;
                 }
                 case "pluginmessaging": {
                     String channel = config.forwarding.pluginMessaging.channel;
 
                     try {
                         this.forwardingMethod = new SpongePluginMessagingForwardingSink(this, channel, this);
-                        getLogger().info("Receiving votes over plugin messaging channel '{}'", channel);
+                        this.forwardingMethod.init();
+                        return true;
                     } catch (RuntimeException ex) {
-                        logger.error("NuVotifier could not set up plugin messaging for vote forwarding!", ex);
+                        logger.error("Could not set up plugin messaging forwarding sink", ex);
+                        return false;
                     }
-
-                    break;
                 }
                 case "redis": {
                     String channel = config.forwarding.redis.channel;
@@ -168,14 +173,22 @@ public class NuVotifierSponge implements VoteHandler, VotifierPlugin, ForwardedV
                             .channel(channel)
                             .build();
 
-                    this.forwardingMethod = new RedisForwardingSink(credentials, this, loggerAdapter);
-                    logger.info("Receiving votes over Redis channel '{}'.", channel);
+                    try {
+                        this.forwardingMethod = new RedisForwardingSink(credentials, this, loggerAdapter);
+                        this.forwardingMethod.init();
+                        return true;
+                    } catch (RuntimeException ex) {
+                        logger.error("Could not set up Redis for vote forwarding", ex);
+                        return false;
+                    }
                 }
                 default: {
                     logger.error("No vote forwarding method '{}' known. Defaulting to noop implementation.", method);
+                    return false;
                 }
             }
         }
+
         return true;
     }
 
@@ -216,22 +229,9 @@ public class NuVotifierSponge implements VoteHandler, VotifierPlugin, ForwardedV
     }
 
     @Listener
-    public void onServerStart(GameStartedServerEvent event) {
-        this.scheduler = new SpongeScheduler(this);
-        this.loggerAdapter = new SLF4JLogger(logger);
-
-        Sponge.getCommandManager().register(this, CommandSpec.builder()
-                .description(Text.of("Reloads NuVotifier"))
-                .permission("nuvotifier.reload")
-                .executor(new VotifierReloadCommand(this))
-                .build(), "nvreload");
-
-        Sponge.getCommandManager().register(this, CommandSpec.builder()
-                .arguments(GenericArguments.allOf(GenericArguments.string(Text.of("args"))))
-                .description(Text.of("Sends a test vote to the server's listeners"))
-                .permission("nuvotifier.testvote")
-                .executor(new TestVoteCommand(this))
-                .build(), "testvote");
+    public void onServerStart(final StartedEngineEvent<Server> event) {
+        this.scheduler = new SpongeScheduler(container);
+        this.loggerAdapter = new Log4JLogger(logger);
 
         if (!loadAndBind()) {
             logger.error("Votifier did not initialize properly!");
@@ -239,12 +239,18 @@ public class NuVotifierSponge implements VoteHandler, VotifierPlugin, ForwardedV
     }
 
     @Listener
-    public void onGameReload(GameReloadEvent event) {
+    public void onRegisterCommands(final RegisterCommandEvent<Command.Parameterized> event) {
+        event.register(container, new TestVoteCommand(this).build(), "testvote");
+        event.register(container, new VotifierReloadCommand(this).build(), "nvreload");
+    }
+
+    @Listener
+    public void onGameReload(RefreshGameEvent event) {
         this.reload();
     }
 
     @Listener
-    public void onServerStop(GameStoppingServerEvent event) {
+    public void onServerStop(StoppingEngineEvent<Server> event) {
         this.halt();
         logger.info("Votifier disabled.");
     }
@@ -285,12 +291,18 @@ public class NuVotifierSponge implements VoteHandler, VotifierPlugin, ForwardedV
     }
 
     private void fireVoteEvent(final Vote vote) {
-        Sponge.getScheduler()
-                .createTaskBuilder()
+        Sponge.server().scheduler().submit(Task.builder()
+                .plugin(container)
                 .execute(() -> {
-                    VotifierEvent event = new VotifierEvent(vote, Sponge.getCauseStackManager().getCurrentCause());
-                    Sponge.getEventManager().post(event);
-                }).submit(this);
+                    Sponge.eventManager().post(
+                            new VotifierEvent(vote,
+                                    Sponge.server().causeStackManager().currentCause(),
+                                    this,
+                                    Sponge.server().causeStackManager().currentContext()
+                            )
+                    );
+                }).build()
+        );
     }
 
     public Logger getLogger() {
@@ -321,7 +333,11 @@ public class NuVotifierSponge implements VoteHandler, VotifierPlugin, ForwardedV
         return keyPair;
     }
 
-    public File getConfigDir() {
+    public Path getConfigDir() {
         return configDir;
+    }
+
+    public PluginContainer getPluginContainer() {
+        return container;
     }
 }

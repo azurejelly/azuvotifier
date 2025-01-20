@@ -1,4 +1,4 @@
-package com.vexsoftware.votifier.util;
+package com.vexsoftware.votifier.util.gson;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

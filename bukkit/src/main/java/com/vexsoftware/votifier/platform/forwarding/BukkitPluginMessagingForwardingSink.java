@@ -26,14 +26,14 @@ public class BukkitPluginMessagingForwardingSink extends AbstractPluginMessaging
     ) {
         super(listener, logger);
 
-        if (channel == null) {
-            throw new IllegalArgumentException("channel cannot be null");
-        }
-
         this.channel = channel;
         this.plugin = plugin;
+    }
 
+    @Override
+    public void init() {
         plugin.getServer().getMessenger().registerIncomingPluginChannel(plugin, channel, this);
+        plugin.getLogger().info("Receiving votes over plugin messaging channel '" + channel + "'.");
     }
 
     @Override

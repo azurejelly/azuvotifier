@@ -39,7 +39,6 @@ public class StandaloneVotifierServer implements VotifierPlugin {
     private final boolean disableV1Protocol;
     private ForwardingVoteSource forwardingMethod;
     private VotifierServerBootstrap bootstrap;
-    private volatile boolean running;
 
     public StandaloneVotifierServer(
             boolean debug, Map<String, Key> tokens,
@@ -78,8 +77,6 @@ public class StandaloneVotifierServer implements VotifierPlugin {
 
     private void makeForwardingSource(Map<String, BackendServer> backendServers) {
         if (redis != null && redis.isEnabled()) {
-            getPluginLogger().info("Using Redis as the vote forwarding method.");
-
             RedisCredentials redisCredentials = RedisCredentials.builder()
                     .host(redis.getAddress())
                     .port(redis.getPort())
@@ -92,6 +89,12 @@ public class StandaloneVotifierServer implements VotifierPlugin {
             this.forwardingMethod = new RedisForwardingVoteSource(
                     redisCredentials, getPluginLogger()
             );
+
+            try {
+                this.forwardingMethod.init();
+            } catch (RuntimeException ex) {
+                getPluginLogger().error("Could not set up Redis for vote forwarding", ex);
+            }
         } else {
             List<ProxyForwardingVoteSource.BackendServer> serverList = new ArrayList<>();
             for (Map.Entry<String, BackendServer> entry : backendServers.entrySet()) {
@@ -128,6 +131,7 @@ public class StandaloneVotifierServer implements VotifierPlugin {
             }
 
             this.forwardingMethod = bootstrap.createForwardingSource(serverList, null);
+            this.forwardingMethod.init();
         }
     }
 
