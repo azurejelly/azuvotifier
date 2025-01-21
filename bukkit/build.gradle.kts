@@ -53,6 +53,7 @@ bukkit {
     main = "com.vexsoftware.votifier.NuVotifierBukkit"
     authors = listOf("azurejelly", "Ichbinjoe", "blakeman8192", "Kramer", "tuxed")
     apiVersion = "1.13"
+    foliaSupported = true
 
     commands {
         register("nvreload") {
