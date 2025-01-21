@@ -1,5 +1,5 @@
 # AzuVotifier ![Build status](https://img.shields.io/github/actions/workflow/status/azurejelly/azuvotifier/build.yml?logo=githubactions&logoColor=ffffff) ![Docker Pulls](https://img.shields.io/docker/pulls/azurejelly/standalone-nuvotifier?logo=docker) [![Modrinth](https://img.shields.io/modrinth/dt/azuvotifier?logo=modrinth&color=00AF5C)](https://modrinth.com/plugin/azuvotifier)
-A fork of NuVotifier with Redis forwarding support, a standalone server implementation and modern Sponge support. From the original README:
+A fork of NuVotifier with Redis forwarding support, a standalone server implementation and Sponge 11+ support. From the original README:
 > NuVotifier is a secure alternative to using the original Votifier project.
 > NuVotifier will work in place of Votifier - any vote listener that supports
 > Votifier will also support NuVotifier.
