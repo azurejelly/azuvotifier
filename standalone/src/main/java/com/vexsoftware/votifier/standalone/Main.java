@@ -29,11 +29,15 @@ public final class Main {
 
     private final String[] args;
     private File directory;
+    private File rsaDirectory;
     private File configFile;
     private VotifierConfiguration config;
     private CommandLine commandLine;
     private InetSocketAddress socket;
-    private StandaloneVotifierServer plugin;
+    private StandaloneVotifierServer server;
+    private ObjectMapper mapper;
+    private HelpFormatter helpFormatter;
+    private Options options;
 
     public Main(String[] args) {
         this.args = args;
@@ -47,68 +51,32 @@ public final class Main {
     public void init() {
         LOGGER.info("Initializing Votifier...");
 
-        Options options = new Options();
-        options.addOption(VotifierOptions.CONFIG_FOLDER);
-        options.addOption(VotifierOptions.HOST);
-        options.addOption(VotifierOptions.PORT);
+        this.setupCommandLine();
+        this.setupConfiguration();
+        this.setupRSA();
+        this.setupServer();
+        this.setupShutdownHook();
+    }
 
-        ObjectMapper mapper = new ObjectMapper(new YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER));
-        mapper.findAndRegisterModules();
+    public void shutdown() {
+        LOGGER.info("Votifier is now shutting down...");
 
-        try {
-            CommandLineParser parser = new DefaultParser();
-            this.commandLine = parser.parse(options, args);
-        } catch (ParseException ex) {
-            HelpFormatter formatter = new HelpFormatter();
-            formatter.printHelp("java -jar nuvotifier-standalone.jar [OPTIONS]", options);
-            System.exit(1);
-        }
+        this.server.halt();
+    }
 
-        if (commandLine.hasOption(VotifierOptions.CONFIG_FOLDER)) {
-            try {
-                this.directory = commandLine.getParsedOptionValue(VotifierOptions.CONFIG_FOLDER);
-                if (!this.directory.exists() && !this.directory.mkdirs()) {
-                    LOGGER.error("Failed to create configuration directory at '{}'", this.directory.getAbsolutePath());
-                    System.exit(1);
-                }
-            } catch (ParseException ex) {
-                HelpFormatter formatter = new HelpFormatter();
-                formatter.printHelp("java -jar nuvotifier-standalone.jar [OPTIONS]", options);
-                System.exit(1);
-            } catch (SecurityException ex) {
-                LOGGER.error("An exception was caught while attempting to create the configuration directory", ex);
-                System.exit(1);
-            }
-        } else {
-            Path currentRelativePath = Paths.get(".");
-            this.directory = new File(currentRelativePath.toFile(), "config");
-
-            if (!directory.exists() && !directory.mkdirs()) {
-                LOGGER.error("Failed to create configuration directory at {}", directory.getAbsolutePath());
-                System.exit(1);
-            }
-        }
+    private void setupShutdownHook() {
+        // Make sure we shut down safely as long as we don't get SIGKILL'd or something
+        Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown, "Shutdown Thread"));
 
         try {
-            this.configFile = new File(directory, "config.yml");
-
-            if (!configFile.exists()) {
-                InputStream resource = this.getClass().getClassLoader().getResourceAsStream("standaloneConfig.yml");
-                if (resource == null) {
-                    LOGGER.error("Failed to find default configuration file in JAR.");
-                    System.exit(1);
-                }
-
-                Files.copy(resource, configFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                LOGGER.debug("Copied default configuration file from JAR.");
-            }
-
-            this.config = mapper.readValue(configFile, VotifierConfiguration.class);
-        } catch (IOException e) {
-            LOGGER.error("Failed to read or copy defaults to configuration file:", e);
-            System.exit(1);
+            // Keep the program running
+            Thread.currentThread().join();
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
         }
+    }
 
+    private void setupServer() {
         String address = commandLine.hasOption(VotifierOptions.HOST)
                 ? commandLine.getOptionValue(VotifierOptions.HOST)
                 : config.getHost();
@@ -121,35 +89,14 @@ public final class Main {
                 this.socket = new InetSocketAddress(address, config.getPort());
             }
         } catch (IllegalArgumentException ex) {
-            HelpFormatter formatter = new HelpFormatter();
-            formatter.printHelp("java -jar nuvotifier-standalone.jar [OPTIONS]", options);
+            printHelp();
             System.exit(1);
-        }
-
-        File rsaFolder = new File(directory, "rsa" + File.separator);
-        if (!rsaFolder.exists()) {
-            if (!rsaFolder.mkdirs()) {
-                LOGGER.error(
-                        "Cannot make RSA folder at {}, unable to continue creating standalone Votifier server.",
-                        rsaFolder.getAbsolutePath()
-                );
-
-                System.exit(1);
-            }
-
-            try {
-                RSAIO.save(rsaFolder, RSAKeygen.generate(2048));
-                LOGGER.info("Generated new RSA key pair at {}", rsaFolder.getAbsolutePath());
-            } catch (Exception e) {
-                LOGGER.error("Failed to generate RSA key pair at {}", rsaFolder.getAbsolutePath(), e);
-                System.exit(1);
-            }
         }
 
         try {
             VotifierServerBuilder builder = new VotifierServerBuilder()
                     .bind(socket)
-                    .v1KeyFolder(rsaFolder)
+                    .v1KeyFolder(rsaDirectory)
                     .disableV1Protocol(config.isDisableV1Protocol())
                     .debug(config.isDebug())
                     .redis(config.getRedis())
@@ -177,34 +124,124 @@ public final class Main {
                 builder.addToken(service, token);
             });
 
-            this.plugin = builder.create();
+            this.server = builder.create();
         } catch (Exception ex) {
             LOGGER.error("Failed to build the standalone Votifier server", ex);
             System.exit(1);
         }
 
-        this.plugin.start(ex -> {
+        this.server.start(ex -> {
             if (ex == null) {
                 return;
             }
 
-            LOGGER.error("Could not initialize standalone Votifier server", ex);
+            LOGGER.error("An exception occurred while initializing the Votifier server", ex);
             System.exit(1);
         });
+    }
 
-        // Make sure we shut down safely as long as we don't get SIGKILL'd or something
-        Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown, "shutdown"));
+    private void setupCommandLine() {
+        this.options = new Options();
+        this.options.addOption(VotifierOptions.CONFIG_FOLDER);
+        this.options.addOption(VotifierOptions.HOST);
+        this.options.addOption(VotifierOptions.PORT);
 
         try {
-            // Keep the program running
-            Thread.currentThread().join();
-        } catch (InterruptedException ex) {
-            Thread.currentThread().interrupt();
+            CommandLineParser parser = new DefaultParser();
+            this.commandLine = parser.parse(options, args);
+        } catch (ParseException ex) {
+            this.printHelp();
+            System.exit(1);
         }
     }
 
-    public void shutdown() {
-        LOGGER.info("Votifier is now shutting down...");
-        plugin.halt();
+    private void setupRSA() {
+        this.rsaDirectory = new File(directory, "rsa" + File.separator);
+
+        if (!rsaDirectory.exists()) {
+            if (!rsaDirectory.mkdirs()) {
+                LOGGER.error(
+                        "Could not make RSA folder at {}, unable to continue creating standalone Votifier server.",
+                        rsaDirectory.getAbsolutePath()
+                );
+
+                System.exit(1);
+            }
+
+            try {
+                RSAIO.save(rsaDirectory, RSAKeygen.generate(2048));
+                LOGGER.info("Generated new RSA key pair at {}", rsaDirectory.getAbsolutePath());
+            } catch (Exception e) {
+                LOGGER.error("Failed to generate RSA key pair at {}", rsaDirectory.getAbsolutePath(), e);
+                System.exit(1);
+            }
+        }
+    }
+
+    private void setupConfiguration() {
+        setupMapper();
+        setupConfigurationDirectory();
+        setupConfigurationFile();
+    }
+
+    private void setupMapper() {
+        this.mapper = new ObjectMapper(new YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER));
+        this.mapper.findAndRegisterModules();
+    }
+
+    private void setupConfigurationFile() {
+        try {
+            this.configFile = new File(directory, "config.yml");
+
+            if (!configFile.exists()) {
+                InputStream resource = this.getClass().getClassLoader().getResourceAsStream("standaloneConfig.yml");
+                if (resource == null) {
+                    LOGGER.error("Failed to find default configuration file in JAR.");
+                    System.exit(1);
+                }
+
+                Files.copy(resource, configFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                LOGGER.debug("Copied default configuration file from JAR.");
+            }
+
+            this.config = mapper.readValue(configFile, VotifierConfiguration.class);
+        } catch (IOException e) {
+            LOGGER.error("Failed to read or copy defaults to configuration file:", e);
+            System.exit(1);
+        }
+    }
+
+    private void setupConfigurationDirectory() {
+        if (commandLine.hasOption(VotifierOptions.CONFIG_FOLDER)) {
+            try {
+                this.directory = commandLine.getParsedOptionValue(VotifierOptions.CONFIG_FOLDER);
+                if (!this.directory.exists() && !this.directory.mkdirs()) {
+                    LOGGER.error("Failed to create configuration directory at '{}'", this.directory.getAbsolutePath());
+                    System.exit(1);
+                }
+            } catch (ParseException ex) {
+                printHelp();
+                System.exit(1);
+            } catch (SecurityException ex) {
+                LOGGER.error("An exception was caught while attempting to create the configuration directory", ex);
+                System.exit(1);
+            }
+        } else {
+            Path currentRelativePath = Paths.get(".");
+            this.directory = new File(currentRelativePath.toFile(), "config");
+
+            if (!directory.exists() && !directory.mkdirs()) {
+                LOGGER.error("Failed to create configuration directory at {}", directory.getAbsolutePath());
+                System.exit(1);
+            }
+        }
+    }
+
+    private void printHelp() {
+        if (helpFormatter == null) {
+            this.helpFormatter = new HelpFormatter();
+        }
+
+        helpFormatter.printHelp("java -jar nuvotifier-standalone.jar [OPTIONS]", options);
     }
 }
