@@ -73,4 +73,4 @@ This will:
 If you want to use Docker Compose, an example [`docker-compose.yml`](https://github.com/azurejelly/azuvotifier/blob/master/docker-compose.yml) file is available on the repository.
 
 # License
-NuVotifier is GNU GPLv3 licensed. This project's license can be viewed [here](LICENSE).
+AzuVotifier is GNU GPLv3 licensed. This project's license can be viewed [here](LICENSE).
