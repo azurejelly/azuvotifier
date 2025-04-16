@@ -3,7 +3,8 @@ package com.vexsoftware.votifier.model;
 import com.google.gson.JsonObject;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class VoteTest {
 
@@ -25,7 +26,7 @@ public class VoteTest {
         assertEquals(serviceName, v.getServiceName());
         assertEquals(username, v.getUsername());
         assertEquals(address, v.getAddress());
-        assertEquals(timestamp, v.getTimeStamp());
+        assertEquals(timestamp, v.getTimestamp());
     }
 
     @Test
@@ -46,7 +47,7 @@ public class VoteTest {
         assertEquals(serviceName, v.getServiceName());
         assertEquals(username, v.getUsername());
         assertEquals(address, v.getAddress());
-        assertEquals("1234", v.getTimeStamp());
+        assertEquals("1234", v.getTimestamp());
     }
 
     @Test
