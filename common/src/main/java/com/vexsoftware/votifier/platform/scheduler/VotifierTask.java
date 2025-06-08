@@ -1,6 +1,6 @@
 package com.vexsoftware.votifier.platform.scheduler;
 
-public interface ScheduledVotifierTask {
+public interface VotifierTask {
 
     void cancel();
 }

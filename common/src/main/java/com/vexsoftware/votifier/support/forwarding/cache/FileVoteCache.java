@@ -5,7 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.vexsoftware.votifier.platform.LoggingAdapter;
 import com.vexsoftware.votifier.platform.VotifierPlugin;
-import com.vexsoftware.votifier.platform.scheduler.ScheduledVotifierTask;
+import com.vexsoftware.votifier.platform.scheduler.VotifierTask;
 import com.vexsoftware.votifier.util.gson.GsonInst;
 
 import java.io.BufferedReader;
@@ -22,7 +22,7 @@ public class FileVoteCache extends MemoryVoteCache {
 
     private final LoggingAdapter l;
     private final File cacheFile;
-    private final ScheduledVotifierTask saveTask;
+    private final VotifierTask saveTask;
 
     public FileVoteCache(final VotifierPlugin plugin, File cacheFile, long voteTTL) throws IOException {
         super(plugin, voteTTL);

@@ -1,13 +1,11 @@
 package com.vexsoftware.votifier.platform.scheduler;
 
 import com.vexsoftware.votifier.NuVotifierBukkit;
-import com.vexsoftware.votifier.platform.scheduler.ScheduledVotifierTask;
-import com.vexsoftware.votifier.platform.scheduler.VotifierScheduler;
-import org.bukkit.scheduler.BukkitTask;
+import com.vexsoftware.votifier.platform.scheduler.task.BukkitVotifierTask;
 
 import java.util.concurrent.TimeUnit;
 
-public class BukkitScheduler implements VotifierScheduler {
+public final class BukkitScheduler implements VotifierScheduler {
 
     private final NuVotifierBukkit plugin;
 
@@ -20,32 +18,32 @@ public class BukkitScheduler implements VotifierScheduler {
     }
 
     @Override
-    public ScheduledVotifierTask delayedOnPool(Runnable runnable, int delay, TimeUnit unit) {
-        return new BukkitTaskWrapper(
+    public VotifierTask delayedOnPool(Runnable runnable, int delay, TimeUnit unit) {
+        return new BukkitVotifierTask(
                 plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, runnable, toTicks(delay, unit))
         );
     }
 
     @Override
-    public ScheduledVotifierTask repeatOnPool(Runnable runnable, int delay, int repeat, TimeUnit unit) {
-        return new BukkitTaskWrapper(
+    public VotifierTask repeatOnPool(Runnable runnable, int delay, int repeat, TimeUnit unit) {
+        return new BukkitVotifierTask(
                 plugin.getServer().getScheduler().runTaskTimerAsynchronously(
                         plugin, runnable, toTicks(delay, unit), toTicks(repeat, unit)
                 )
         );
     }
 
-    private static class BukkitTaskWrapper implements ScheduledVotifierTask {
+    @Override
+    public VotifierTask run(Runnable runnable) {
+        return new BukkitVotifierTask(
+                plugin.getServer().getScheduler().runTask(plugin, runnable)
+        );
+    }
 
-        private final BukkitTask task;
-
-        private BukkitTaskWrapper(BukkitTask task) {
-            this.task = task;
-        }
-
-        @Override
-        public void cancel() {
-            task.cancel();
-        }
+    @Override
+    public VotifierTask runAsync(Runnable runnable) {
+        return new BukkitVotifierTask(
+                plugin.getServer().getScheduler().runTaskAsynchronously(plugin, runnable)
+        );
     }
 }

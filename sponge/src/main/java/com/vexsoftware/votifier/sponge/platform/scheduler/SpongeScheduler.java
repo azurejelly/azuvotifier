@@ -1,7 +1,8 @@
 package com.vexsoftware.votifier.sponge.platform.scheduler;
 
-import com.vexsoftware.votifier.platform.scheduler.ScheduledVotifierTask;
 import com.vexsoftware.votifier.platform.scheduler.VotifierScheduler;
+import com.vexsoftware.votifier.platform.scheduler.VotifierTask;
+import com.vexsoftware.votifier.sponge.platform.scheduler.task.SpongeVotifierTask;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.scheduler.ScheduledTask;
 import org.spongepowered.api.scheduler.Task;
@@ -22,7 +23,7 @@ public final class SpongeScheduler implements VotifierScheduler {
     }
 
     @Override
-    public ScheduledVotifierTask delayedOnPool(Runnable runnable, int delay, TimeUnit unit) {
+    public VotifierTask delayedOnPool(Runnable runnable, int delay, TimeUnit unit) {
         ScheduledTask task = Sponge.asyncScheduler().submit(
                 taskBuilder(runnable)
                         .delay(delay, unit)
@@ -30,11 +31,11 @@ public final class SpongeScheduler implements VotifierScheduler {
                         .build()
         );
 
-        return new SpongeTaskWrapper(task);
+        return new SpongeVotifierTask(task);
     }
 
     @Override
-    public ScheduledVotifierTask repeatOnPool(Runnable runnable, int delay, int repeat, TimeUnit unit) {
+    public VotifierTask repeatOnPool(Runnable runnable, int delay, int repeat, TimeUnit unit) {
         ScheduledTask task = Sponge.server().scheduler().submit(
                 taskBuilder(runnable)
                         .delay(delay, unit)
@@ -43,20 +44,6 @@ public final class SpongeScheduler implements VotifierScheduler {
                         .build()
         );
 
-        return new SpongeTaskWrapper(task);
-    }
-
-    private static class SpongeTaskWrapper implements ScheduledVotifierTask {
-
-        private final ScheduledTask task;
-
-        private SpongeTaskWrapper(ScheduledTask task) {
-            this.task = task;
-        }
-
-        @Override
-        public void cancel() {
-            task.cancel();
-        }
+        return new SpongeVotifierTask(task);
     }
 }

@@ -12,8 +12,9 @@ repositories {
 }
 
 dependencies {
-    api(project(":nuvotifier-api"))
     api(project(":nuvotifier-common"))
+    api(project(":nuvotifier-folia"))
+
     compileOnly(libs.paper)
     implementation(libs.jedis)
 }

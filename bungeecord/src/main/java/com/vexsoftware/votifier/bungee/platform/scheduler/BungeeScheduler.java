@@ -1,13 +1,13 @@
 package com.vexsoftware.votifier.bungee.platform.scheduler;
 
 import com.vexsoftware.votifier.bungee.NuVotifierBungee;
-import com.vexsoftware.votifier.platform.scheduler.ScheduledVotifierTask;
+import com.vexsoftware.votifier.bungee.platform.scheduler.task.BungeeVotifierTask;
 import com.vexsoftware.votifier.platform.scheduler.VotifierScheduler;
-import net.md_5.bungee.api.scheduler.ScheduledTask;
+import com.vexsoftware.votifier.platform.scheduler.VotifierTask;
 
 import java.util.concurrent.TimeUnit;
 
-public class BungeeScheduler implements VotifierScheduler {
+public final class BungeeScheduler implements VotifierScheduler {
 
     private final NuVotifierBungee plugin;
 
@@ -16,26 +16,12 @@ public class BungeeScheduler implements VotifierScheduler {
     }
 
     @Override
-    public ScheduledVotifierTask delayedOnPool(Runnable runnable, int delay, TimeUnit unit) {
-        return new BungeeTaskWrapper(plugin.getProxy().getScheduler().schedule(plugin, runnable, delay, unit));
+    public VotifierTask delayedOnPool(Runnable runnable, int delay, TimeUnit unit) {
+        return new BungeeVotifierTask(plugin.getProxy().getScheduler().schedule(plugin, runnable, delay, unit));
     }
 
     @Override
-    public ScheduledVotifierTask repeatOnPool(Runnable runnable, int delay, int repeat, TimeUnit unit) {
-        return new BungeeTaskWrapper(plugin.getProxy().getScheduler().schedule(plugin, runnable, delay, repeat, unit));
-    }
-
-    private static class BungeeTaskWrapper implements ScheduledVotifierTask {
-
-        private final ScheduledTask task;
-
-        private BungeeTaskWrapper(ScheduledTask task) {
-            this.task = task;
-        }
-
-        @Override
-        public void cancel() {
-            this.task.cancel();
-        }
+    public VotifierTask repeatOnPool(Runnable runnable, int delay, int repeat, TimeUnit unit) {
+        return new BungeeVotifierTask(plugin.getProxy().getScheduler().schedule(plugin, runnable, delay, repeat, unit));
     }
 }

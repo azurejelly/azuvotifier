@@ -20,6 +20,8 @@ package com.vexsoftware.votifier;
 
 import com.vexsoftware.votifier.commands.TestVoteCommand;
 import com.vexsoftware.votifier.commands.VotifierReloadCommand;
+import com.vexsoftware.votifier.folia.platform.FoliaScheduler;
+import com.vexsoftware.votifier.folia.util.FoliaUtils;
 import com.vexsoftware.votifier.model.Vote;
 import com.vexsoftware.votifier.model.VotifierEvent;
 import com.vexsoftware.votifier.net.VotifierServerBootstrap;
@@ -91,16 +93,16 @@ public class NuVotifierBukkit extends JavaPlugin implements VoteHandler, Votifie
     private boolean isFolia;
 
     private boolean loadAndBind() {
-        try {
-            Class.forName("io.papermc.paper.threadedregions.RegionizedServer");
+        if (FoliaUtils.isFolia()) {
+            this.scheduler = new FoliaScheduler(this);
             this.isFolia = true;
 
             getLogger().info("Using Folia; VotifierEvent will be fired asynchronously.");
-        } catch (ClassNotFoundException e) {
+        } else {
+            this.scheduler = new BukkitScheduler(this);
             this.isFolia = false;
         }
 
-        this.scheduler = new BukkitScheduler(this);
         this.pluginLogger = new JavaUtilLogger(getLogger());
 
         if (!getDataFolder().exists()) {
@@ -442,14 +444,12 @@ public class NuVotifierBukkit extends JavaPlugin implements VoteHandler, Votifie
             getLogger().log(Level.SEVERE, "a list of listeners you can configure.");
         }
 
-        if (!isFolia) {
-            getServer().getScheduler().runTask(
-                    this, () -> getServer().getPluginManager().callEvent(new VotifierEvent(vote))
-            );
-        } else {
-            getServer().getScheduler().runTaskAsynchronously(
-                    this, () -> getServer().getPluginManager().callEvent(new VotifierEvent(vote, true))
-            );
+        // dispatch event asynchronously when running on Folia
+        if (isFolia) {
+            scheduler.runAsync(() -> getServer().getPluginManager().callEvent(new VotifierEvent(vote, true)));
+            return;
         }
+
+        scheduler.run(() -> getServer().getPluginManager().callEvent(new VotifierEvent(vote)));
     }
 }

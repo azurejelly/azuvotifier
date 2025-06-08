@@ -4,7 +4,15 @@ import java.util.concurrent.TimeUnit;
 
 public interface VotifierScheduler {
 
-    ScheduledVotifierTask delayedOnPool(Runnable runnable, int delay, TimeUnit unit);
+    VotifierTask delayedOnPool(Runnable runnable, int delay, TimeUnit unit);
 
-    ScheduledVotifierTask repeatOnPool(Runnable runnable, int delay, int repeat, TimeUnit unit);
+    VotifierTask repeatOnPool(Runnable runnable, int delay, int repeat, TimeUnit unit);
+
+    default VotifierTask run(Runnable runnable) {
+        throw new UnsupportedOperationException();
+    }
+
+    default VotifierTask runAsync(Runnable runnable) {
+        throw new UnsupportedOperationException();
+    }
 }
