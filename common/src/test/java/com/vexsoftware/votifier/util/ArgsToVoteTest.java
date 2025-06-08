@@ -43,7 +43,7 @@ public class ArgsToVoteTest {
     void handleTimestampGetter() {
         Vote vote = ArgsToVote.parse(new String[] { "username=abc123", "timestamp=dummy" });
         assertEquals("abc123", vote.getUsername());
-        assertEquals("dummy", vote.getTimeStamp());
+        assertEquals("dummy", vote.getTimestamp());
     }
 
     @Test

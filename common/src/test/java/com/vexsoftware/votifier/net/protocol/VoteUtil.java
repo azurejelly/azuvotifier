@@ -19,7 +19,7 @@ public class VoteUtil {
         ordered.add(vote.getServiceName());
         ordered.add(vote.getUsername());
         ordered.add(vote.getAddress());
-        ordered.add(vote.getTimeStamp());
+        ordered.add(vote.getTimestamp());
 
         StringBuilder builder = new StringBuilder();
         for (String s : ordered) {
