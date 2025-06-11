@@ -51,7 +51,7 @@ bukkit {
     name = "Votifier"
     description = "A plugin that gets notified when votes are made for the server on toplists."
     version = project.version.toString()
-    main = "com.vexsoftware.votifier.bukkit.NuVotifierBukkit"
+    main = "com.vexsoftware.votifier.NuVotifierBukkit"
     authors = listOf("azurejelly", "Ichbinjoe", "blakeman8192", "Kramer", "tuxed")
     apiVersion = "1.13"
     foliaSupported = true
