@@ -16,14 +16,17 @@
  * along with Votifier.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.vexsoftware.votifier;
+package com.vexsoftware.votifier.bukkit;
 
-import com.vexsoftware.votifier.commands.TestVoteCommand;
-import com.vexsoftware.votifier.commands.VotifierReloadCommand;
+import com.vexsoftware.votifier.VoteHandler;
+import com.vexsoftware.votifier.bukkit.commands.TestVoteCommand;
+import com.vexsoftware.votifier.bukkit.commands.VotifierReloadCommand;
+import com.vexsoftware.votifier.bukkit.model.VotifierEvent;
+import com.vexsoftware.votifier.bukkit.platform.forwarding.BukkitPluginMessagingForwardingSink;
+import com.vexsoftware.votifier.bukkit.platform.scheduler.BukkitScheduler;
 import com.vexsoftware.votifier.folia.platform.FoliaScheduler;
 import com.vexsoftware.votifier.folia.util.FoliaUtils;
 import com.vexsoftware.votifier.model.Vote;
-import com.vexsoftware.votifier.model.VotifierEvent;
 import com.vexsoftware.votifier.net.VotifierServerBootstrap;
 import com.vexsoftware.votifier.net.VotifierSession;
 import com.vexsoftware.votifier.net.protocol.v1crypto.RSAIO;
@@ -31,8 +34,6 @@ import com.vexsoftware.votifier.net.protocol.v1crypto.RSAKeygen;
 import com.vexsoftware.votifier.platform.JavaUtilLogger;
 import com.vexsoftware.votifier.platform.LoggingAdapter;
 import com.vexsoftware.votifier.platform.VotifierPlugin;
-import com.vexsoftware.votifier.platform.forwarding.BukkitPluginMessagingForwardingSink;
-import com.vexsoftware.votifier.platform.scheduler.BukkitScheduler;
 import com.vexsoftware.votifier.platform.scheduler.VotifierScheduler;
 import com.vexsoftware.votifier.support.forwarding.ForwardedVoteListener;
 import com.vexsoftware.votifier.support.forwarding.ForwardingVoteSink;

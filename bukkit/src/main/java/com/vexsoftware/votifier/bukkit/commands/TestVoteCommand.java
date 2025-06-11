@@ -1,6 +1,6 @@
-package com.vexsoftware.votifier.commands;
+package com.vexsoftware.votifier.bukkit.commands;
 
-import com.vexsoftware.votifier.NuVotifierBukkit;
+import com.vexsoftware.votifier.bukkit.NuVotifierBukkit;
 import com.vexsoftware.votifier.model.Vote;
 import com.vexsoftware.votifier.net.VotifierSession;
 import com.vexsoftware.votifier.util.ArgsToVote;

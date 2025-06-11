@@ -1,6 +1,6 @@
-package com.vexsoftware.votifier.commands;
+package com.vexsoftware.votifier.bukkit.commands;
 
-import com.vexsoftware.votifier.NuVotifierBukkit;
+import com.vexsoftware.votifier.bukkit.NuVotifierBukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

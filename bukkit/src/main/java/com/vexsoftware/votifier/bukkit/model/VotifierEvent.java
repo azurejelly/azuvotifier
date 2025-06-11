@@ -1,5 +1,6 @@
-package com.vexsoftware.votifier.model;
+package com.vexsoftware.votifier.bukkit.model;
 
+import com.vexsoftware.votifier.model.Vote;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
