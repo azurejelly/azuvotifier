@@ -50,6 +50,10 @@ tasks {
     runServer {
         minecraftVersion("1.21.7")
         jvmArgs("-Dcom.mojang.eula.agree=true")
+
+        downloadPlugins {
+            modrinth("fancyfirework", "1.4.4")
+        }
     }
 }
 
