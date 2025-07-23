@@ -78,7 +78,7 @@ public class Vote {
         this.serviceName = vote.getServiceName();
         this.username = vote.getUsername();
         this.address = vote.getAddress();
-        this.timestamp = vote.getTimeStamp();
+        this.timestamp = vote.getTimestamp();
         this.additionalData = vote.getAdditionalData() == null
                 ? null
                 : vote.getAdditionalData().clone();
