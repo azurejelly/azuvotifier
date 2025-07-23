@@ -1,4 +1,4 @@
-package com.vexsoftware.votifier.bukkit.model;
+package com.vexsoftware.votifier.model;
 
 import com.vexsoftware.votifier.model.Vote;
 import org.bukkit.event.Event;

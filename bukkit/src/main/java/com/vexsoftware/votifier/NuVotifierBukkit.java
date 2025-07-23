@@ -16,14 +16,14 @@
  * along with Votifier.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.vexsoftware.votifier.bukkit;
+package com.vexsoftware.votifier;
 
 import com.vexsoftware.votifier.VoteHandler;
-import com.vexsoftware.votifier.bukkit.commands.TestVoteCommand;
-import com.vexsoftware.votifier.bukkit.commands.VotifierReloadCommand;
-import com.vexsoftware.votifier.bukkit.model.VotifierEvent;
-import com.vexsoftware.votifier.bukkit.platform.forwarding.BukkitPluginMessagingForwardingSink;
-import com.vexsoftware.votifier.bukkit.platform.scheduler.BukkitScheduler;
+import com.vexsoftware.votifier.commands.TestVoteCommand;
+import com.vexsoftware.votifier.commands.VotifierReloadCommand;
+import com.vexsoftware.votifier.model.VotifierEvent;
+import com.vexsoftware.votifier.platform.forwarding.BukkitPluginMessagingForwardingSink;
+import com.vexsoftware.votifier.platform.scheduler.BukkitScheduler;
 import com.vexsoftware.votifier.folia.platform.FoliaScheduler;
 import com.vexsoftware.votifier.folia.util.FoliaUtils;
 import com.vexsoftware.votifier.model.Vote;

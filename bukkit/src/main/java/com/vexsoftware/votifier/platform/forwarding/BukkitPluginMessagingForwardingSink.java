@@ -1,4 +1,4 @@
-package com.vexsoftware.votifier.bukkit.platform.forwarding;
+package com.vexsoftware.votifier.platform.forwarding;
 
 import com.vexsoftware.votifier.platform.LoggingAdapter;
 import com.vexsoftware.votifier.support.forwarding.AbstractPluginMessagingForwardingSink;

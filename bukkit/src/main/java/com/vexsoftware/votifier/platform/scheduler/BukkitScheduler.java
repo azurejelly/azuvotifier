@@ -1,7 +1,7 @@
-package com.vexsoftware.votifier.bukkit.platform.scheduler;
+package com.vexsoftware.votifier.platform.scheduler;
 
-import com.vexsoftware.votifier.bukkit.NuVotifierBukkit;
-import com.vexsoftware.votifier.bukkit.platform.scheduler.task.BukkitVotifierTask;
+import com.vexsoftware.votifier.NuVotifierBukkit;
+import com.vexsoftware.votifier.platform.scheduler.task.BukkitVotifierTask;
 import com.vexsoftware.votifier.platform.scheduler.VotifierScheduler;
 import com.vexsoftware.votifier.platform.scheduler.VotifierTask;
 

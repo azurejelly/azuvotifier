@@ -1,4 +1,4 @@
-package com.vexsoftware.votifier.bukkit.platform.scheduler.task;
+package com.vexsoftware.votifier.platform.scheduler.task;
 
 import com.vexsoftware.votifier.platform.scheduler.VotifierTask;
 import org.bukkit.scheduler.BukkitTask;
