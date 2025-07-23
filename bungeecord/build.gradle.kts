@@ -4,6 +4,7 @@ plugins {
     `java-library`
     alias(libs.plugins.shadow)
     alias(libs.plugins.pluginyml.bungee)
+    alias(libs.plugins.run.waterfall)
 }
 
 dependencies {
@@ -39,6 +40,18 @@ tasks {
     named("assemble").configure {
         dependsOn("shadowJar")
     }
+
+    runWaterfall {
+        waterfallVersion("1.20")
+    }
+}
+
+tasks.withType(xyz.jpenilla.runtask.task.AbstractRun::class) {
+    javaLauncher = javaToolchains.launcherFor {
+        vendor = JvmVendorSpec.JETBRAINS
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+    jvmArgs("-XX:+AllowEnhancedClassRedefinition")
 }
 
 bungee {

@@ -4,6 +4,7 @@ plugins {
     `java-library`
     alias(libs.plugins.blossom)
     alias(libs.plugins.shadow)
+    alias(libs.plugins.run.velocity)
 }
 
 blossom {
@@ -50,4 +51,16 @@ tasks {
     named("assemble").configure {
         dependsOn("shadowJar")
     }
+
+    runVelocity {
+        velocityVersion("3.4.0-SNAPSHOT")
+    }
+}
+
+tasks.withType(xyz.jpenilla.runtask.task.AbstractRun::class) {
+    javaLauncher = javaToolchains.launcherFor {
+        vendor = JvmVendorSpec.JETBRAINS
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+    jvmArgs("-XX:+AllowEnhancedClassRedefinition")
 }

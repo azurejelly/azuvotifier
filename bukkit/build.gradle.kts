@@ -5,6 +5,7 @@ plugins {
     `java-library`
     alias(libs.plugins.pluginyml.bukkit)
     alias(libs.plugins.shadow)
+    alias(libs.plugins.run.paper)
 }
 
 repositories {
@@ -45,6 +46,19 @@ tasks {
     named("assemble").configure {
         dependsOn("shadowJar")
     }
+
+    runServer {
+        minecraftVersion("1.21.7")
+        jvmArgs("-Dcom.mojang.eula.agree=true")
+    }
+}
+
+tasks.withType(xyz.jpenilla.runtask.task.AbstractRun::class) {
+    javaLauncher = javaToolchains.launcherFor {
+        vendor = JvmVendorSpec.JETBRAINS
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+    jvmArgs("-XX:+AllowEnhancedClassRedefinition")
 }
 
 bukkit {

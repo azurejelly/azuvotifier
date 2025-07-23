@@ -47,6 +47,7 @@ debug.txt
 # gradle stuff
 .gradle/
 .gradletasknamecache
+run/
 
 # fabric
 fabric/run/
