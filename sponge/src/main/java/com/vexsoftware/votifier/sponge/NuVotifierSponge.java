@@ -32,11 +32,9 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.Command;
 import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.event.Listener;
-import org.spongepowered.api.event.lifecycle.RefreshGameEvent;
-import org.spongepowered.api.event.lifecycle.RegisterCommandEvent;
-import org.spongepowered.api.event.lifecycle.StartedEngineEvent;
-import org.spongepowered.api.event.lifecycle.StoppingEngineEvent;
+import org.spongepowered.api.event.lifecycle.*;
 import org.spongepowered.api.scheduler.Task;
+import org.spongepowered.api.util.metric.MetricsConfigManager;
 import org.spongepowered.plugin.PluginContainer;
 import org.spongepowered.plugin.builtin.jvm.Plugin;
 
@@ -63,6 +61,9 @@ public class NuVotifierSponge implements VoteHandler, VotifierPlugin, ForwardedV
     @Inject
     private Metrics.Factory metricsFactory;
 
+    @Inject
+    private MetricsConfigManager metricsConfigManager;
+
     /**
      * The server bootstrap.
      */
@@ -83,16 +84,13 @@ public class NuVotifierSponge implements VoteHandler, VotifierPlugin, ForwardedV
      */
     private final Map<String, Key> tokens = new HashMap<>();
 
+    private SpongeConfig config;
     private Metrics metrics;
     private ForwardingVoteSink forwardingMethod;
     private LoggingAdapter loggerAdapter;
     private VotifierScheduler scheduler;
 
     private boolean loadAndBind() {
-        // Load configuration.
-        ConfigLoader.loadConfig(this);
-        SpongeConfig config = ConfigLoader.getSpongeConfig();
-
         /*
          * Create RSA directory and keys if it does not exist; otherwise, read
          * keys.
@@ -147,10 +145,6 @@ public class NuVotifierSponge implements VoteHandler, VotifierPlugin, ForwardedV
             getLogger().info("votifier port server! Votifier will not listen for votes over any port, and");
             getLogger().info("will only listen for forwarded votes!");
             getLogger().info("------------------------------------------------------------------------------");
-        }
-
-        if (config.bstats) {
-            this.metrics = metricsFactory.make(Constants.BSTATS_ID);
         }
 
         if (config.forwarding != null) {
@@ -244,7 +238,16 @@ public class NuVotifierSponge implements VoteHandler, VotifierPlugin, ForwardedV
     }
 
     @Listener
+    public void onConstructPluginEvent(final ConstructPluginEvent event) {
+        ConfigLoader.loadConfig(this);
+
+        this.metrics = metricsFactory.make(Constants.BSTATS_ID);
+        this.metrics.startup(event);
+    }
+
+    @Listener
     public void onServerStart(final StartedEngineEvent<Server> event) {
+        this.config = ConfigLoader.getSpongeConfig();
         this.scheduler = new SpongeScheduler(container);
         this.loggerAdapter = new Log4JLogger(logger);
 
@@ -354,5 +357,11 @@ public class NuVotifierSponge implements VoteHandler, VotifierPlugin, ForwardedV
 
     public PluginContainer getPluginContainer() {
         return container;
+    }
+
+    public boolean hasConsent() {
+        return metricsConfigManager
+                .collectionState(container)
+                .asBoolean();
     }
 }
