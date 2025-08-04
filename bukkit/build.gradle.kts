@@ -18,6 +18,7 @@ dependencies {
 
     compileOnly(libs.paper)
     implementation(libs.jedis)
+    implementation(libs.bstats.bukkit)
 }
 
 tasks {
@@ -25,6 +26,7 @@ tasks {
         archiveClassifier.set("dist")
 
         val reloc = "com.vexsoftware.votifier.libs"
+        relocate("org.bstats", "$reloc.bstats")
         relocate("redis.clients.jedis", "$reloc.redis.clients.jedis")
         relocate("org.json", "$reloc.json")
         relocate("org.apache.commons.pool2", "$reloc.apache.commons.pool2")

@@ -18,6 +18,7 @@ repositories {
 dependencies {
     compileOnly(libs.velocity)
     annotationProcessor(libs.velocity)
+    implementation(libs.bstats.velocity)
 
     api(project(":nuvotifier-api"))
     api(project(":nuvotifier-common")) {
@@ -30,6 +31,7 @@ tasks {
         archiveClassifier.set("dist")
 
         val reloc = "com.vexsoftware.votifier.libs"
+        relocate("org.bstats", "$reloc.bstats")
         relocate("redis.clients.jedis", "$reloc.redis.clients.jedis")
         relocate("org.json", "$reloc.json")
         relocate("org.apache.commons.pool2", "$reloc.apache.commons.pool2")

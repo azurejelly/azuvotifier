@@ -12,6 +12,11 @@ import java.util.Map;
 public class SpongeConfig {
 
     @Setting
+    @Comment("Whether to collect anonymous statistics about this server.\n" +
+            "If you're not comfortable with this, simply change this to false.")
+    public boolean bstats = true;
+
+    @Setting
     @Comment("The IP to listen to. Use 0.0.0.0 if you wish to listen to all interfaces on your server (all IP addresses).\n" +
             "This defaults to 0.0.0.0.")
     public String host = "0.0.0.0";

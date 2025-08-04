@@ -18,12 +18,15 @@ import com.vexsoftware.votifier.sponge.event.VotifierEvent;
 import com.vexsoftware.votifier.sponge.platform.forwarding.SpongePluginMessagingForwardingSink;
 import com.vexsoftware.votifier.sponge.platform.logger.Log4JLogger;
 import com.vexsoftware.votifier.sponge.platform.scheduler.SpongeScheduler;
+import com.vexsoftware.votifier.sponge.util.Constants;
 import com.vexsoftware.votifier.support.forwarding.ForwardedVoteListener;
 import com.vexsoftware.votifier.support.forwarding.ForwardingVoteSink;
 import com.vexsoftware.votifier.support.forwarding.redis.RedisCredentials;
 import com.vexsoftware.votifier.support.forwarding.redis.RedisForwardingSink;
 import com.vexsoftware.votifier.util.KeyCreator;
 import org.apache.logging.log4j.Logger;
+import org.bstats.charts.SimplePie;
+import org.bstats.sponge.Metrics;
 import org.spongepowered.api.Server;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.Command;
@@ -57,6 +60,9 @@ public class NuVotifierSponge implements VoteHandler, VotifierPlugin, ForwardedV
     @ConfigDir(sharedRoot = false)
     public Path configDir;
 
+    @Inject
+    private Metrics.Factory metricsFactory;
+
     /**
      * The server bootstrap.
      */
@@ -77,6 +83,7 @@ public class NuVotifierSponge implements VoteHandler, VotifierPlugin, ForwardedV
      */
     private final Map<String, Key> tokens = new HashMap<>();
 
+    private Metrics metrics;
     private ForwardingVoteSink forwardingMethod;
     private LoggingAdapter loggerAdapter;
     private VotifierScheduler scheduler;
@@ -84,6 +91,7 @@ public class NuVotifierSponge implements VoteHandler, VotifierPlugin, ForwardedV
     private boolean loadAndBind() {
         // Load configuration.
         ConfigLoader.loadConfig(this);
+        SpongeConfig config = ConfigLoader.getSpongeConfig();
 
         /*
          * Create RSA directory and keys if it does not exist; otherwise, read
@@ -106,24 +114,24 @@ public class NuVotifierSponge implements VoteHandler, VotifierPlugin, ForwardedV
             return false;
         }
 
-        this.debug = ConfigLoader.getSpongeConfig().debug;
+        this.debug = config.debug;
 
         // Load Votifier tokens.
-        ConfigLoader.getSpongeConfig().tokens.forEach((w, t) -> {
+        config.tokens.forEach((w, t) -> {
             tokens.put(w, KeyCreator.createKeyFrom(t));
             logger.info("Loaded token for website: {}", w);
         });
 
         // Initialize the receiver.
-        final String host = ConfigLoader.getSpongeConfig().host;
-        final int port = ConfigLoader.getSpongeConfig().port;
+        final String host = config.host;
+        final int port = config.port;
 
         if (!debug) {
             logger.info("QUIET mode enabled!");
         }
 
         if (port >= 0) {
-            final boolean disableV1 = ConfigLoader.getSpongeConfig().disableV1Protocol;
+            final boolean disableV1 = config.disableV1Protocol;
             if (disableV1) {
                 logger.info("------------------------------------------------------------------------------");
                 logger.info("Votifier protocol v1 parsing has been disabled. Most voting websites do not");
@@ -141,10 +149,17 @@ public class NuVotifierSponge implements VoteHandler, VotifierPlugin, ForwardedV
             getLogger().info("------------------------------------------------------------------------------");
         }
 
-        SpongeConfig config = ConfigLoader.getSpongeConfig();
+        if (config.bstats) {
+            this.metrics = metricsFactory.make(Constants.BSTATS_ID);
+        }
 
         if (config.forwarding != null) {
             String method = config.forwarding.method.toLowerCase();
+
+            if (metrics != null) {
+                metrics.addCustomChart(new SimplePie("forwarding_method", () -> method));
+            }
+
             switch (method) {
                 case "none": {
                     logger.info("Method none selected for vote forwarding: Votes will not be received from a forwarder.");

@@ -38,6 +38,9 @@ import com.vexsoftware.votifier.velocity.forwarding.PluginMessagingForwardingSou
 import com.vexsoftware.votifier.velocity.platform.logger.SLF4JLogger;
 import com.vexsoftware.votifier.velocity.platform.scheduler.VelocityScheduler;
 import com.vexsoftware.votifier.velocity.platform.server.VelocityBackendServer;
+import com.vexsoftware.votifier.velocity.utils.Constants;
+import org.bstats.charts.SimplePie;
+import org.bstats.velocity.Metrics;
 import org.slf4j.Logger;
 
 import java.io.ByteArrayInputStream;
@@ -71,6 +74,9 @@ public class NuVotifierVelocity implements VoteHandler, ProxyVotifierPlugin {
 
     @Inject
     public ProxyServer server;
+
+    @Inject
+    private Metrics.Factory metricsFactory;
 
     private VotifierScheduler scheduler;
 
@@ -138,6 +144,11 @@ public class NuVotifierVelocity implements VoteHandler, ProxyVotifierPlugin {
 
         Toml fwd = config.getTable("forwarding");
         String method = fwd.getString("method", "none").toLowerCase();
+
+        if (config.getBoolean("bstats", true)) {
+            Metrics metrics = metricsFactory.make(this, Constants.BSTATS_ID);
+            metrics.addCustomChart(new SimplePie("forwarding_method", () -> method));
+        }
 
         switch (method) {
             case "none": {

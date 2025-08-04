@@ -9,6 +9,7 @@ import com.vexsoftware.votifier.bungee.platform.forwarding.OnlineForwardPluginMe
 import com.vexsoftware.votifier.bungee.platform.forwarding.PluginMessagingForwardingSource;
 import com.vexsoftware.votifier.bungee.platform.scheduler.BungeeScheduler;
 import com.vexsoftware.votifier.bungee.platform.server.BungeeBackendServer;
+import com.vexsoftware.votifier.bungee.util.Constants;
 import com.vexsoftware.votifier.model.Vote;
 import com.vexsoftware.votifier.net.VotifierServerBootstrap;
 import com.vexsoftware.votifier.net.VotifierSession;
@@ -37,6 +38,8 @@ import net.md_5.bungee.api.plugin.PluginManager;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
+import org.bstats.bungeecord.Metrics;
+import org.bstats.charts.SimplePie;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -234,6 +237,12 @@ public class NuVotifierBungee extends Plugin implements VoteHandler, ProxyVotifi
 
         Configuration fwd = configuration.getSection("forwarding");
         String method = fwd.getString("method", "none").toLowerCase();
+
+        if (configuration.getBoolean("bstats", true)) {
+            Metrics metrics = new Metrics(this, Constants.BSTATS_ID);
+            metrics.addCustomChart(new SimplePie("forwarding_method", () -> method));
+        }
+
         switch (method) {
             case "none": {
                 getLogger().info("Method none selected for vote forwarding:" +

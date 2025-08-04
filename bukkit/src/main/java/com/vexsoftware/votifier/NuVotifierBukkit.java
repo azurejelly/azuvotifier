@@ -18,7 +18,6 @@
 
 package com.vexsoftware.votifier;
 
-import com.vexsoftware.votifier.VoteHandler;
 import com.vexsoftware.votifier.commands.TestVoteCommand;
 import com.vexsoftware.votifier.commands.VotifierReloadCommand;
 import com.vexsoftware.votifier.model.VotifierEvent;
@@ -39,9 +38,12 @@ import com.vexsoftware.votifier.support.forwarding.ForwardedVoteListener;
 import com.vexsoftware.votifier.support.forwarding.ForwardingVoteSink;
 import com.vexsoftware.votifier.support.forwarding.redis.RedisCredentials;
 import com.vexsoftware.votifier.support.forwarding.redis.RedisForwardingSink;
+import com.vexsoftware.votifier.util.Constants;
 import com.vexsoftware.votifier.util.IOUtil;
 import com.vexsoftware.votifier.util.KeyCreator;
 import com.vexsoftware.votifier.util.TokenUtil;
+import org.bstats.bukkit.Metrics;
+import org.bstats.charts.SimplePie;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -268,6 +270,11 @@ public class NuVotifierBukkit extends JavaPlugin implements VoteHandler, Votifie
         }
 
         String method = forwardingConfig.getString("method", "none");
+        if (cfg.getBoolean("bstats", true)) {
+            Metrics metrics = new Metrics(this, Constants.BSTATS_ID);
+            metrics.addCustomChart(new SimplePie("forwarding_method", () -> method));
+        }
+
         switch (method) {
             case "none": {
                 getLogger().info("Method none selected for vote forwarding: Votes will not be received from a forwarder.");
