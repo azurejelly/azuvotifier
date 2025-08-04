@@ -66,10 +66,8 @@ public class NuVotifierVelocity implements VoteHandler, ProxyVotifierPlugin {
 
     @Inject
     public Logger logger;
-    private LoggingAdapter loggingAdapter;
 
-    @Inject
-    @DataDirectory
+    @Inject @DataDirectory
     public Path configDir;
 
     @Inject
@@ -78,6 +76,7 @@ public class NuVotifierVelocity implements VoteHandler, ProxyVotifierPlugin {
     @Inject
     private Metrics.Factory metricsFactory;
 
+    private LoggingAdapter loggingAdapter;
     private VotifierScheduler scheduler;
 
     private boolean loadAndBind() {
