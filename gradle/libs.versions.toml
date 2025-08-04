@@ -15,7 +15,7 @@ junit-jupiter = "5.10.0"
 slf4j = "2.0.16"
 plugin-yml = "0.6.0"
 run-task = "2.3.1"
-bstats = "3.0.2"
+bstats = "3.1.0"
 
 [libraries]
 velocity = "com.velocitypowered:velocity-api:3.1.0"
