@@ -34,7 +34,6 @@ import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.lifecycle.*;
 import org.spongepowered.api.scheduler.Task;
-import org.spongepowered.api.util.metric.MetricsConfigManager;
 import org.spongepowered.plugin.PluginContainer;
 import org.spongepowered.plugin.builtin.jvm.Plugin;
 
@@ -60,9 +59,6 @@ public class NuVotifierSponge implements VoteHandler, VotifierPlugin, ForwardedV
 
     @Inject
     private Metrics.Factory metricsFactory;
-
-    @Inject
-    private MetricsConfigManager metricsConfigManager;
 
     /**
      * The server bootstrap.
