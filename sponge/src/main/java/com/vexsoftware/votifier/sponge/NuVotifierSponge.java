@@ -358,10 +358,4 @@ public class NuVotifierSponge implements VoteHandler, VotifierPlugin, ForwardedV
     public PluginContainer getPluginContainer() {
         return container;
     }
-
-    public boolean hasConsent() {
-        return metricsConfigManager
-                .collectionState(container)
-                .asBoolean();
-    }
 }
