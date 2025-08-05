@@ -15,7 +15,7 @@ AzuVotifier is currently supported on the following platforms:
   - Older versions might work but no support will be provided
   - Any fork without significant breaking changes should also work
 - Folia (1.21.5+)
-  - Support is experimental and might break at any time
+  - Support is experimental. Let me know if it breaks!
 - Sponge 11 (1.20+)
 - BungeeCord/Waterfall
 - Velocity
