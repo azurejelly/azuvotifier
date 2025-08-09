@@ -47,9 +47,9 @@ tasks {
 
         val reloc = "com.vexsoftware.votifier.libs"
         relocate("org.bstats", "$reloc.bstats")
-        relocate("redis.clients.jedis", "$reloc.redis.clients.jedis")
+        relocate("redis.clients.jedis", "$reloc.jedis")
         relocate("org.json", "$reloc.json")
-        relocate("org.apache.commons.pool2", "$reloc.apache.commons.pool2")
+        relocate("org.apache.commons.pool2", "$reloc.pool2")
         relocate("org.slf4j", "$reloc.slf4j")
         relocate("io.netty", "$reloc.netty")
         relocate("com.google.gson", "$reloc.gson")
