@@ -1,6 +1,6 @@
 services:
   forwarder:
-    container_name: nuvotifier
+    container_name: azuvotifier
     image: azurejelly/standalone-nuvotifier:latest
     restart: unless-stopped
     ports:
