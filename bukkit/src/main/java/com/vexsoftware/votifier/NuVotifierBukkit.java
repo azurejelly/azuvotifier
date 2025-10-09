@@ -284,6 +284,7 @@ public class NuVotifierBukkit extends JavaPlugin implements VoteHandler, Votifie
                 String channel = forwardingConfig.getString("pluginMessaging.channel", "NuVotifier");
 
                 try {
+                    this.getLogger().info("Using plugin messages to receive votes from a forwarder.");
                     this.forwardingMethod = new BukkitPluginMessagingForwardingSink(this, channel, this, pluginLogger);
                     this.forwardingMethod.init();
                     return true;
@@ -320,6 +321,7 @@ public class NuVotifierBukkit extends JavaPlugin implements VoteHandler, Votifie
 
                 try {
                     this.forwardingMethod.init();
+                    this.getLogger().info("Using Redis to receive votes from a forwarder.");
                 } catch (RuntimeException ex) {
                     getLogger().log(Level.SEVERE, "Could not set up Redis for vote forwarding", ex);
                 }

@@ -373,6 +373,7 @@ public class NuVotifierBungee extends Plugin implements VoteHandler, ProxyVotifi
                 );
 
                 this.forwardingMethod.init();
+                this.getLogger().info("Forwarding votes from this NuVotifier instance using Redis.");
                 break;
             }
             default: {

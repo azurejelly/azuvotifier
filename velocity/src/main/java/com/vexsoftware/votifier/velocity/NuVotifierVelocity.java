@@ -296,6 +296,7 @@ public class NuVotifierVelocity implements VoteHandler, ProxyVotifierPlugin {
                     );
 
                     this.forwardingMethod.init();
+                    this.getLogger().info("Forwarding votes from this NuVotifier instance using Redis.");
                     return true;
                 } catch (RuntimeException ex) {
                     logger.error("Could not set up Redis for vote forwarding", ex);

@@ -161,6 +161,7 @@ public class NuVotifierSponge implements VoteHandler, VotifierPlugin, ForwardedV
                     try {
                         this.forwardingMethod = new SpongePluginMessagingForwardingSink(this, channel, this);
                         this.forwardingMethod.init();
+                        this.getLogger().info("Using plugin messages to receive votes from a forwarder.");
                         return true;
                     } catch (RuntimeException ex) {
                         logger.error("Could not set up plugin messaging forwarding sink", ex);
@@ -181,6 +182,7 @@ public class NuVotifierSponge implements VoteHandler, VotifierPlugin, ForwardedV
                     try {
                         this.forwardingMethod = new RedisForwardingSink(credentials, this, loggerAdapter);
                         this.forwardingMethod.init();
+                        this.getLogger().info("Using Redis to receive votes from a forwarder.");
                         return true;
                     } catch (RuntimeException ex) {
                         logger.error("Could not set up Redis for vote forwarding", ex);
