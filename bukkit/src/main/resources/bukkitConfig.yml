@@ -35,3 +35,8 @@ forwarding:
     password: ""
     uri: "" # will have priority over the other options
     channel: nuvotifier:votes
+
+# Experimental settings. You should only change those if you absolutely know what you're doing!
+experimental:
+  # Prevents a vote event from firing if the player who voted isn't online.
+  skip-offline-players: false

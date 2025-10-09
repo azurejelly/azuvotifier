@@ -40,6 +40,17 @@ public class SpongeConfig {
     @Comment("Configuration section for all vote forwarding to NuVotifier")
     public Forwarding forwarding = new Forwarding();
 
+    @Comment("Experimental settings. You should only change those if you absolutely know what you're doing!")
+    public Experimental experimental = new Experimental();
+
+    @ConfigSerializable
+    public static class Experimental {
+
+        @Setting("skip-offline-players")
+        @Comment("Prevents a vote event from firing if the player who voted isn't online.")
+        public boolean skipOfflinePlayers = false;
+    }
+
     @ConfigSerializable
     public static class Forwarding {
 

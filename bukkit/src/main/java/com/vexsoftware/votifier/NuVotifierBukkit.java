@@ -47,6 +47,7 @@ import org.bstats.charts.SimplePie;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.ByteArrayInputStream;
@@ -448,6 +449,15 @@ public class NuVotifierBukkit extends JavaPlugin implements VoteHandler, Votifie
     }
 
     private void fireVotifierEvent(Vote vote) {
+        if (getConfig().getBoolean("experimental.skip-offline-players", false)) {
+            String name = vote.getUsername();
+            Player player = getServer().getPlayer(name);
+            if (player == null) {
+                pluginLogger.info("Skipping vote from " + name + " on this server as player is offline.");
+                return;
+            }
+        }
+
         if (VotifierEvent.getHandlerList().getRegisteredListeners().length == 0) {
             getLogger().log(Level.SEVERE, "A vote was received, but you don't have any listeners available to listen for it.");
             getLogger().log(Level.SEVERE, "See https://github.com/NuVotifier/NuVotifier/wiki/Setup-Guide#vote-listeners for");
@@ -457,9 +467,8 @@ public class NuVotifierBukkit extends JavaPlugin implements VoteHandler, Votifie
         // dispatch event asynchronously when running on Folia
         if (isFolia) {
             scheduler.runAsync(() -> getServer().getPluginManager().callEvent(new VotifierEvent(vote, true)));
-            return;
+        } else {
+            scheduler.run(() -> getServer().getPluginManager().callEvent(new VotifierEvent(vote)));
         }
-
-        scheduler.run(() -> getServer().getPluginManager().callEvent(new VotifierEvent(vote)));
     }
 }
