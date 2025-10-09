@@ -350,6 +350,7 @@ public class NuVotifierBungee extends Plugin implements VoteHandler, ProxyVotifi
 
                 this.forwardingMethod = bootstrap.createForwardingSource(serverList, null);
                 getLogger().info("Forwarding votes from this NuVotifier instance to another NuVotifier server.");
+                break;
             }
             case "redis": {
                 Configuration section = fwd.getSection("redis");
