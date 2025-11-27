@@ -190,7 +190,7 @@ public class NuVotifierSponge implements VoteHandler, VotifierPlugin, ForwardedV
                     }
                 }
                 default: {
-                    logger.error("No vote forwarding method '{}' known. Defaulting to noop implementation.", method);
+                    logger.error("No vote forwarding method '{}' known!", method);
                     return false;
                 }
             }

@@ -329,7 +329,7 @@ public class NuVotifierBukkit extends JavaPlugin implements VoteHandler, Votifie
                 return true;
             }
             default: {
-                getLogger().severe("No vote forwarding method '" + method + "' known. Defaulting to noop implementation.");
+                getLogger().severe("No vote forwarding method '" + method + "' known!");
                 return false;
             }
         }

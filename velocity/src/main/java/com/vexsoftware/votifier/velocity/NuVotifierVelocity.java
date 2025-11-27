@@ -273,15 +273,14 @@ public class NuVotifierVelocity implements VoteHandler, ProxyVotifierPlugin {
                 if (!fwd.containsTable("redis")) {
                     getLogger().error(
                             "Cannot set up Redis forwarding as the 'redis' configuration section is missing "
-                                    + "or incomplete. Defaulting to noop implementation."
+                                    + "or incomplete!"
                     );
 
                     return false;
                 }
 
-                Toml redis = fwd.getTable("redis");
-
                 try {
+                    Toml redis = fwd.getTable("redis");
                     this.forwardingMethod = new RedisForwardingVoteSource(
                             RedisCredentials.builder()
                                     .host(redis.getString("address"))
@@ -304,7 +303,7 @@ public class NuVotifierVelocity implements VoteHandler, ProxyVotifierPlugin {
                 }
             }
             default: {
-                getLogger().error("No vote forwarding method '{}' known. Defaulting to noop implementation.", method);
+                getLogger().error("No vote forwarding method '{}' known!", method);
                 return false;
             }
         }
