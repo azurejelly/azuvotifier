@@ -21,6 +21,6 @@ WORKDIR /app
 
 COPY --from=build "/build/standalone/build/libs/nuvotifier-standalone-*-dist.jar" ./nuvotifier-standalone.jar
 
-EXPOSE 8192
+EXPOSE 8192/tcp
 
 ENTRYPOINT ["java", "-jar", "nuvotifier-standalone.jar"]
