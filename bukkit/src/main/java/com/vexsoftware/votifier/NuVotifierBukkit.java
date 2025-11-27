@@ -270,7 +270,7 @@ public class NuVotifierBukkit extends JavaPlugin implements VoteHandler, Votifie
             return true;
         }
 
-        String method = forwardingConfig.getString("method", "none");
+        String method = forwardingConfig.getString("method", "none").toLowerCase();
         if (cfg.getBoolean("bstats", true)) {
             Metrics metrics = new Metrics(this, Constants.BSTATS_ID);
             metrics.addCustomChart(new SimplePie("forwarding_method", () -> method));
