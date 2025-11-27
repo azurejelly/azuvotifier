@@ -440,6 +440,17 @@ public class NuVotifierBukkit extends JavaPlugin implements VoteHandler, Votifie
     }
 
     @Override
+    public void onConnectionReset(String remoteAddress, boolean voteAlreadyCompleted) {
+        if (debug) {
+            if (voteAlreadyCompleted) {
+                getLogger().log(Level.INFO, "Connection reset from " + remoteAddress + " after vote was processed");
+            } else {
+                getLogger().log(Level.INFO, "Connection reset from " + remoteAddress + " during vote processing");
+            }
+        }
+    }
+
+    @Override
     public void onForward(final Vote v) {
         if (debug) {
             getLogger().info("Got a forwarded vote -> " + v);
