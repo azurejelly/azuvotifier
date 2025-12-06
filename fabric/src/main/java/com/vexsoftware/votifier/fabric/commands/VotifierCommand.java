@@ -5,6 +5,7 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.vexsoftware.votifier.fabric.VotifierFabric;
 import com.vexsoftware.votifier.fabric.utils.CommandResult;
+import com.vexsoftware.votifier.fabric.utils.FabricUtils;
 import com.vexsoftware.votifier.model.Vote;
 import com.vexsoftware.votifier.net.VotifierSession;
 import net.fabricmc.loader.api.FabricLoader;
@@ -45,12 +46,7 @@ public class VotifierCommand {
     }
 
     private static int info(CommandContext<ServerCommandSource> ctx) {
-        var metadata = FabricLoader.getInstance()
-                .getModContainer("azuvotifier")
-                .orElseThrow()
-                .getMetadata();
-
-        var version = metadata.getVersion().getFriendlyString();
+        var version = FabricUtils.getModVersion("azuvotifier");
         var text = Text.literal("This server is running ")
                 .withColor(0xf3b0ff)
                 .append(
@@ -62,16 +58,28 @@ public class VotifierCommand {
                 ).append(
                         Text.literal(version)
                                 .withColor(0xe867ff)
-                ).append(
-                        Text.literal("!")
-                                .withColor(0xf3b0ff)
-                ).append(
-                        Text.literal("\nModrinth: ")
-                                .withColor(0xf3b0ff)
-                ).append(
-                        Text.literal("https://modrinth.com/project/azuvotifier")
-                                .withColor(0xe867ff)
                 );
+
+        if (ctx.getSource().hasPermissionLevel(4)) {
+            var minecraft = FabricUtils.getMinecraftVersion();
+            var fabric = FabricUtils.getModVersion("fabric-api");
+
+            text.append(
+                    Text.literal("\nServer: ")
+                            .withColor(0xf3b0ff)
+            ).append(
+                    Text.literal("Minecraft " + minecraft + ", Fabric API " + fabric)
+                            .withColor(0xe867ff)
+            );
+        }
+
+        text.append(
+                Text.literal("\nModrinth: ")
+                        .withColor(0xf3b0ff)
+        ).append(
+                Text.literal("https://modrinth.com/project/azuvotifier")
+                        .withColor(0xe867ff)
+        );
 
         ctx.getSource().sendMessage(text);
         return CommandResult.SUCCESS;
