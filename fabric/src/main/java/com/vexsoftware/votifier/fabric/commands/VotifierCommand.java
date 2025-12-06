@@ -3,7 +3,7 @@ package com.vexsoftware.votifier.fabric.commands;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
-import com.vexsoftware.votifier.fabric.Votifier;
+import com.vexsoftware.votifier.fabric.VotifierFabric;
 import com.vexsoftware.votifier.fabric.utils.CommandResult;
 import com.vexsoftware.votifier.model.Vote;
 import com.vexsoftware.votifier.net.VotifierSession;
@@ -72,25 +72,24 @@ public class VotifierCommand {
     }
 
     private static int reload(CommandContext<ServerCommandSource> ctx) {
-        var instance = Votifier.getInstance();
-        var plugin = instance.getPlugin();
+        var plugin = VotifierFabric.getInstance();
 
-        instance.getLogger().info("Reloading azuvotifier...");
+        plugin.getLogger().info("Reloading azuvotifier...");
         ctx.getSource().sendMessage(Text.literal("Reloading azuvotifier...").withColor(0xf1e079));
 
         try {
             plugin.halt();
         } catch (RuntimeException ex) {
-            instance.getLogger().warn("An error occurred while halting Votifier. This might be fine!", ex);
+            plugin.getLogger().warn("An error occurred while halting Votifier. This might be fine!", ex);
         }
 
         if (!plugin.init()) {
-            instance.getLogger().error("An error occurred while attempting to reload azuvotifier. Please check for any errors above.");
+            plugin.getLogger().error("An error occurred while attempting to reload azuvotifier. Please check for any errors above.");
 
             try {
                 plugin.halt();
             } catch (RuntimeException ex) {
-                instance.getLogger().error("An error occurred while re-halting Votifier. The mod is in an unstable state!", ex);
+                plugin.getLogger().error("An error occurred while re-halting Votifier. The mod is in an unstable state!", ex);
             }
 
             ctx.getSource().sendMessage(
@@ -116,7 +115,7 @@ public class VotifierCommand {
             service = "azuuure.dev";
         }
 
-        var plugin = Votifier.getInstance().getPlugin();
+        var plugin = VotifierFabric.getInstance();
         var timestamp = String.valueOf(Instant.now().getEpochSecond());
         var vote = new Vote(service, username, "127.0.0.1", timestamp);
 

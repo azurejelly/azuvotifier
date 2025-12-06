@@ -1,12 +1,13 @@
-package com.vexsoftware.votifier.fabric.platform;
+package com.vexsoftware.votifier.fabric;
 
-import com.vexsoftware.votifier.fabric.Votifier;
 import com.vexsoftware.votifier.fabric.configuration.FabricConfig;
 import com.vexsoftware.votifier.fabric.configuration.loader.ConfigLoader;
 import com.vexsoftware.votifier.fabric.event.VoteListener;
+import com.vexsoftware.votifier.fabric.event.listener.CommandRegistrationCallbackListener;
+import com.vexsoftware.votifier.fabric.event.listener.DefaultVoteListener;
 import com.vexsoftware.votifier.fabric.platform.forwarding.FabricMessagingForwardingSink;
 import com.vexsoftware.votifier.fabric.platform.logger.FabricLoggerAdapter;
-import com.vexsoftware.votifier.fabric.provider.MinecraftServerProvider;
+import com.vexsoftware.votifier.fabric.utils.provider.MinecraftServerProvider;
 import com.vexsoftware.votifier.model.Vote;
 import com.vexsoftware.votifier.net.VotifierServerBootstrap;
 import com.vexsoftware.votifier.net.VotifierSession;
@@ -21,9 +22,13 @@ import com.vexsoftware.votifier.support.forwarding.ForwardingVoteSink;
 import com.vexsoftware.votifier.support.forwarding.redis.RedisCredentials;
 import com.vexsoftware.votifier.support.forwarding.redis.RedisForwardingSink;
 import com.vexsoftware.votifier.util.KeyCreator;
+import net.fabricmc.api.DedicatedServerModInitializer;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.server.MinecraftServer;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,33 +36,61 @@ import java.security.Key;
 import java.security.KeyPair;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Executors;
 
-public class FabricVotifierPlugin implements VotifierPlugin, ForwardedVoteListener {
+public class VotifierFabric implements DedicatedServerModInitializer, VotifierPlugin, ForwardedVoteListener {
 
-    private final MinecraftServer server;
-    private final Logger logger;
-    private final LoggingAdapter loggerAdapter;
-    private final File configDir;
-    private final Map<String, Key> tokens;
-    private final VotifierScheduler scheduler;
+    private static VotifierFabric instance;
 
+    private Logger logger;
+    private LoggingAdapter loggingAdapter;
+    private Map<String, Key> tokens;
+    private VotifierScheduler scheduler;
     private FabricConfig config;
     private VotifierServerBootstrap bootstrap;
     private ForwardingVoteSink forwardingSink;
-    private boolean debug;
     private KeyPair keyPair;
+    private boolean debug;
 
-    public FabricVotifierPlugin() {
-        this.server = MinecraftServerProvider.getServer();
-        this.logger = Votifier.getInstance().getLogger();
-        this.loggerAdapter = new FabricLoggerAdapter(logger);
-        this.configDir = new File(FabricLoader.getInstance().getConfigDir().toFile(), "azuvotifier");
-        this.scheduler = new StandaloneVotifierScheduler(Executors.newScheduledThreadPool(1));
-        this.tokens = new HashMap<>();
+    @Override
+    public void onInitializeServer() {
+        instance = this;
+        logger = LoggerFactory.getLogger(VotifierFabric.class);
+
+        ServerLifecycleEvents.SERVER_STARTING.register(this::start);
+        ServerLifecycleEvents.SERVER_STOPPING.register(this::stop);
+        CommandRegistrationCallback.EVENT.register(new CommandRegistrationCallbackListener());
+        VoteListener.EVENT.register(new DefaultVoteListener());
+    }
+
+    public void start(MinecraftServer server) {
+        MinecraftServerProvider.setServer(server);
+
+        if (init()) {
+            return;
+        }
+
+        logger.error("azuvotifier did not initialize properly!");
+    }
+
+    public void stop(MinecraftServer server) {
+        halt();
+        logger.info("azuvotifier disabled.");
+    }
+
+    public static VotifierFabric getInstance() {
+        return instance;
+    }
+
+    public Logger getLogger() {
+        return logger;
     }
 
     public boolean init() {
+        loggingAdapter = new FabricLoggerAdapter(logger);
+        tokens = new HashMap<>();
+        scheduler = new StandaloneVotifierScheduler();
+
+        File configDir = new File(FabricLoader.getInstance().getConfigDir().toFile(), "azuvotifier");
         try {
             config = ConfigLoader.loadFrom(configDir);
         } catch (IOException | RuntimeException ex) {
@@ -107,7 +140,7 @@ public class FabricVotifierPlugin implements VotifierPlugin, ForwardedVoteListen
             logger.info("------------------------------------------------------------------------------");
             logger.info("Your Votifier port is less than 0, so we assume you do NOT want to start the");
             logger.info("Votifier port server! Votifier will not listen for votes over any port, and");
-            logger.info("will only listen for pluginMessaging forwarded votes!");
+            logger.info("will only listen for forwarded votes!");
             logger.info("------------------------------------------------------------------------------");
         }
 
@@ -119,19 +152,19 @@ public class FabricVotifierPlugin implements VotifierPlugin, ForwardedVoteListen
                     break;
                 }
                 case "redis": {
-                    String channel = config.forwarding.redis.channel;
-                    RedisCredentials credentials = RedisCredentials.builder()
-                            .host(config.forwarding.redis.address)
-                            .port(config.forwarding.redis.port)
-                            .username(config.forwarding.redis.username)
-                            .password(config.forwarding.redis.password)
-                            .uri(config.forwarding.redis.uri)
-                            .channel(channel)
-                            .build();
-
                     try {
-                        this.forwardingSink = new RedisForwardingSink(credentials, this, loggerAdapter);
-                        this.forwardingSink.init();
+                        forwardingSink = new RedisForwardingSink(
+                                RedisCredentials.builder()
+                                        .host(config.forwarding.redis.address)
+                                        .port(config.forwarding.redis.port)
+                                        .username(config.forwarding.redis.username)
+                                        .password(config.forwarding.redis.password)
+                                        .uri(config.forwarding.redis.uri)
+                                        .channel(config.forwarding.redis.channel)
+                                        .build(), this, loggingAdapter
+                        );
+
+                        forwardingSink.init();
                     } catch (RuntimeException ex) {
                         logger.error("Could not set up Redis for vote forwarding", ex);
                         return false;
@@ -140,12 +173,13 @@ public class FabricVotifierPlugin implements VotifierPlugin, ForwardedVoteListen
                     logger.info("Votifier will use Redis to receive forwarded votes.");
                     break;
                 }
+                case "plugin-messaging":
                 case "pluginmessaging": {
                     var channel = config.forwarding.pluginMessaging.channel;
 
                     try {
-                        this.forwardingSink = new FabricMessagingForwardingSink(channel, this, loggerAdapter);
-                        this.forwardingSink.init();
+                        forwardingSink = new FabricMessagingForwardingSink(channel, this, loggingAdapter);
+                        forwardingSink.init();
                     } catch (RuntimeException ex) {
                         logger.error("Could not set up plugin messaging for vote forwarding", ex);
                         return false;
@@ -155,7 +189,7 @@ public class FabricVotifierPlugin implements VotifierPlugin, ForwardedVoteListen
                     break;
                 }
                 default: {
-                    logger.error("No vote forwarding method '{}' known!", method);
+                    logger.error("No vote forwarding method '{}' known! Votifier will not receive forwarded votes.", method);
                     break;
                 }
             }
@@ -188,7 +222,7 @@ public class FabricVotifierPlugin implements VotifierPlugin, ForwardedVoteListen
 
     @Override
     public LoggingAdapter getPluginLogger() {
-        return loggerAdapter;
+        return loggingAdapter;
     }
 
     @Override
@@ -232,6 +266,8 @@ public class FabricVotifierPlugin implements VotifierPlugin, ForwardedVoteListen
     }
 
     private void fireVoteEvent(Vote vote) {
+        var server = MinecraftServerProvider.getServer();
+
         if (config.experimental.skipOfflinePlayers) {
             String username = vote.getUsername();
             var player = server.getPlayerManager().getPlayer(username);

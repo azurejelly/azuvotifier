@@ -1,4 +1,4 @@
-package com.vexsoftware.votifier.fabric.provider;
+package com.vexsoftware.votifier.fabric.utils.provider;
 
 import net.minecraft.server.MinecraftServer;
 import org.jetbrains.annotations.ApiStatus;
