@@ -12,7 +12,7 @@
   "environment": "server",
   "entrypoints": {
     "server": [
-      "com.vexsoftware.votifier.fabric.VotifierBootstrap"
+      "com.vexsoftware.votifier.fabric.Votifier"
     ]
   },
   "mixins": [

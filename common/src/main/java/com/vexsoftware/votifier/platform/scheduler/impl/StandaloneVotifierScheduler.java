@@ -1,8 +1,8 @@
-package com.vexsoftware.votifier.standalone.platform.scheduler;
+package com.vexsoftware.votifier.platform.scheduler.impl;
 
 import com.vexsoftware.votifier.platform.scheduler.VotifierScheduler;
 import com.vexsoftware.votifier.platform.scheduler.VotifierTask;
-import com.vexsoftware.votifier.standalone.platform.scheduler.task.StandaloneVotifierTask;
+import com.vexsoftware.votifier.platform.scheduler.impl.task.StandaloneVotifierTask;
 
 import java.util.Objects;
 import java.util.concurrent.ScheduledExecutorService;

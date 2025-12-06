@@ -1,4 +1,4 @@
-package com.vexsoftware.votifier.standalone.platform.scheduler.task;
+package com.vexsoftware.votifier.platform.scheduler.impl.task;
 
 import com.vexsoftware.votifier.platform.scheduler.VotifierTask;
 

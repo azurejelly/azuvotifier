@@ -1,5 +1,10 @@
+// i fucking hate fabric
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import net.fabricmc.loom.task.RemapJarTask
+
 plugins {
     alias(libs.plugins.fabric.loom)
+    alias(libs.plugins.shadow)
     `maven-publish`
 }
 
@@ -10,6 +15,22 @@ base {
 loom {
     splitEnvironmentSourceSets()
 }
+
+configurations {
+    create("shade")
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+
+    // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
+    // if it is present.
+    // If you remove this line, sources will not be generated.
+    withSourcesJar()
+}
+
 
 repositories {
     // Add repositories to retrieve artifacts from in here.
@@ -27,11 +48,16 @@ dependencies {
         }
     )
 
-    implementation(project(":nuvotifier-api"))
-    implementation(project(":nuvotifier-common"))
-
     modImplementation(libs.fabric.loader)
     modImplementation(libs.fabric.api)
+
+    implementation(project(":nuvotifier-api"))
+    implementation(project(":nuvotifier-common"))
+    implementation(libs.configurate)
+
+    add("shade", project(":nuvotifier-api"))
+    add("shade", project(":nuvotifier-common"))
+    add("shade", libs.configurate)
 }
 
 tasks.processResources {
@@ -51,14 +77,22 @@ tasks.processResources {
     }
 }
 
+tasks.named<ShadowJar>("shadowJar") {
+    archiveClassifier.set("shaded")
 
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
-    }
+    configurations = listOf(project.configurations["shade"])
 
-    // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
-    // if it is present.
-    // If you remove this line, sources will not be generated.
-    withSourcesJar()
+    exclude("mappings/mappings.tiny")
+}
+
+tasks.register<RemapJarTask>("remapShadowJar") {
+    val shadowJar = tasks.getByName<ShadowJar>("shadowJar")
+    dependsOn(shadowJar)
+    inputFile.set(shadowJar.archiveFile)
+    archiveClassifier.set("dist")
+    addNestedDependencies.set(true)
+}
+
+tasks.named("assemble").configure {
+    dependsOn("remapShadowJar")
 }
