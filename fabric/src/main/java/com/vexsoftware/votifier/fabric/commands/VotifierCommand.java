@@ -2,13 +2,14 @@ package com.vexsoftware.votifier.fabric.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.vexsoftware.votifier.fabric.VotifierFabric;
 import com.vexsoftware.votifier.fabric.utils.CommandResult;
 import com.vexsoftware.votifier.fabric.utils.FabricUtils;
 import com.vexsoftware.votifier.model.Vote;
 import com.vexsoftware.votifier.net.VotifierSession;
-import net.fabricmc.loader.api.FabricLoader;
+import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
@@ -19,30 +20,36 @@ import java.time.Instant;
 public class VotifierCommand {
 
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
-        // TODO: use a proper permission system
-        dispatcher.register(
-                CommandManager.literal("votifier")
-                        .executes(VotifierCommand::info)
-                        .then(CommandManager.literal("reload")
-                                .requires(src -> src.hasPermissionLevel(4))
-                                .executes(VotifierCommand::reload)
-                        ).then(CommandManager.literal("test") // i don't like this
-                                .requires(src -> src.hasPermissionLevel(2))
-                                .executes((ctx) -> test(ctx, null, null))
-                                .then(CommandManager.argument("target", StringArgumentType.string())
-                                        .executes((ctx) ->
-                                                        test(ctx, StringArgumentType.getString(ctx, "target"), null)
-                                        ).then(CommandManager.argument("service", StringArgumentType.string())
-                                                .executes((ctx) ->
-                                                        test(ctx,
-                                                                StringArgumentType.getString(ctx, "target"),
-                                                                StringArgumentType.getString(ctx, "service")
-                                                        )
-                                                )
-                                        )
+        // Main command
+        LiteralArgumentBuilder<ServerCommandSource> builder = CommandManager.literal("votifier")
+                .executes(VotifierCommand::info);
+
+        // Reload subcommand
+        builder.then(
+                CommandManager.literal("reload")
+                        .requires(Permissions.require("azuvotifier.reload", 4))
+                        .executes(VotifierCommand::reload)
+        );
+
+        // Test vote subcommand
+        builder.then(
+                CommandManager.literal("test")
+                        .requires(Permissions.require("azuvotifier.test-vote", 4))
+                        .executes((ctx) -> test(ctx, null, null))
+                        .then(CommandManager.argument("target", StringArgumentType.string())
+                                .executes((ctx) ->
+                                        test(ctx, StringArgumentType.getString(ctx, "target"), null))
+                                .then(CommandManager.argument("service", StringArgumentType.string())
+                                        .executes((ctx) -> test(ctx,
+                                                StringArgumentType.getString(ctx, "target"),
+                                                StringArgumentType.getString(ctx, "service")
+                                        ))
                                 )
                         )
-        );
+                );
+
+        var command = dispatcher.register(builder);
+        dispatcher.register(CommandManager.literal("azuvotifier").redirect(command)); // alias
     }
 
     private static int info(CommandContext<ServerCommandSource> ctx) {
@@ -60,7 +67,7 @@ public class VotifierCommand {
                                 .withColor(0xe867ff)
                 );
 
-        if (ctx.getSource().hasPermissionLevel(4)) {
+        if (Permissions.check(ctx.getSource(), "azuvotifier.more-info", 2)) {
             var minecraft = FabricUtils.getMinecraftVersion();
             var fabric = FabricUtils.getModVersion("fabric-api");
 

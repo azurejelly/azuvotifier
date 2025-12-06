@@ -47,6 +47,7 @@ dependencies {
         }
     )
 
+    modImplementation(libs.fabric.permissions)
     modImplementation(libs.fabric.loader)
     modImplementation(libs.fabric.api)
 
@@ -57,6 +58,7 @@ dependencies {
 
     add("shade", project(":nuvotifier-api"))
     add("shade", project(":nuvotifier-common"))
+    add("shade", libs.fabric.permissions) // this is shading fabric api too
     add("shade", libs.jedis)
     add("shade", libs.configurate)
 }
@@ -92,12 +94,21 @@ tasks.named<ShadowJar>("shadowJar") {
     relocate("org.json", "$pkg.json")
     relocate("org.spongepowered.configurate", "$pkg.configurate")
     relocate("redis.clients.jedis", "$pkg.jedis")
+    relocate("me.lucko.fabric.api.permissions.v0", "$pkg.permissions") // should this be relocated?
 
+    exclude("fabric-installer*")
+    exclude("LICENSE-*/")
+    exclude("LICENSE_*/")
+    exclude("ui/icon/**")
+    exclude("assets/**")
+    exclude("net/fabricmc/**")
     exclude("GradleStart**")
     exclude(".cache")
     exclude("META-INF/services/**")
     exclude("META-INF/maven/**")
     exclude("META-INF/versions/**")
+    exclude("META-INF/proguard/**")
+    exclude("META-INF/jars/**")
     exclude("org/intellij/**")
     exclude("org/jetbrains/**")
     exclude("org/slf4j/**")
