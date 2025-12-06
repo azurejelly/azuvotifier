@@ -4,6 +4,7 @@ import com.vexsoftware.votifier.fabric.Votifier;
 import com.vexsoftware.votifier.fabric.configuration.FabricConfig;
 import com.vexsoftware.votifier.fabric.configuration.loader.ConfigLoader;
 import com.vexsoftware.votifier.fabric.event.VoteListener;
+import com.vexsoftware.votifier.fabric.platform.forwarding.FabricMessagingForwardingSink;
 import com.vexsoftware.votifier.fabric.platform.logger.FabricLoggerAdapter;
 import com.vexsoftware.votifier.fabric.provider.MinecraftServerProvider;
 import com.vexsoftware.votifier.model.Vote;
@@ -140,7 +141,17 @@ public class FabricVotifierPlugin implements VotifierPlugin, ForwardedVoteListen
                     break;
                 }
                 case "pluginmessaging": {
-                    logger.warn("Plugin messaging is not implemented");
+                    var channel = config.forwarding.pluginMessaging.channel;
+
+                    try {
+                        this.forwardingSink = new FabricMessagingForwardingSink(channel, this, loggerAdapter);
+                        this.forwardingSink.init();
+                    } catch (RuntimeException ex) {
+                        logger.error("Could not set up plugin messaging for vote forwarding", ex);
+                        return false;
+                    }
+
+                    logger.info("Votifier will receive forwarded votes over the \"{}\" plugin messaging channel.", channel);
                     break;
                 }
                 default: {
