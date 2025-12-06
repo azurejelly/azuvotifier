@@ -2,13 +2,8 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
     `java-library`
-    alias(libs.plugins.blossom)
     alias(libs.plugins.shadow)
     alias(libs.plugins.run.velocity)
-}
-
-blossom {
-    replaceToken("@version@", project.version.toString())
 }
 
 repositories {
@@ -66,4 +61,21 @@ tasks.withType(xyz.jpenilla.runtask.task.AbstractRun::class) {
         languageVersion = JavaLanguageVersion.of(21)
     }
     jvmArgs("-XX:+AllowEnhancedClassRedefinition")
+}
+
+val templateSource = file("src/main/templates")
+val templateDest = layout.buildDirectory.dir("generated/sources/templates")
+val generateTemplates = tasks.register<Copy>("generateTemplates") {
+    inputs.properties(
+        "version" to rootProject.version,
+    )
+
+    from(templateSource)
+    into(templateDest)
+    rename { "com/vexsoftware/votifier/velocity/utils/$it" }
+    expand(inputs.properties)
+}
+
+sourceSets.main {
+    java.srcDir(generateTemplates.map { it.outputs })
 }

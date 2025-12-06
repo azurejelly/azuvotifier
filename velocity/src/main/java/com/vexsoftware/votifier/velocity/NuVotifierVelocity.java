@@ -60,8 +60,13 @@ import java.security.KeyPair;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Plugin(id = "nuvotifier", name = "NuVotifier", version = "@version@", authors = "Ichbinjoe",
-        description = "Safe, smart, and secure Votifier server plugin")
+@Plugin(
+        id = "nuvotifier",
+        name = "NuVotifier",
+        version = Constants.VERSION,
+        authors = {"Ichbinjoe", "azurejelly"},
+        description = "Safe, smart, and secure Votifier server plugin"
+)
 public class NuVotifierVelocity implements VoteHandler, ProxyVotifierPlugin {
 
     @Inject

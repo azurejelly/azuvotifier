@@ -1,5 +1,9 @@
+import org.jetbrains.gradle.ext.settings
+import org.jetbrains.gradle.ext.taskTriggers
+
 plugins {
     id("java")
+    alias(libs.plugins.idea)
 }
 
 subprojects {
@@ -70,4 +74,9 @@ subprojects {
             }
         }
     }
+}
+
+// this sucks
+idea.project.settings.taskTriggers {
+    afterSync(":nuvotifier-velocity:generateTemplates")
 }
