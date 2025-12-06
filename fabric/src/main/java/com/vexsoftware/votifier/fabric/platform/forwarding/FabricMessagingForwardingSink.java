@@ -12,18 +12,27 @@ import net.minecraft.util.Identifier;
 public class FabricMessagingForwardingSink extends AbstractPluginMessagingForwardingSink implements ServerPlayNetworking.PlayPayloadHandler<FabricVotifierPacket> {
 
     private final Identifier channel;
+    private final LoggingAdapter logger;
     private final CustomPayload.Id<FabricVotifierPacket> id;
 
     public FabricMessagingForwardingSink(String channel, ForwardedVoteListener listener, LoggingAdapter logger) {
         super(listener, logger);
         this.channel = Identifier.of(channel);
+        this.logger = logger;
         this.id = new CustomPayload.Id<>(this.channel);
     }
 
     @Override
     public void init() {
         FabricVotifierPacket.setPacketId(id);
-        PayloadTypeRegistry.playC2S().register(id, FabricVotifierPacket.PACKET_CODEC);
+
+        try {
+            PayloadTypeRegistry.playC2S().register(id, FabricVotifierPacket.PACKET_CODEC);
+        } catch (IllegalArgumentException ex) {
+            logger.warn("Plugin messaging packet already registered during sink initialization. " +
+                    "This is probably fine!");
+        }
+
         ServerPlayNetworking.registerGlobalReceiver(id, this);
     }
 
