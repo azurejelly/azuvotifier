@@ -80,9 +80,28 @@ tasks.processResources {
 
 tasks.named<ShadowJar>("shadowJar") {
     archiveClassifier.set("shaded")
-
     configurations = listOf(project.configurations["shade"])
 
+    val pkg = "com.vexsoftware.votifier.libs"
+    relocate("com.google.errorprone", "$pkg.errorprone")
+    relocate("com.google.gson", "$pkg.gson")
+    relocate("io.netty", "$pkg.netty")
+    relocate("io.leangen.geantyref", "$pkg.geantyref")
+    relocate("net.kyori.option", "$pkg.option")
+    relocate("org.apache.commons.pool2", "$pkg.pool2")
+    relocate("org.json", "$pkg.json")
+    relocate("org.spongepowered.configurate", "$pkg.configurate")
+    relocate("redis.clients.jedis", "$pkg.jedis")
+
+    exclude("GradleStart**")
+    exclude(".cache")
+    exclude("META-INF/services/**")
+    exclude("META-INF/maven/**")
+    exclude("META-INF/versions/**")
+    exclude("org/intellij/**")
+    exclude("org/jetbrains/**")
+    exclude("org/slf4j/**")
+    exclude("**/module-info.class")
     exclude("mappings/mappings.tiny")
 }
 
