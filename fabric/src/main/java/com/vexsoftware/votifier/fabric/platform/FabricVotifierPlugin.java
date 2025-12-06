@@ -55,19 +55,20 @@ public class FabricVotifierPlugin implements VotifierPlugin, ForwardedVoteListen
         this.tokens = new HashMap<>();
     }
 
-    public void init() {
+    public boolean init() {
         try {
             config = ConfigLoader.loadFrom(configDir);
         } catch (IOException | RuntimeException ex) {
             logger.error("Failed to create or load configuration file!", ex);
-            return;
+            return false;
         }
 
         File rsaDirectory = new File(configDir, "rsa");
         try {
             if (!rsaDirectory.exists()) {
                 if (!rsaDirectory.mkdirs()) {
-                    throw new RuntimeException("Failed to create RSA key folder at " + rsaDirectory);
+                    logger.error("Failed to create RSA key folder at {}", rsaDirectory);
+                    return false;
                 }
 
                 this.keyPair = RSAKeygen.generate(2048);
@@ -77,6 +78,7 @@ public class FabricVotifierPlugin implements VotifierPlugin, ForwardedVoteListen
             }
         } catch (Exception ex) {
             logger.error("Error creating or reading RSA tokens", ex);
+            return false;
         }
 
         this.debug = config.debug;
@@ -124,9 +126,12 @@ public class FabricVotifierPlugin implements VotifierPlugin, ForwardedVoteListen
                 }
                 default: {
                     logger.error("No vote forwarding method '{}' known!", method);
+                    break;
                 }
             }
         }
+
+        return true;
     }
 
     public void halt() {
