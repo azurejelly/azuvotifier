@@ -14,11 +14,13 @@ AzuVotifier is currently supported on the following platforms:
 - CraftBukkit, Spigot, Paper, Pufferfish or Purpur (1.8.8+)
   - Older versions might work but no support will be provided
   - Any fork without significant breaking changes should also work
-- Folia (1.21.5+)
-  - Support is experimental. Let me know if it breaks!
+- Folia (1.21.5+)*
+- Fabric (1.21.10+)*
 - Sponge 11 (1.20+)
 - BungeeCord/Waterfall
 - Velocity
+
+*support for Folia and Fabric is experimental. Please let me know if it breaks!
 
 It can also run as a standalone application.
 
