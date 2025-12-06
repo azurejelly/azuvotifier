@@ -17,11 +17,12 @@ import com.vexsoftware.votifier.platform.scheduler.VotifierScheduler;
 import com.vexsoftware.votifier.platform.scheduler.impl.StandaloneVotifierScheduler;
 import com.vexsoftware.votifier.support.forwarding.ForwardedVoteListener;
 import com.vexsoftware.votifier.support.forwarding.ForwardingVoteSink;
+import com.vexsoftware.votifier.support.forwarding.redis.RedisCredentials;
+import com.vexsoftware.votifier.support.forwarding.redis.RedisForwardingSink;
 import com.vexsoftware.votifier.util.KeyCreator;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.server.MinecraftServer;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -113,11 +114,29 @@ public class FabricVotifierPlugin implements VotifierPlugin, ForwardedVoteListen
             String method = config.forwarding.method;
             switch (method.toLowerCase()) {
                 case "none": {
-                    logger.info("Method none selected for vote forwarding: Votes will not be received from a forwarder.");
+                    logger.info("Votifier will not receive votes from a forwarder.");
                     break;
                 }
                 case "redis": {
-                    logger.warn("Redis is not implemented");
+                    String channel = config.forwarding.redis.channel;
+                    RedisCredentials credentials = RedisCredentials.builder()
+                            .host(config.forwarding.redis.address)
+                            .port(config.forwarding.redis.port)
+                            .username(config.forwarding.redis.username)
+                            .password(config.forwarding.redis.password)
+                            .uri(config.forwarding.redis.uri)
+                            .channel(channel)
+                            .build();
+
+                    try {
+                        this.forwardingSink = new RedisForwardingSink(credentials, this, loggerAdapter);
+                        this.forwardingSink.init();
+                    } catch (RuntimeException ex) {
+                        logger.error("Could not set up Redis for vote forwarding", ex);
+                        return false;
+                    }
+
+                    logger.info("Votifier will use Redis to receive forwarded votes.");
                     break;
                 }
                 case "pluginmessaging": {

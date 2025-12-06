@@ -50,12 +50,14 @@ dependencies {
     modImplementation(libs.fabric.loader)
     modImplementation(libs.fabric.api)
 
-    implementation(project(":nuvotifier-api"))
-    implementation(project(":nuvotifier-common"))
+    api(project(":nuvotifier-api"))
+    api(project(":nuvotifier-common"))
+    implementation(libs.jedis)
     implementation(libs.configurate)
 
     add("shade", project(":nuvotifier-api"))
     add("shade", project(":nuvotifier-common"))
+    add("shade", libs.jedis)
     add("shade", libs.configurate)
 }
 
