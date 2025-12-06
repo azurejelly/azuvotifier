@@ -13,7 +13,7 @@ public class DefaultVoteListener implements VoteListener {
 
     @Override
     public void onVote(Vote vote) {
-        FabricConfig cfg = ConfigLoader.getFabricConfig();
+        FabricConfig cfg = ConfigLoader.get();
         List<String> commands = cfg.runCommands;
 
         if (commands == null || commands.isEmpty()) {

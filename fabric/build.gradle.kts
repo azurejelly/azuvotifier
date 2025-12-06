@@ -31,7 +31,6 @@ java {
     withSourcesJar()
 }
 
-
 repositories {
     // Add repositories to retrieve artifacts from in here.
     // You should only use this when depending on other mods because

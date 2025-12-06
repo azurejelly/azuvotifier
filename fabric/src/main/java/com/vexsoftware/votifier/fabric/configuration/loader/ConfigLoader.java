@@ -13,7 +13,7 @@ import java.io.IOException;
 // FIXME: temporary
 public class ConfigLoader {
 
-    private static FabricConfig fabricConfig;
+    private static FabricConfig cfg;
 
     public static FabricConfig loadFrom(File configDir) throws IOException {
         if (!configDir.exists()) {
@@ -33,13 +33,13 @@ public class ConfigLoader {
                 .build();
 
         ConfigurationNode node = loader.load(ConfigurationOptions.defaults().shouldCopyDefaults(true));
-        fabricConfig = node.get(TypeToken.get(FabricConfig.class), new FabricConfig());
+        cfg = node.get(TypeToken.get(FabricConfig.class), new FabricConfig());
         loader.save(node);
 
-        return fabricConfig;
+        return cfg;
     }
 
-    public static FabricConfig getFabricConfig() {
-        return fabricConfig;
+    public static FabricConfig get() {
+        return cfg;
     }
 }

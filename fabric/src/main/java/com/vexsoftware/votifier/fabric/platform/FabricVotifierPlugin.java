@@ -40,6 +40,7 @@ public class FabricVotifierPlugin implements VotifierPlugin, ForwardedVoteListen
     private final Map<String, Key> tokens;
     private final VotifierScheduler scheduler;
 
+    private FabricConfig config;
     private VotifierServerBootstrap bootstrap;
     private ForwardingVoteSink forwardingSink;
     private boolean debug;
@@ -55,8 +56,6 @@ public class FabricVotifierPlugin implements VotifierPlugin, ForwardedVoteListen
     }
 
     public void init() {
-        FabricConfig config;
-
         try {
             config = ConfigLoader.loadFrom(configDir);
         } catch (IOException | RuntimeException ex) {
@@ -198,6 +197,16 @@ public class FabricVotifierPlugin implements VotifierPlugin, ForwardedVoteListen
     }
 
     private void fireVoteEvent(Vote vote) {
+        if (config.experimental.skipOfflinePlayers) {
+            String username = vote.getUsername();
+            var player = server.getPlayerManager().getPlayer(username);
+
+            if (player == null) {
+                logger.info("Skipping vote from {} on this server as player is offline.", username);
+                return;
+            }
+        }
+
         server.submitAndJoin(() -> VoteListener.EVENT.invoker().onVote(vote));
     }
 }
