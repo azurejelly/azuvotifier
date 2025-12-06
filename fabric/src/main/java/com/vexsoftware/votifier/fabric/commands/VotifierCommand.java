@@ -65,6 +65,12 @@ public class VotifierCommand {
                 ).append(
                         Text.literal("!")
                                 .withColor(0xf3b0ff)
+                ).append(
+                        Text.literal("\nModrinth: ")
+                                .withColor(0xf3b0ff)
+                ).append(
+                        Text.literal("https://modrinth.com/project/azuvotifier")
+                                .withColor(0xe867ff)
                 );
 
         ctx.getSource().sendMessage(text);
