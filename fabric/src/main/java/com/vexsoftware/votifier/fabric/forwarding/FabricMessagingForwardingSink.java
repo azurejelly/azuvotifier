@@ -1,7 +1,7 @@
-package com.vexsoftware.votifier.fabric.platform.forwarding;
+package com.vexsoftware.votifier.fabric.forwarding;
 
-import com.vexsoftware.votifier.fabric.platform.forwarding.packet.FabricVotifierPacket;
-import com.vexsoftware.votifier.platform.LoggingAdapter;
+import com.vexsoftware.votifier.fabric.forwarding.packet.FabricVotifierPacket;
+import com.vexsoftware.votifier.platform.logger.LoggingAdapter;
 import com.vexsoftware.votifier.support.forwarding.AbstractPluginMessagingForwardingSink;
 import com.vexsoftware.votifier.support.forwarding.ForwardedVoteListener;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;

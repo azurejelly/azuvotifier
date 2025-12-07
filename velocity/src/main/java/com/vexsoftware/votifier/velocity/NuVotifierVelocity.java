@@ -16,8 +16,9 @@ import com.vexsoftware.votifier.net.VotifierSession;
 import com.vexsoftware.votifier.net.protocol.v1crypto.RSAIO;
 import com.vexsoftware.votifier.net.protocol.v1crypto.RSAKeygen;
 import com.vexsoftware.votifier.platform.BackendServer;
-import com.vexsoftware.votifier.platform.LoggingAdapter;
 import com.vexsoftware.votifier.platform.ProxyVotifierPlugin;
+import com.vexsoftware.votifier.platform.logger.LoggingAdapter;
+import com.vexsoftware.votifier.platform.logger.impl.SLF4JLoggingAdapter;
 import com.vexsoftware.votifier.platform.scheduler.VotifierScheduler;
 import com.vexsoftware.votifier.support.forwarding.ForwardingVoteSource;
 import com.vexsoftware.votifier.support.forwarding.ServerFilter;
@@ -35,7 +36,6 @@ import com.vexsoftware.votifier.velocity.commands.VotifierReloadCommand;
 import com.vexsoftware.votifier.velocity.event.VotifierEvent;
 import com.vexsoftware.votifier.velocity.forwarding.OnlineForwardPluginMessagingForwardingSource;
 import com.vexsoftware.votifier.velocity.forwarding.PluginMessagingForwardingSource;
-import com.vexsoftware.votifier.velocity.platform.logger.SLF4JLogger;
 import com.vexsoftware.votifier.velocity.platform.scheduler.VelocityScheduler;
 import com.vexsoftware.votifier.velocity.platform.server.VelocityBackendServer;
 import com.vexsoftware.votifier.velocity.utils.Constants;
@@ -351,7 +351,7 @@ public class NuVotifierVelocity implements VoteHandler, ProxyVotifierPlugin {
     @Subscribe
     public void onServerStart(ProxyInitializeEvent event) {
         this.scheduler = new VelocityScheduler(server, this);
-        this.loggingAdapter = new SLF4JLogger(logger);
+        this.loggingAdapter = new SLF4JLoggingAdapter(logger);
 
         this.getServer().getCommandManager().register("pnvreload", new VotifierReloadCommand(this));
         this.getServer().getCommandManager().register("ptestvote", new TestVoteCommand(this));

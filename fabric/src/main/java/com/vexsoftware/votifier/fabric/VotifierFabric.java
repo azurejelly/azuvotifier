@@ -5,16 +5,16 @@ import com.vexsoftware.votifier.fabric.configuration.loader.ConfigLoader;
 import com.vexsoftware.votifier.fabric.event.VoteListener;
 import com.vexsoftware.votifier.fabric.event.listener.CommandRegistrationCallbackListener;
 import com.vexsoftware.votifier.fabric.event.listener.DefaultVoteListener;
-import com.vexsoftware.votifier.fabric.platform.forwarding.FabricMessagingForwardingSink;
-import com.vexsoftware.votifier.fabric.platform.logger.FabricLoggerAdapter;
+import com.vexsoftware.votifier.fabric.forwarding.FabricMessagingForwardingSink;
 import com.vexsoftware.votifier.fabric.utils.provider.MinecraftServerProvider;
 import com.vexsoftware.votifier.model.Vote;
 import com.vexsoftware.votifier.net.VotifierServerBootstrap;
 import com.vexsoftware.votifier.net.VotifierSession;
 import com.vexsoftware.votifier.net.protocol.v1crypto.RSAIO;
 import com.vexsoftware.votifier.net.protocol.v1crypto.RSAKeygen;
-import com.vexsoftware.votifier.platform.LoggingAdapter;
 import com.vexsoftware.votifier.platform.VotifierPlugin;
+import com.vexsoftware.votifier.platform.logger.LoggingAdapter;
+import com.vexsoftware.votifier.platform.logger.impl.SLF4JLoggingAdapter;
 import com.vexsoftware.votifier.platform.scheduler.VotifierScheduler;
 import com.vexsoftware.votifier.platform.scheduler.impl.StandaloneVotifierScheduler;
 import com.vexsoftware.votifier.support.forwarding.ForwardedVoteListener;
@@ -86,7 +86,7 @@ public class VotifierFabric implements DedicatedServerModInitializer, VotifierPl
     }
 
     public boolean init() {
-        loggingAdapter = new FabricLoggerAdapter(logger);
+        loggingAdapter = new SLF4JLoggingAdapter(logger);
         tokens = new HashMap<>();
         scheduler = new StandaloneVotifierScheduler();
 

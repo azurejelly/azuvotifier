@@ -1,4 +1,4 @@
-package com.vexsoftware.votifier.fabric.platform.forwarding.packet;
+package com.vexsoftware.votifier.fabric.forwarding.packet;
 
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;

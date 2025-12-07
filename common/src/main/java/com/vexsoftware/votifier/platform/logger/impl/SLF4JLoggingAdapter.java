@@ -1,14 +1,19 @@
-package com.vexsoftware.votifier.fabric.platform.logger;
+package com.vexsoftware.votifier.platform.logger.impl;
 
-import com.vexsoftware.votifier.platform.LoggingAdapter;
+import com.vexsoftware.votifier.platform.logger.LoggingAdapter;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class FabricLoggerAdapter implements LoggingAdapter {
+public class SLF4JLoggingAdapter implements LoggingAdapter {
 
     private final Logger logger;
 
-    public FabricLoggerAdapter(Logger logger) {
+    public SLF4JLoggingAdapter(Logger logger) {
         this.logger = logger;
+    }
+
+    public SLF4JLoggingAdapter(Class<?> clazz) {
+        this.logger = LoggerFactory.getLogger(clazz);
     }
 
     @Override
@@ -23,8 +28,7 @@ public class FabricLoggerAdapter implements LoggingAdapter {
 
     @Override
     public void error(String s, Throwable e, Object... o) {
-        // FIXME: this should handle the 'o' parameter as well
-        logger.error(s, e);
+        logger.error(s, e, o);
     }
 
     @Override

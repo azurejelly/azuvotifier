@@ -1,15 +1,15 @@
-package com.vexsoftware.votifier.standalone.platform.server;
+package com.vexsoftware.votifier.standalone.server;
 
 import com.vexsoftware.votifier.model.Vote;
 import com.vexsoftware.votifier.net.VotifierServerBootstrap;
 import com.vexsoftware.votifier.net.VotifierSession;
-import com.vexsoftware.votifier.platform.LoggingAdapter;
 import com.vexsoftware.votifier.platform.VotifierPlugin;
+import com.vexsoftware.votifier.platform.logger.LoggingAdapter;
+import com.vexsoftware.votifier.platform.logger.impl.SLF4JLoggingAdapter;
 import com.vexsoftware.votifier.platform.scheduler.VotifierScheduler;
 import com.vexsoftware.votifier.platform.scheduler.impl.StandaloneVotifierScheduler;
 import com.vexsoftware.votifier.standalone.config.redis.RedisVotifierConfiguration;
 import com.vexsoftware.votifier.standalone.config.server.BackendServer;
-import com.vexsoftware.votifier.standalone.platform.logger.StandaloneVotifierLoggingAdapter;
 import com.vexsoftware.votifier.support.forwarding.ForwardingVoteSource;
 import com.vexsoftware.votifier.support.forwarding.proxy.ProxyForwardingVoteSource;
 import com.vexsoftware.votifier.support.forwarding.redis.RedisCredentials;
@@ -147,7 +147,7 @@ public class StandaloneVotifierServer implements VotifierPlugin {
 
     @Override
     public LoggingAdapter getPluginLogger() {
-        return new StandaloneVotifierLoggingAdapter(this.getClass());
+        return new SLF4JLoggingAdapter(StandaloneVotifierServer.class);
     }
 
     @Override

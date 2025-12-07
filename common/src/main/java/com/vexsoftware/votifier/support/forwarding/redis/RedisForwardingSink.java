@@ -2,7 +2,7 @@ package com.vexsoftware.votifier.support.forwarding.redis;
 
 import com.google.gson.JsonObject;
 import com.vexsoftware.votifier.model.Vote;
-import com.vexsoftware.votifier.platform.LoggingAdapter;
+import com.vexsoftware.votifier.platform.logger.LoggingAdapter;
 import com.vexsoftware.votifier.support.forwarding.ForwardedVoteListener;
 import com.vexsoftware.votifier.support.forwarding.ForwardingVoteSink;
 import com.vexsoftware.votifier.util.gson.GsonInst;

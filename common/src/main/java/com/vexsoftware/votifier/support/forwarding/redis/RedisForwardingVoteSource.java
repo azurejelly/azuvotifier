@@ -1,7 +1,7 @@
 package com.vexsoftware.votifier.support.forwarding.redis;
 
 import com.vexsoftware.votifier.model.Vote;
-import com.vexsoftware.votifier.platform.LoggingAdapter;
+import com.vexsoftware.votifier.platform.logger.LoggingAdapter;
 import com.vexsoftware.votifier.support.forwarding.ForwardingVoteSource;
 import com.vexsoftware.votifier.util.gson.GsonInst;
 import com.vexsoftware.votifier.util.redis.RedisPoolBuilder;

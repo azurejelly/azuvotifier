@@ -1,15 +1,19 @@
-package com.vexsoftware.votifier.platform;
+package com.vexsoftware.votifier.platform.logger;
 
 public interface LoggingAdapter {
 
     void error(String s);
+
     void error(String s, Object... o);
+
     void error(String s, Throwable e, Object... o);
 
     void warn(String s);
+
     void warn(String s, Object... o);
 
     void info(String s);
+
     void info(String s, Object... o);
 }
 

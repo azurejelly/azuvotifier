@@ -1,9 +1,9 @@
-package com.vexsoftware.votifier.standalone.platform.server.builder;
+package com.vexsoftware.votifier.standalone.server.builder;
 
 import com.vexsoftware.votifier.net.protocol.v1crypto.RSAIO;
 import com.vexsoftware.votifier.standalone.config.redis.RedisVotifierConfiguration;
 import com.vexsoftware.votifier.standalone.config.server.BackendServer;
-import com.vexsoftware.votifier.standalone.platform.server.StandaloneVotifierServer;
+import com.vexsoftware.votifier.standalone.server.StandaloneVotifierServer;
 import com.vexsoftware.votifier.util.KeyCreator;
 
 import java.io.File;
