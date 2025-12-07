@@ -16,40 +16,42 @@ import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.Instant;
+import java.util.List;
 
 public class VotifierCommand {
 
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
-        // Main command
-        LiteralArgumentBuilder<ServerCommandSource> builder = CommandManager.literal("votifier")
-                .executes(VotifierCommand::info);
+        for (String command : List.of("azuvotifier", "votifier")) {
+            // Main command
+            LiteralArgumentBuilder<ServerCommandSource> root = CommandManager.literal(command)
+                    .executes(VotifierCommand::info);
 
-        // Reload subcommand
-        builder.then(
-                CommandManager.literal("reload")
-                        .requires(Permissions.require("azuvotifier.reload", 4))
-                        .executes(VotifierCommand::reload)
-        );
+            // Reload subcommand
+            root.then(
+                    CommandManager.literal("reload")
+                            .requires(Permissions.require("azuvotifier.reload", 4))
+                            .executes(VotifierCommand::reload)
+            );
 
-        // Test vote subcommand
-        builder.then(
-                CommandManager.literal("test")
-                        .requires(Permissions.require("azuvotifier.test-vote", 4))
-                        .executes((ctx) -> test(ctx, null, null))
-                        .then(CommandManager.argument("target", StringArgumentType.string())
-                                .executes((ctx) ->
-                                        test(ctx, StringArgumentType.getString(ctx, "target"), null))
-                                .then(CommandManager.argument("service", StringArgumentType.string())
-                                        .executes((ctx) -> test(ctx,
-                                                StringArgumentType.getString(ctx, "target"),
-                                                StringArgumentType.getString(ctx, "service")
-                                        ))
-                                )
-                        )
-                );
+            // Test vote subcommand
+            root.then(
+                    CommandManager.literal("test")
+                            .requires(Permissions.require("azuvotifier.test-vote", 4))
+                            .executes((ctx) -> test(ctx, null, null))
+                            .then(CommandManager.argument("target", StringArgumentType.string())
+                                    .executes((ctx) ->
+                                            test(ctx, StringArgumentType.getString(ctx, "target"), null))
+                                    .then(CommandManager.argument("service", StringArgumentType.string())
+                                            .executes((ctx) -> test(ctx,
+                                                    StringArgumentType.getString(ctx, "target"),
+                                                    StringArgumentType.getString(ctx, "service")
+                                            ))
+                                    )
+                            )
+            );
 
-        var command = dispatcher.register(builder);
-        dispatcher.register(CommandManager.literal("azuvotifier").redirect(command)); // alias
+            dispatcher.register(root);
+        }
     }
 
     private static int info(CommandContext<ServerCommandSource> ctx) {
