@@ -16,9 +16,9 @@ import com.vexsoftware.votifier.net.VotifierSession;
 import com.vexsoftware.votifier.net.protocol.v1crypto.RSAIO;
 import com.vexsoftware.votifier.net.protocol.v1crypto.RSAKeygen;
 import com.vexsoftware.votifier.platform.BackendServer;
-import com.vexsoftware.votifier.platform.JavaUtilLogger;
-import com.vexsoftware.votifier.platform.LoggingAdapter;
 import com.vexsoftware.votifier.platform.ProxyVotifierPlugin;
+import com.vexsoftware.votifier.platform.logger.LoggingAdapter;
+import com.vexsoftware.votifier.platform.logger.impl.JavaLoggingAdapter;
 import com.vexsoftware.votifier.platform.scheduler.VotifierScheduler;
 import com.vexsoftware.votifier.support.forwarding.ForwardingVoteSource;
 import com.vexsoftware.votifier.support.forwarding.ServerFilter;
@@ -386,7 +386,7 @@ public class NuVotifierBungee extends Plugin implements VoteHandler, ProxyVotifi
     @Override
     public void onEnable() {
         this.scheduler = new BungeeScheduler(this);
-        this.pluginLogger = new JavaUtilLogger(getLogger());
+        this.pluginLogger = new JavaLoggingAdapter(getLogger());
 
         PluginManager pluginManager = ProxyServer.getInstance().getPluginManager();
         pluginManager.registerCommand(this, new VotifierReloadCommand(this));

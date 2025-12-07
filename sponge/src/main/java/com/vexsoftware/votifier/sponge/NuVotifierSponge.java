@@ -7,8 +7,8 @@ import com.vexsoftware.votifier.net.VotifierServerBootstrap;
 import com.vexsoftware.votifier.net.VotifierSession;
 import com.vexsoftware.votifier.net.protocol.v1crypto.RSAIO;
 import com.vexsoftware.votifier.net.protocol.v1crypto.RSAKeygen;
-import com.vexsoftware.votifier.platform.LoggingAdapter;
 import com.vexsoftware.votifier.platform.VotifierPlugin;
+import com.vexsoftware.votifier.platform.logger.LoggingAdapter;
 import com.vexsoftware.votifier.platform.scheduler.VotifierScheduler;
 import com.vexsoftware.votifier.sponge.commands.TestVoteCommand;
 import com.vexsoftware.votifier.sponge.commands.VotifierReloadCommand;
@@ -16,7 +16,7 @@ import com.vexsoftware.votifier.sponge.configuration.SpongeConfig;
 import com.vexsoftware.votifier.sponge.configuration.loader.ConfigLoader;
 import com.vexsoftware.votifier.sponge.event.VotifierEvent;
 import com.vexsoftware.votifier.sponge.platform.forwarding.SpongePluginMessagingForwardingSink;
-import com.vexsoftware.votifier.sponge.platform.logger.Log4JLogger;
+import com.vexsoftware.votifier.sponge.platform.logger.Log4JLoggingAdapter;
 import com.vexsoftware.votifier.sponge.platform.scheduler.SpongeScheduler;
 import com.vexsoftware.votifier.sponge.util.Constants;
 import com.vexsoftware.votifier.support.forwarding.ForwardedVoteListener;
@@ -247,7 +247,7 @@ public class NuVotifierSponge implements VoteHandler, VotifierPlugin, ForwardedV
     public void onServerStart(final StartedEngineEvent<Server> event) {
         this.config = ConfigLoader.getSpongeConfig();
         this.scheduler = new SpongeScheduler(container);
-        this.loggerAdapter = new Log4JLogger(logger);
+        this.loggerAdapter = new Log4JLoggingAdapter(logger);
 
         if (!loadAndBind()) {
             logger.error("Votifier did not initialize properly!");

@@ -6,7 +6,7 @@ import com.google.gson.Strictness;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.vexsoftware.votifier.model.Vote;
-import com.vexsoftware.votifier.platform.LoggingAdapter;
+import com.vexsoftware.votifier.platform.logger.LoggingAdapter;
 
 import java.io.CharArrayReader;
 import java.io.IOException;

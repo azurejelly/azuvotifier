@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "azuvotifier",
+  "name": "azuvotifier",
+  "version": "${version}",
+  "description": "",
+  "authors": [
+    "azurejelly"
+  ],
+  "contact": {},
+  "license": "GPL-3.0-only",
+  "environment": "server",
+  "entrypoints": {
+    "server": [
+      "com.vexsoftware.votifier.fabric.AzuVotifierFabric"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric": "*",
+    "minecraft": "~${minecraft_version}"
+  }
+}

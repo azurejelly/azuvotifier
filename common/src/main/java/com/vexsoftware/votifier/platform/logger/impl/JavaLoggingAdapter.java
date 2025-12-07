@@ -1,14 +1,16 @@
-package com.vexsoftware.votifier.platform;
+package com.vexsoftware.votifier.platform.logger.impl;
+
+import com.vexsoftware.votifier.platform.logger.LoggingAdapter;
 
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
-public class JavaUtilLogger implements LoggingAdapter {
+public class JavaLoggingAdapter implements LoggingAdapter {
 
     private final Logger logger;
 
-    public JavaUtilLogger(Logger logger) {
+    public JavaLoggingAdapter(Logger logger) {
         this.logger = logger;
     }
 

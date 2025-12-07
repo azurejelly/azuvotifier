@@ -1,6 +1,7 @@
 package com.vexsoftware.votifier.platform;
 
 import com.vexsoftware.votifier.VoteHandler;
+import com.vexsoftware.votifier.platform.logger.LoggingAdapter;
 import com.vexsoftware.votifier.platform.scheduler.VotifierScheduler;
 import io.netty.util.AttributeKey;
 

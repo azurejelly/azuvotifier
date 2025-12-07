@@ -23,6 +23,9 @@ subprojects {
         compileOnly(rootProject.libs.findbugs)
         testImplementation(rootProject.libs.bundles.junit.jupiter)
         testImplementation(rootProject.libs.bundles.mockito)
+
+        // as per https://github.com/gradle/gradle/issues/34512#issuecomment-3145182665
+        testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     }
 
     configurations.all {

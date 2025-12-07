@@ -25,14 +25,14 @@ tasks {
     named<ShadowJar>("shadowJar") {
         archiveClassifier.set("dist")
 
-        val reloc = "com.vexsoftware.votifier.libs"
-        relocate("org.bstats", "$reloc.bstats")
-        relocate("redis.clients.jedis", "$reloc.jedis")
-        relocate("org.json", "$reloc.json")
-        relocate("org.apache.commons.pool2", "$reloc.pool2")
-        relocate("io.netty", "$reloc.netty")
-        relocate("com.google.gson", "$reloc.gson")
-        relocate("com.google.errorprone", "$reloc.errorprone")
+        val pkg = "com.vexsoftware.votifier.libs"
+        relocate("org.bstats", "$pkg.bstats")
+        relocate("redis.clients.jedis", "$pkg.jedis")
+        relocate("org.json", "$pkg.json")
+        relocate("org.apache.commons.pool2", "$pkg.pool2")
+        relocate("io.netty", "$pkg.netty")
+        relocate("com.google.gson", "$pkg.gson")
+        relocate("com.google.errorprone", "$pkg.errorprone")
 
         exclude("GradleStart**")
         exclude(".cache");
@@ -42,6 +42,7 @@ tasks {
         exclude("META-INF/versions/**")
         exclude("org/intellij/**")
         exclude("org/jetbrains/**")
+        exclude("org/slf4j/**")
         exclude("**/module-info.class")
         exclude("*.yml")
     }

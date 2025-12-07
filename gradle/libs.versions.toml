@@ -1,5 +1,5 @@
 [plugins]
-shadow = "com.github.johnrengelman.shadow:7.1.2"
+shadow = "com.gradleup.shadow:9.2.2"
 sponge = "org.spongepowered.gradle.plugin:2.2.0"
 pluginyml-bukkit = { id = "net.minecrell.plugin-yml.bukkit", version.ref = "plugin-yml" }
 pluginyml-bungee = { id = "net.minecrell.plugin-yml.bungee", version.ref = "plugin-yml" }
@@ -7,6 +7,7 @@ run-paper = { id = "xyz.jpenilla.run-paper", version.ref = "run-task" }
 run-velocity = { id = "xyz.jpenilla.run-velocity", version.ref = "run-task" }
 run-waterfall = { id = "xyz.jpenilla.run-waterfall", version.ref = "run-task" }
 idea = "org.jetbrains.gradle.plugin.idea-ext:1.2"
+fabric-loom = { id = "fabric-loom", version.ref = "fabric-loom" }
 
 [versions]
 netty = "4.1.116.Final"
@@ -17,7 +18,20 @@ plugin-yml = "0.6.0"
 run-task = "2.3.1"
 bstats = "3.1.0"
 
+# fabric - see https://fabricmc.net/develop
+fabric-minecraft = "1.21.10"
+fabric-api = "0.138.3+1.21.10"
+fabric-loader = "0.18.1"
+fabric-loom = "1.14-SNAPSHOT"
+fabric-yarn = "1.21.10+build.3"
+fabric-permissions = "0.5.0"
+
 [libraries]
+fabric-minecraft = { module = "com.mojang:minecraft", version.ref = "fabric-minecraft" }
+fabric-api = { module = "net.fabricmc.fabric-api:fabric-api", version.ref = "fabric-api" }
+fabric-yarn = { module = "net.fabricmc:yarn", version.ref = "fabric-yarn" }
+fabric-loader = { module = "net.fabricmc:fabric-loader", version.ref = "fabric-loader" }
+fabric-permissions = { module = "me.lucko:fabric-permissions-api", version.ref = "fabric-permissions" }
 velocity = "com.velocitypowered:velocity-api:3.1.0"
 gson = "com.google.code.gson:gson:2.9.0"
 spongeapi = "org.spongepowered:spongeapi:7.2.0"
@@ -29,6 +43,7 @@ bungeecord = "net.md-5:bungeecord-api:1.21-R0.1-SNAPSHOT"
 paper = "io.papermc.paper:paper-api:1.21.5-R0.1-SNAPSHOT"
 json = "org.json:json:20180130"
 guava = "com.google.guava:guava:28.1-jre"
+configurate = "org.spongepowered:configurate-yaml:4.2.0"
 mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }
 mockito-junit-jupiter = { module = "org.mockito:mockito-junit-jupiter", version.ref = "mockito" }
 junit-juniter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit-jupiter" }

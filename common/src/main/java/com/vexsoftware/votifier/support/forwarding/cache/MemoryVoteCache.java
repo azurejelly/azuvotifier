@@ -2,8 +2,8 @@ package com.vexsoftware.votifier.support.forwarding.cache;
 
 import com.google.gson.JsonObject;
 import com.vexsoftware.votifier.model.Vote;
-import com.vexsoftware.votifier.platform.LoggingAdapter;
 import com.vexsoftware.votifier.platform.VotifierPlugin;
+import com.vexsoftware.votifier.platform.logger.LoggingAdapter;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
