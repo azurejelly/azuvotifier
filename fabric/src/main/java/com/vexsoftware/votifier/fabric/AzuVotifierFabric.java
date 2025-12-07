@@ -37,9 +37,9 @@ import java.security.KeyPair;
 import java.util.HashMap;
 import java.util.Map;
 
-public class VotifierFabric implements DedicatedServerModInitializer, VotifierPlugin, ForwardedVoteListener {
+public class AzuVotifierFabric implements DedicatedServerModInitializer, VotifierPlugin, ForwardedVoteListener {
 
-    private static VotifierFabric instance;
+    private static AzuVotifierFabric instance;
 
     private Logger logger;
     private LoggingAdapter loggingAdapter;
@@ -54,7 +54,7 @@ public class VotifierFabric implements DedicatedServerModInitializer, VotifierPl
     @Override
     public void onInitializeServer() {
         instance = this;
-        logger = LoggerFactory.getLogger(VotifierFabric.class);
+        logger = LoggerFactory.getLogger(AzuVotifierFabric.class);
 
         ServerLifecycleEvents.SERVER_STARTING.register(this::start);
         ServerLifecycleEvents.SERVER_STOPPING.register(this::stop);
@@ -77,7 +77,7 @@ public class VotifierFabric implements DedicatedServerModInitializer, VotifierPl
         logger.info("azuvotifier disabled.");
     }
 
-    public static VotifierFabric getInstance() {
+    public static AzuVotifierFabric getInstance() {
         return instance;
     }
 

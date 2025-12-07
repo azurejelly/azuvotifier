@@ -4,7 +4,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import com.vexsoftware.votifier.fabric.VotifierFabric;
+import com.vexsoftware.votifier.fabric.AzuVotifierFabric;
 import com.vexsoftware.votifier.fabric.utils.CommandResult;
 import com.vexsoftware.votifier.fabric.utils.FabricUtils;
 import com.vexsoftware.votifier.model.Vote;
@@ -95,7 +95,7 @@ public class VotifierCommand {
     }
 
     private static int reload(CommandContext<ServerCommandSource> ctx) {
-        var plugin = VotifierFabric.getInstance();
+        var plugin = AzuVotifierFabric.getInstance();
 
         plugin.getLogger().info("Reloading azuvotifier...");
         ctx.getSource().sendMessage(Text.literal("Reloading azuvotifier...").withColor(0xf1e079));
@@ -138,7 +138,7 @@ public class VotifierCommand {
             service = "azuuure.dev";
         }
 
-        var plugin = VotifierFabric.getInstance();
+        var plugin = AzuVotifierFabric.getInstance();
         var timestamp = String.valueOf(Instant.now().getEpochSecond());
         var vote = new Vote(service, username, "127.0.0.1", timestamp);
 
