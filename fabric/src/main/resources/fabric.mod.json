@@ -15,9 +15,6 @@
       "com.vexsoftware.votifier.fabric.VotifierFabric"
     ]
   },
-  "mixins": [
-    "azuvotifier.mixins.json"
-  ],
   "depends": {
     "fabricloader": ">=${loader_version}",
     "fabric": "*",
