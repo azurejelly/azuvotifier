@@ -42,6 +42,7 @@ tasks {
         exclude("META-INF/versions/**")
         exclude("org/intellij/**")
         exclude("org/jetbrains/**")
+        exclude("org/slf4j/**")
         exclude("**/module-info.class")
         exclude("*.yml")
     }

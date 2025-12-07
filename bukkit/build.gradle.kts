@@ -30,7 +30,6 @@ tasks {
         relocate("redis.clients.jedis", "$reloc.jedis")
         relocate("org.json", "$reloc.json")
         relocate("org.apache.commons.pool2", "$reloc.pool2")
-        relocate("org.slf4j", "$reloc.slf4j")
         relocate("io.netty", "$reloc.netty")
         relocate("com.google.gson", "$reloc.gson")
         relocate("com.google.errorprone", "$reloc.errorprone")
@@ -43,6 +42,7 @@ tasks {
         exclude("META-INF/versions/**")
         exclude("org/intellij/**")
         exclude("org/jetbrains/**")
+        exclude("org/slf4j/**")
         exclude("**/module-info.class")
     }
 

@@ -10,7 +10,7 @@ import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 import java.io.File;
 import java.io.IOException;
 
-// FIXME: temporary
+// FIXME: temporary?
 public class ConfigLoader {
 
     private static FabricConfig cfg;
