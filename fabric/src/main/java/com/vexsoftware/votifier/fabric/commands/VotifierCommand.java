@@ -72,12 +72,13 @@ public class VotifierCommand {
         if (Permissions.check(ctx.getSource(), "azuvotifier.more-info", 2)) {
             var minecraft = FabricUtils.getMinecraftVersion();
             var fabric = FabricUtils.getModVersion("fabric-api");
+            var loader = FabricUtils.getModVersion("fabricloader");
 
             text.append(
                     Text.literal("\nServer: ")
                             .withColor(0xf3b0ff)
             ).append(
-                    Text.literal("Minecraft " + minecraft + ", Fabric API " + fabric)
+                    Text.literal("Minecraft " + minecraft + ", Fabric API " + fabric + ", Fabric Loader " + loader)
                             .withColor(0xe867ff)
             );
         }
