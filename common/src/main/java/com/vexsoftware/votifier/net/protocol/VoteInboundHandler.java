@@ -48,6 +48,15 @@ public class VoteInboundHandler extends SimpleChannelInboundHandler<Vote> {
         String remoteAddr = ctx.channel().remoteAddress().toString();
         boolean hasCompletedVote = session.hasCompletedVote();
 
+        // Handle connection reset gracefully without sending error response
+        if (isConnectionReset(cause)) {
+            ctx.close();
+            if (!willThrottleErrorLogging()) {
+                handler.onConnectionReset(remoteAddr, hasCompletedVote);
+            }
+            return;
+        }
+
         if (session.getVersion() == VotifierSession.ProtocolVersion.TWO) {
             JsonObject object = new JsonObject();
             object.addProperty("status", "error");
@@ -61,6 +70,11 @@ public class VoteInboundHandler extends SimpleChannelInboundHandler<Vote> {
         if (!willThrottleErrorLogging()) {
             handler.onError(cause, hasCompletedVote, remoteAddr);
         }
+    }
+
+    private boolean isConnectionReset(Throwable cause) {
+        return cause instanceof java.net.SocketException &&
+               "Connection reset".equals(cause.getMessage());
     }
 
     private boolean willThrottleErrorLogging() {
