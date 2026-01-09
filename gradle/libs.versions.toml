@@ -32,7 +32,7 @@ fabric-api = { module = "net.fabricmc.fabric-api:fabric-api", version.ref = "fab
 fabric-yarn = { module = "net.fabricmc:yarn", version.ref = "fabric-yarn" }
 fabric-loader = { module = "net.fabricmc:fabric-loader", version.ref = "fabric-loader" }
 fabric-permissions = { module = "me.lucko:fabric-permissions-api", version.ref = "fabric-permissions" }
-velocity = "com.velocitypowered:velocity-api:3.1.0"
+velocity = "com.velocitypowered:velocity-api:3.4.0-SNAPSHOT"
 gson = "com.google.code.gson:gson:2.9.0"
 spongeapi = "org.spongepowered:spongeapi:7.2.0"
 netty-handler = { module = "io.netty:netty-handler", version.ref = "netty" }
