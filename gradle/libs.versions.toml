@@ -40,7 +40,7 @@ netty-transport-native-epoll = { module = "io.netty:netty-transport-native-epoll
 findbugs = "com.google.code.findbugs:jsr305:3.0.2"
 jedis = "redis.clients:jedis:5.2.0"
 bungeecord = "net.md-5:bungeecord-api:1.21-R0.1-SNAPSHOT"
-paper = "io.papermc.paper:paper-api:1.21.5-R0.1-SNAPSHOT"
+paper = "io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT"
 json = "org.json:json:20180130"
 guava = "com.google.guava:guava:28.1-jre"
 configurate = "org.spongepowered:configurate-yaml:4.2.0"
