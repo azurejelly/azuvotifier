@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-    api(project(":nuvotifier-api"))
+    api(project(":azuvotifier-api"))
 
     compileOnly(libs.gson)
     compileOnly(libs.slf4j.api)

@@ -11,7 +11,7 @@ repositories {
 }
 
 dependencies {
-    api(project(":nuvotifier-common"))
+    api(project(":azuvotifier-common"))
 
     implementation(libs.jackson.yaml)
     implementation(libs.apache.cli)

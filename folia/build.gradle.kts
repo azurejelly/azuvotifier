@@ -7,6 +7,6 @@ repositories {
 }
 
 dependencies {
-    api(project(":nuvotifier-common"))
+    api(project(":azuvotifier-common"))
     compileOnly(libs.paper)
 }

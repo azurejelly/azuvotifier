@@ -76,6 +76,6 @@ dependencies {
     implementation(libs.jedis)
     implementation(libs.bstats.sponge)
 
-    api(project(":nuvotifier-api"))
-    api(project(":nuvotifier-common"))
+    api(project(":azuvotifier-api"))
+    api(project(":azuvotifier-common"))
 }

@@ -15,8 +15,8 @@ dependencies {
     annotationProcessor(libs.velocity)
     implementation(libs.bstats.velocity)
 
-    api(project(":nuvotifier-api"))
-    api(project(":nuvotifier-common")) {
+    api(project(":azuvotifier-api"))
+    api(project(":azuvotifier-common")) {
         exclude(group = "org.slf4j", module = "slf4j-api")
     }
 }

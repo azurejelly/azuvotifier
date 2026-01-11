@@ -1,4 +1,4 @@
-rootProject.name = "nuvotifier"
+rootProject.name = "azuvotifier"
 
 pluginManagement {
     repositories {
@@ -19,6 +19,6 @@ listOf(
     "velocity", "standalone", "sponge", "folia",
     "fabric"
 ).forEach {
-    include(":nuvotifier-$it")
-    project(":nuvotifier-$it").projectDir = file(it)
+    include(":azuvotifier-$it")
+    project(":azuvotifier-$it").projectDir = file(it)
 }

@@ -13,8 +13,8 @@ repositories {
 }
 
 dependencies {
-    api(project(":nuvotifier-common"))
-    api(project(":nuvotifier-folia"))
+    api(project(":azuvotifier-common"))
+    api(project(":azuvotifier-folia"))
 
     compileOnly(libs.paper)
     implementation(libs.jedis)

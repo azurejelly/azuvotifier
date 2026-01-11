@@ -51,13 +51,13 @@ dependencies {
     modImplementation(libs.fabric.loader)
     modImplementation(libs.fabric.api)
 
-    api(project(":nuvotifier-api"))
-    api(project(":nuvotifier-common"))
+    api(project(":azuvotifier-api"))
+    api(project(":azuvotifier-common"))
     implementation(libs.jedis)
     implementation(libs.configurate)
 
-    add("shade", project(":nuvotifier-api"))
-    add("shade", project(":nuvotifier-common"))
+    add("shade", project(":azuvotifier-api"))
+    add("shade", project(":azuvotifier-common"))
     add("shade", libs.fabric.permissions) // this is shading fabric api too
     add("shade", libs.jedis)
     add("shade", libs.configurate)

@@ -81,5 +81,5 @@ subprojects {
 
 // this sucks
 idea.project.settings.taskTriggers {
-    afterSync(":nuvotifier-velocity:generateTemplates")
+    afterSync(":azuvotifier-velocity:generateTemplates")
 }
