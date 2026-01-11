@@ -10,26 +10,24 @@ import com.vexsoftware.votifier.bungee.platform.forwarding.PluginMessagingForwar
 import com.vexsoftware.votifier.bungee.platform.scheduler.BungeeScheduler;
 import com.vexsoftware.votifier.bungee.platform.server.BungeeBackendServer;
 import com.vexsoftware.votifier.bungee.util.Constants;
+import com.vexsoftware.votifier.util.CryptoUtil;
 import com.vexsoftware.votifier.model.Vote;
-import com.vexsoftware.votifier.net.VotifierServerBootstrap;
-import com.vexsoftware.votifier.net.VotifierSession;
-import com.vexsoftware.votifier.net.protocol.v1crypto.RSAIO;
-import com.vexsoftware.votifier.net.protocol.v1crypto.RSAKeygen;
+import com.vexsoftware.votifier.network.VotifierServerBootstrap;
+import com.vexsoftware.votifier.network.protocol.session.VotifierSession;
 import com.vexsoftware.votifier.platform.BackendServer;
-import com.vexsoftware.votifier.platform.ProxyVotifierPlugin;
+import com.vexsoftware.votifier.platform.plugin.proxy.ProxyVotifierPlugin;
 import com.vexsoftware.votifier.platform.logger.LoggingAdapter;
 import com.vexsoftware.votifier.platform.logger.impl.JavaLoggingAdapter;
 import com.vexsoftware.votifier.platform.scheduler.VotifierScheduler;
-import com.vexsoftware.votifier.support.forwarding.ForwardingVoteSource;
-import com.vexsoftware.votifier.support.forwarding.ServerFilter;
-import com.vexsoftware.votifier.support.forwarding.cache.FileVoteCache;
-import com.vexsoftware.votifier.support.forwarding.cache.MemoryVoteCache;
-import com.vexsoftware.votifier.support.forwarding.cache.VoteCache;
-import com.vexsoftware.votifier.support.forwarding.proxy.ProxyForwardingVoteSource;
-import com.vexsoftware.votifier.support.forwarding.redis.RedisCredentials;
-import com.vexsoftware.votifier.support.forwarding.redis.RedisForwardingVoteSource;
+import com.vexsoftware.votifier.platform.forwarding.source.ForwardingVoteSource;
+import com.vexsoftware.votifier.platform.forwarding.ServerFilter;
+import com.vexsoftware.votifier.cache.file.FileVoteCache;
+import com.vexsoftware.votifier.cache.memory.MemoryVoteCache;
+import com.vexsoftware.votifier.cache.VoteCache;
+import com.vexsoftware.votifier.platform.forwarding.source.proxy.ProxyForwardingVoteSource;
+import com.vexsoftware.votifier.redis.RedisCredentials;
+import com.vexsoftware.votifier.platform.forwarding.source.redis.RedisForwardingVoteSource;
 import com.vexsoftware.votifier.util.IOUtil;
-import com.vexsoftware.votifier.util.KeyCreator;
 import com.vexsoftware.votifier.util.TokenUtil;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
@@ -163,10 +161,10 @@ public class NuVotifierBungee extends Plugin implements VoteHandler, ProxyVotifi
                     throw new RuntimeException("Unable to create the RSA key folder " + rsaDirectory);
                 }
 
-                this.keyPair = RSAKeygen.generate(2048);
-                RSAIO.save(rsaDirectory, keyPair);
+                this.keyPair = CryptoUtil.generateKeyPair(2048);
+                CryptoUtil.save(rsaDirectory, keyPair);
             } else {
-                this.keyPair = RSAIO.load(rsaDirectory);
+                this.keyPair = CryptoUtil.load(rsaDirectory);
             }
         } catch (Exception ex) {
             throw new RuntimeException("Error reading RSA tokens", ex);
@@ -177,13 +175,13 @@ public class NuVotifierBungee extends Plugin implements VoteHandler, ProxyVotifi
 
         if (configuration.get("tokens") != null) {
             for (String s : tokenSection.getKeys()) {
-                tokens.put(s, KeyCreator.createKeyFrom(tokenSection.getString(s)));
+                tokens.put(s, TokenUtil.toKey(tokenSection.getString(s)));
                 getLogger().info("Loaded token for website: " + s);
             }
         } else {
             String token = TokenUtil.newToken();
             configuration.set("tokens", Collections.singletonMap("default", token));
-            tokens.put("default", KeyCreator.createKeyFrom(token));
+            tokens.put("default", TokenUtil.toKey(token));
 
             try {
                 ConfigurationProvider.getProvider(YamlConfiguration.class).save(configuration, config);
@@ -328,7 +326,7 @@ public class NuVotifierBungee extends Plugin implements VoteHandler, ProxyVotifi
 
                     Key token = null;
                     try {
-                        token = KeyCreator.createKeyFrom(section.getString("token", section.getString("key")));
+                        token = TokenUtil.toKey(section.getString("token", section.getString("key")));
                     } catch (IllegalArgumentException ex) {
                         getLogger().log(Level.SEVERE,
                                 "An exception occurred while attempting to add proxy target '" + s

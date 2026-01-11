@@ -1,12 +1,11 @@
 package com.vexsoftware.votifier.net.protocol;
 
 import com.vexsoftware.votifier.model.Vote;
-import com.vexsoftware.votifier.net.VotifierSession;
-import com.vexsoftware.votifier.util.QuietException;
+import com.vexsoftware.votifier.network.protocol.session.VotifierSession;
+import com.vexsoftware.votifier.network.protocol.VotifierProtocolDifferentiator;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.embedded.EmbeddedChannel;
-import io.netty.handler.codec.CorruptedFrameException;
 import io.netty.handler.codec.DecoderException;
 import org.junit.jupiter.api.Test;
 

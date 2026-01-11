@@ -5,44 +5,44 @@ import org.apache.logging.log4j.Logger;
 
 public class Log4JLoggingAdapter implements LoggingAdapter {
 
-    private final Logger l;
+    private final Logger logger;
 
-    public Log4JLoggingAdapter(Logger l) {
-        this.l = l;
+    public Log4JLoggingAdapter(Logger logger) {
+        this.logger = logger;
     }
 
     @Override
     public void error(String s) {
-        l.error(s);
+        logger.error(s);
     }
 
     @Override
     public void error(String s, Object... o) {
-        l.error(s, o);
+        logger.error(s, o);
     }
 
     @Override
     public void error(String s, Throwable e, Object... o) {
-        l.error(s, e, o);
+        logger.error(s, e, o);
     }
 
     @Override
     public void warn(String s) {
-        l.warn(s);
+        logger.warn(s);
     }
 
     @Override
     public void warn(String s, Object... o) {
-        l.warn(s, o);
+        logger.warn(s, o);
     }
 
     @Override
     public void info(String s) {
-        l.info(s);
+        logger.info(s);
     }
 
     @Override
     public void info(String s, Object... o) {
-        l.info(s, o);
+        logger.info(s, o);
     }
 }

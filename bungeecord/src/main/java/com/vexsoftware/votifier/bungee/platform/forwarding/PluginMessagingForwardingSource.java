@@ -2,9 +2,9 @@ package com.vexsoftware.votifier.bungee.platform.forwarding;
 
 import com.vexsoftware.votifier.bungee.NuVotifierBungee;
 import com.vexsoftware.votifier.bungee.platform.server.BungeeBackendServer;
-import com.vexsoftware.votifier.support.forwarding.AbstractPluginMessagingForwardingSource;
-import com.vexsoftware.votifier.support.forwarding.ServerFilter;
-import com.vexsoftware.votifier.support.forwarding.cache.VoteCache;
+import com.vexsoftware.votifier.platform.forwarding.source.messaging.AbstractPluginMessagingForwardingSource;
+import com.vexsoftware.votifier.platform.forwarding.ServerFilter;
+import com.vexsoftware.votifier.cache.VoteCache;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.event.PluginMessageEvent;
 import net.md_5.bungee.api.event.ServerConnectedEvent;
@@ -26,20 +26,20 @@ public class PluginMessagingForwardingSource extends AbstractPluginMessagingForw
     }
 
     @EventHandler
-    public void onPluginMessage(PluginMessageEvent e) {
-        if (e.getTag().equals(channel)) {
-            e.setCancelled(true);
+    public void onPluginMessage(PluginMessageEvent event) {
+        if (event.getTag().equals(channel)) {
+            event.setCancelled(true);
         }
     }
 
     @EventHandler
-    public void onServerConnected(final ServerConnectedEvent e) {
+    public void onServerConnected(final ServerConnectedEvent event) {
         // Attempt to resend any votes that were previously cached.
-        onServerConnect(new BungeeBackendServer(e.getServer().getInfo()));
+        onServerConnect(new BungeeBackendServer(event.getServer().getInfo()));
     }
 
     @Override
     public void init() {
-        ProxyServer.getInstance().getPluginManager().registerListener(plugin, this);
+        plugin.getProxy().getPluginManager().registerListener(plugin, this);
     }
 }

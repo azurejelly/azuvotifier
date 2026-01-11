@@ -1,7 +1,7 @@
 package com.vexsoftware.votifier.sponge.commands;
 
 import com.vexsoftware.votifier.model.Vote;
-import com.vexsoftware.votifier.net.VotifierSession;
+import com.vexsoftware.votifier.network.protocol.session.VotifierSession;
 import com.vexsoftware.votifier.sponge.NuVotifierSponge;
 import net.kyori.adventure.text.Component;
 import org.spongepowered.api.command.Command;

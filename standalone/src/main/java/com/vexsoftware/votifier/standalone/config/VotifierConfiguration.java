@@ -2,7 +2,7 @@ package com.vexsoftware.votifier.standalone.config;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.vexsoftware.votifier.standalone.config.redis.RedisVotifierConfiguration;
-import com.vexsoftware.votifier.standalone.config.server.BackendServer;
+import com.vexsoftware.votifier.standalone.config.server.ForwardableServer;
 import com.vexsoftware.votifier.util.TokenUtil;
 
 import java.util.HashMap;
@@ -17,7 +17,7 @@ public class VotifierConfiguration {
     private final RedisVotifierConfiguration redis;
 
     @JsonProperty("forwarding")
-    private final Map<String, BackendServer> backendServers;
+    private final Map<String, ForwardableServer> forwardableServers;
 
     @JsonProperty("disable-v1-protocol")
     private final boolean disableV1Protocol;
@@ -30,13 +30,13 @@ public class VotifierConfiguration {
         this.tokens.put("default", TokenUtil.newToken());
         this.redis = new RedisVotifierConfiguration();
         this.disableV1Protocol = false;
-        this.backendServers = new HashMap<>();
+        this.forwardableServers = new HashMap<>();
     }
 
     public VotifierConfiguration(
             String host, int port, boolean debug,
             Map<String, String> tokens, RedisVotifierConfiguration redis,
-            boolean disableV1Protocol, Map<String, BackendServer> backendServers
+            boolean disableV1Protocol, Map<String, ForwardableServer> forwardableServers
     ) {
         this.host = host;
         this.port = port;
@@ -44,7 +44,7 @@ public class VotifierConfiguration {
         this.tokens = tokens;
         this.redis = redis;
         this.disableV1Protocol = disableV1Protocol;
-        this.backendServers = backendServers;
+        this.forwardableServers = forwardableServers;
     }
 
     public String getHost() {
@@ -67,8 +67,8 @@ public class VotifierConfiguration {
         return disableV1Protocol;
     }
 
-    public Map<String, BackendServer> getBackendServers() {
-        return backendServers;
+    public Map<String, ForwardableServer> getForwardableServers() {
+        return forwardableServers;
     }
 
     public RedisVotifierConfiguration getRedis() {

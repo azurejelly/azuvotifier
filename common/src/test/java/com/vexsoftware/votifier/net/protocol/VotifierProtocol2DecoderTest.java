@@ -2,9 +2,10 @@ package com.vexsoftware.votifier.net.protocol;
 
 import com.google.gson.JsonObject;
 import com.vexsoftware.votifier.model.Vote;
-import com.vexsoftware.votifier.net.VotifierSession;
-import com.vexsoftware.votifier.platform.VotifierPlugin;
-import com.vexsoftware.votifier.util.KeyCreator;
+import com.vexsoftware.votifier.network.protocol.session.VotifierSession;
+import com.vexsoftware.votifier.network.protocol.v2.VotifierProtocol2Decoder;
+import com.vexsoftware.votifier.platform.plugin.VotifierPlugin;
+import com.vexsoftware.votifier.util.TokenUtil;
 import com.vexsoftware.votifier.util.gson.GsonInst;
 import io.netty.channel.embedded.EmbeddedChannel;
 import io.netty.handler.codec.CorruptedFrameException;
@@ -132,6 +133,6 @@ public class VotifierProtocol2DecoderTest {
     @Test
     public void testFailureDecodeBadSignature() {
         Vote vote = new Vote("Bad Service", "test", "test", "0");
-        assertThrows(CorruptedFrameException.class, () -> sendVote(vote, KeyCreator.createKeyFrom("BadKey"), false));
+        assertThrows(CorruptedFrameException.class, () -> sendVote(vote, TokenUtil.toKey("BadKey"), false));
     }
 }

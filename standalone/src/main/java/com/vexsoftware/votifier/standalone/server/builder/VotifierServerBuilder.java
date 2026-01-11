@@ -1,13 +1,15 @@
 package com.vexsoftware.votifier.standalone.server.builder;
 
-import com.vexsoftware.votifier.net.protocol.v1crypto.RSAIO;
 import com.vexsoftware.votifier.standalone.config.redis.RedisVotifierConfiguration;
-import com.vexsoftware.votifier.standalone.config.server.BackendServer;
+import com.vexsoftware.votifier.standalone.config.server.ForwardableServer;
 import com.vexsoftware.votifier.standalone.server.StandaloneVotifierServer;
-import com.vexsoftware.votifier.util.KeyCreator;
+import com.vexsoftware.votifier.util.CryptoUtil;
+import com.vexsoftware.votifier.util.TokenUtil;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.security.GeneralSecurityException;
 import java.security.Key;
 import java.security.KeyPair;
 import java.security.interfaces.RSAKey;
@@ -17,10 +19,10 @@ import java.util.Objects;
 
 public class VotifierServerBuilder {
 
-    private final Map<String, Key> keyMap = new HashMap<>();
+    private final Map<String, Key> tokens = new HashMap<>();
     private KeyPair v1Key;
     private InetSocketAddress bind;
-    private Map<String, BackendServer> servers;
+    private Map<String, ForwardableServer> servers;
     private boolean debug;
     private boolean disableV1Protocol;
     private RedisVotifierConfiguration redis;
@@ -29,7 +31,7 @@ public class VotifierServerBuilder {
         Objects.requireNonNull(service, "service");
         Objects.requireNonNull(token, "key");
 
-        keyMap.put(service, KeyCreator.createKeyFrom(token));
+        tokens.put(service, TokenUtil.toKey(token));
         return this;
     }
 
@@ -41,8 +43,8 @@ public class VotifierServerBuilder {
         return this;
     }
 
-    public VotifierServerBuilder v1KeyFolder(File file) throws Exception {
-        this.v1Key = RSAIO.load(Objects.requireNonNull(file, "file"));
+    public VotifierServerBuilder v1KeyFolder(File file) throws GeneralSecurityException, IOException {
+        this.v1Key = CryptoUtil.load(Objects.requireNonNull(file, "file"));
         return this;
     }
 
@@ -56,7 +58,7 @@ public class VotifierServerBuilder {
         return this;
     }
 
-    public VotifierServerBuilder backendServers(Map<String, BackendServer> servers) {
+    public VotifierServerBuilder backendServers(Map<String, ForwardableServer> servers) {
         this.servers = servers;
         return this;
     }
@@ -74,6 +76,6 @@ public class VotifierServerBuilder {
     public StandaloneVotifierServer create() {
         Objects.requireNonNull(bind, "need an address to bind to");
         Objects.requireNonNull(servers, "need a list of servers to forward votes for");
-        return new StandaloneVotifierServer(debug, keyMap, v1Key, bind, servers, disableV1Protocol, redis);
+        return new StandaloneVotifierServer(debug, tokens, v1Key, bind, servers, disableV1Protocol, redis);
     }
 }

@@ -1,7 +1,7 @@
 package com.vexsoftware.votifier.net.protocol;
 
 import com.vexsoftware.votifier.model.Vote;
-import com.vexsoftware.votifier.net.protocol.v1crypto.RSA;
+import com.vexsoftware.votifier.util.CryptoUtil;
 
 import java.nio.charset.StandardCharsets;
 import java.security.PublicKey;
@@ -26,6 +26,6 @@ public class VoteUtil {
             builder.append(s).append('\n'); // naive join needed!
         }
 
-        return RSA.encrypt(builder.toString().getBytes(StandardCharsets.US_ASCII), key);
+        return CryptoUtil.encrypt(builder.toString().getBytes(StandardCharsets.US_ASCII), key);
     }
 }

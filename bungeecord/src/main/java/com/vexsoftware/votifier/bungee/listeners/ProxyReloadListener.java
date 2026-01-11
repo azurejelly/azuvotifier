@@ -7,14 +7,14 @@ import net.md_5.bungee.event.EventHandler;
 
 public class ProxyReloadListener implements Listener {
 
-    private final NuVotifierBungee nuVotifier;
+    private final NuVotifierBungee plugin;
 
-    public ProxyReloadListener(NuVotifierBungee nuVotifier) {
-        this.nuVotifier = nuVotifier;
+    public ProxyReloadListener(NuVotifierBungee plugin) {
+        this.plugin = plugin;
     }
 
     @EventHandler
     public void onProxyReload(ProxyReloadEvent event) {
-        this.nuVotifier.reload();
+        plugin.reload();
     }
 }

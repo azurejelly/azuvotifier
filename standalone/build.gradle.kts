@@ -33,7 +33,7 @@ tasks {
     }
 
     named<ShadowJar>("shadowJar") {
-        archiveBaseName.set("nuvotifier-standalone")
+        archiveBaseName.set("azuvotifier-standalone")
         archiveClassifier.set("dist")
     }
 

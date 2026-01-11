@@ -10,26 +10,24 @@ import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.vexsoftware.votifier.VoteHandler;
+import com.vexsoftware.votifier.cache.VoteCache;
+import com.vexsoftware.votifier.cache.file.FileVoteCache;
+import com.vexsoftware.votifier.cache.memory.MemoryVoteCache;
+import com.vexsoftware.votifier.platform.forwarding.ServerFilter;
+import com.vexsoftware.votifier.platform.forwarding.source.ForwardingVoteSource;
+import com.vexsoftware.votifier.platform.forwarding.source.proxy.ProxyForwardingVoteSource;
+import com.vexsoftware.votifier.platform.forwarding.source.redis.RedisForwardingVoteSource;
 import com.vexsoftware.votifier.model.Vote;
-import com.vexsoftware.votifier.net.VotifierServerBootstrap;
-import com.vexsoftware.votifier.net.VotifierSession;
-import com.vexsoftware.votifier.net.protocol.v1crypto.RSAIO;
-import com.vexsoftware.votifier.net.protocol.v1crypto.RSAKeygen;
+import com.vexsoftware.votifier.network.VotifierServerBootstrap;
+import com.vexsoftware.votifier.network.protocol.session.VotifierSession;
 import com.vexsoftware.votifier.platform.BackendServer;
-import com.vexsoftware.votifier.platform.ProxyVotifierPlugin;
 import com.vexsoftware.votifier.platform.logger.LoggingAdapter;
 import com.vexsoftware.votifier.platform.logger.impl.SLF4JLoggingAdapter;
+import com.vexsoftware.votifier.platform.plugin.proxy.ProxyVotifierPlugin;
 import com.vexsoftware.votifier.platform.scheduler.VotifierScheduler;
-import com.vexsoftware.votifier.support.forwarding.ForwardingVoteSource;
-import com.vexsoftware.votifier.support.forwarding.ServerFilter;
-import com.vexsoftware.votifier.support.forwarding.cache.FileVoteCache;
-import com.vexsoftware.votifier.support.forwarding.cache.MemoryVoteCache;
-import com.vexsoftware.votifier.support.forwarding.cache.VoteCache;
-import com.vexsoftware.votifier.support.forwarding.proxy.ProxyForwardingVoteSource;
-import com.vexsoftware.votifier.support.forwarding.redis.RedisCredentials;
-import com.vexsoftware.votifier.support.forwarding.redis.RedisForwardingVoteSource;
+import com.vexsoftware.votifier.redis.RedisCredentials;
+import com.vexsoftware.votifier.util.CryptoUtil;
 import com.vexsoftware.votifier.util.IOUtil;
-import com.vexsoftware.votifier.util.KeyCreator;
 import com.vexsoftware.votifier.util.TokenUtil;
 import com.vexsoftware.votifier.velocity.commands.TestVoteCommand;
 import com.vexsoftware.votifier.velocity.commands.VotifierReloadCommand;
@@ -104,10 +102,10 @@ public class NuVotifierVelocity implements VoteHandler, ProxyVotifierPlugin {
                     throw new RuntimeException("Unable to create the RSA key folder " + rsaDirectory);
                 }
 
-                this.keyPair = RSAKeygen.generate(2048);
-                RSAIO.save(rsaDirectory, keyPair);
+                this.keyPair = CryptoUtil.generateKeyPair(2048);
+                CryptoUtil.save(rsaDirectory, keyPair);
             } else {
-                this.keyPair = RSAIO.load(rsaDirectory);
+                this.keyPair = CryptoUtil.load(rsaDirectory);
             }
         } catch (Exception ex) {
             logger.error("Error creating or reading RSA tokens", ex);
@@ -123,7 +121,7 @@ public class NuVotifierVelocity implements VoteHandler, ProxyVotifierPlugin {
         // Load Votifier tokens.
         config.getTable("tokens").toMap().forEach((service, key) -> {
             if (key instanceof String) {
-                tokens.put(service, KeyCreator.createKeyFrom((String) key));
+                tokens.put(service, TokenUtil.toKey((String) key));
                 logger.info("Loaded token for website: {}", service);
             }
         });
@@ -252,7 +250,7 @@ public class NuVotifierVelocity implements VoteHandler, ProxyVotifierPlugin {
 
                     Key token = null;
                     try {
-                        token = KeyCreator.createKeyFrom(section.getString("token", section.getString("key")));
+                        token = TokenUtil.toKey(section.getString("token", section.getString("key")));
                     } catch (IllegalArgumentException ex) {
                         getLogger().error("An exception occurred while attempting to add proxy target '{}' - " +
                                 "maybe your token is wrong? Votes will not be forwarded to this server!", name, ex);

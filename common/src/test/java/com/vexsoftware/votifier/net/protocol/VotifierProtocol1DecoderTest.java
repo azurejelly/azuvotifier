@@ -1,14 +1,13 @@
 package com.vexsoftware.votifier.net.protocol;
 
-import com.vexsoftware.votifier.platform.VotifierPlugin;
+import com.vexsoftware.votifier.network.protocol.v1.VotifierProtocol1Decoder;
+import com.vexsoftware.votifier.platform.plugin.VotifierPlugin;
 import com.vexsoftware.votifier.model.Vote;
-import com.vexsoftware.votifier.net.VotifierSession;
-import com.vexsoftware.votifier.net.protocol.v1crypto.RSA;
-import com.vexsoftware.votifier.util.QuietException;
+import com.vexsoftware.votifier.network.protocol.session.VotifierSession;
+import com.vexsoftware.votifier.util.CryptoUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.embedded.EmbeddedChannel;
-import io.netty.handler.codec.CorruptedFrameException;
 import io.netty.handler.codec.DecoderException;
 import org.junit.jupiter.api.Test;
 
@@ -49,7 +48,7 @@ public class VotifierProtocol1DecoderTest {
         // Send the bad vote
         EmbeddedChannel channel = createChannel();
 
-        byte[] encrypted = RSA.encrypt(bad.getBytes(StandardCharsets.UTF_8), TestVotifierPlugin.getI().getProtocolV1Key().getPublic());
+        byte[] encrypted = CryptoUtil.encrypt(bad.getBytes(StandardCharsets.UTF_8), TestVotifierPlugin.getI().getProtocolV1Key().getPublic());
         ByteBuf encryptedByteBuf = Unpooled.wrappedBuffer(encrypted);
 
         assertThrows(DecoderException.class, () -> channel.writeInbound(encryptedByteBuf));

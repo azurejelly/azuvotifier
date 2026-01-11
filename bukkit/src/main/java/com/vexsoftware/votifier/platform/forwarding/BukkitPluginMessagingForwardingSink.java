@@ -1,8 +1,8 @@
 package com.vexsoftware.votifier.platform.forwarding;
 
 import com.vexsoftware.votifier.platform.logger.LoggingAdapter;
-import com.vexsoftware.votifier.support.forwarding.AbstractPluginMessagingForwardingSink;
-import com.vexsoftware.votifier.support.forwarding.ForwardedVoteListener;
+import com.vexsoftware.votifier.platform.forwarding.sink.messaging.AbstractPluginMessagingForwardingSink;
+import com.vexsoftware.votifier.platform.forwarding.listener.ForwardedVoteListener;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.messaging.PluginMessageListener;

@@ -1,14 +1,13 @@
 package com.vexsoftware.votifier.net.protocol;
 
 import com.vexsoftware.votifier.model.Vote;
-import com.vexsoftware.votifier.net.VotifierSession;
-import com.vexsoftware.votifier.platform.VotifierPlugin;
+import com.vexsoftware.votifier.network.protocol.session.VotifierSession;
+import com.vexsoftware.votifier.platform.plugin.VotifierPlugin;
 import com.vexsoftware.votifier.platform.logger.LoggingAdapter;
 import com.vexsoftware.votifier.platform.scheduler.VotifierScheduler;
-import com.vexsoftware.votifier.util.KeyCreator;
+import com.vexsoftware.votifier.util.TokenUtil;
 
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -23,11 +22,12 @@ public class TestVotifierPlugin implements VotifierPlugin {
     private static final byte[] PUBLIC_KEY;
     private static final byte[] PRIVATE_KEY;
 
+    @SuppressWarnings("DataFlowIssue")
     static byte[] r(String u) throws Exception {
         URL resourceUrl = TestVotifierPlugin.class.getResource(u);
         Path resourcePath = Paths.get(resourceUrl.toURI());
 
-        return Base64.getDecoder().decode(new String(Files.readAllBytes(resourcePath), StandardCharsets.UTF_8));
+        return Base64.getDecoder().decode(Files.readString(resourcePath));
     }
 
     static {
@@ -61,7 +61,8 @@ public class TestVotifierPlugin implements VotifierPlugin {
         } catch (Exception e) {
             throw new AssertionError(e);
         }
-        keyMap.put("default", KeyCreator.createKeyFrom("test"));
+
+        keyMap.put("default", TokenUtil.toKey("test"));
     }
 
     @Override
@@ -91,16 +92,14 @@ public class TestVotifierPlugin implements VotifierPlugin {
 
     public void specificKeysOnly() {
         keyMap.clear();
-        keyMap.put("Test", KeyCreator.createKeyFrom("test"));
+        keyMap.put("Test", TokenUtil.toKey("test"));
     }
 
     public void restoreDefault() {
         keyMap.clear();
-        keyMap.put("default", KeyCreator.createKeyFrom("test"));
+        keyMap.put("default", TokenUtil.toKey("test"));
     }
 
     @Override
-    public void onVoteReceived(Vote vote, VotifierSession.ProtocolVersion protocolVersion, String remoteAddress) throws Exception {
-
-    }
+    public void onVoteReceived(Vote vote, VotifierSession.ProtocolVersion protocolVersion, String remoteAddress) {}
 }

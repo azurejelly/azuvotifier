@@ -1,5 +1,7 @@
 package com.vexsoftware.votifier.support.forwarding;
 
+import com.vexsoftware.votifier.platform.forwarding.listener.ForwardedVoteListener;
+import com.vexsoftware.votifier.platform.forwarding.sink.messaging.AbstractPluginMessagingForwardingSink;
 import com.vexsoftware.votifier.model.Vote;
 import org.junit.jupiter.api.Test;
 

@@ -13,6 +13,6 @@ public final class BungeeVotifierTask implements VotifierTask {
 
     @Override
     public void cancel() {
-        this.task.cancel();
+        task.cancel();
     }
 }

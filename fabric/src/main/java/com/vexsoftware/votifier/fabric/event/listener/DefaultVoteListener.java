@@ -3,7 +3,7 @@ package com.vexsoftware.votifier.fabric.event.listener;
 import com.vexsoftware.votifier.fabric.configuration.FabricConfig;
 import com.vexsoftware.votifier.fabric.configuration.loader.ConfigLoader;
 import com.vexsoftware.votifier.fabric.event.VoteListener;
-import com.vexsoftware.votifier.fabric.utils.provider.MinecraftServerProvider;
+import com.vexsoftware.votifier.fabric.platform.provider.MinecraftServerProvider;
 import com.vexsoftware.votifier.model.Vote;
 import net.minecraft.server.MinecraftServer;
 

@@ -20,27 +20,24 @@ package com.vexsoftware.votifier;
 
 import com.vexsoftware.votifier.commands.TestVoteCommand;
 import com.vexsoftware.votifier.commands.VotifierReloadCommand;
+import com.vexsoftware.votifier.util.CryptoUtil;
 import com.vexsoftware.votifier.folia.platform.FoliaScheduler;
 import com.vexsoftware.votifier.folia.util.FoliaUtils;
 import com.vexsoftware.votifier.model.Vote;
 import com.vexsoftware.votifier.model.VotifierEvent;
-import com.vexsoftware.votifier.net.VotifierServerBootstrap;
-import com.vexsoftware.votifier.net.VotifierSession;
-import com.vexsoftware.votifier.net.protocol.v1crypto.RSAIO;
-import com.vexsoftware.votifier.net.protocol.v1crypto.RSAKeygen;
-import com.vexsoftware.votifier.platform.VotifierPlugin;
+import com.vexsoftware.votifier.network.VotifierServerBootstrap;
+import com.vexsoftware.votifier.network.protocol.session.VotifierSession;
+import com.vexsoftware.votifier.platform.plugin.VotifierPlugin;
 import com.vexsoftware.votifier.platform.forwarding.BukkitPluginMessagingForwardingSink;
 import com.vexsoftware.votifier.platform.logger.LoggingAdapter;
 import com.vexsoftware.votifier.platform.logger.impl.JavaLoggingAdapter;
 import com.vexsoftware.votifier.platform.scheduler.BukkitScheduler;
 import com.vexsoftware.votifier.platform.scheduler.VotifierScheduler;
-import com.vexsoftware.votifier.support.forwarding.ForwardedVoteListener;
-import com.vexsoftware.votifier.support.forwarding.ForwardingVoteSink;
-import com.vexsoftware.votifier.support.forwarding.redis.RedisCredentials;
-import com.vexsoftware.votifier.support.forwarding.redis.RedisForwardingSink;
+import com.vexsoftware.votifier.platform.forwarding.listener.ForwardedVoteListener;
+import com.vexsoftware.votifier.platform.forwarding.sink.ForwardingVoteSink;
+import com.vexsoftware.votifier.redis.RedisCredentials;
+import com.vexsoftware.votifier.platform.forwarding.sink.redis.RedisForwardingSink;
 import com.vexsoftware.votifier.util.Constants;
-import com.vexsoftware.votifier.util.IOUtil;
-import com.vexsoftware.votifier.util.KeyCreator;
 import com.vexsoftware.votifier.util.TokenUtil;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SimplePie;
@@ -124,7 +121,7 @@ public class NuVotifierBukkit extends JavaPlugin implements VoteHandler, Votifie
          * likely will return the main server address instead of the address
          * assigned to the server.
          */
-        String hostAddr = Bukkit.getServer().getIp();
+        String hostAddr = getServer().getIp();
         if (hostAddr.isEmpty()) {
             hostAddr = "0.0.0.0";
         }
@@ -148,7 +145,7 @@ public class NuVotifierBukkit extends JavaPlugin implements VoteHandler, Votifie
                     throw new IOException("Unable to obtain the default configuration file!");
                 }
 
-                String cfgStr = new String(IOUtil.readAllBytes(defaults), StandardCharsets.UTF_8);
+                String cfgStr = new String(defaults.readAllBytes(), StandardCharsets.UTF_8);
                 String token = TokenUtil.newToken();
                 cfgStr = cfgStr.replace("%default_token%", token).replace("%ip%", hostAddr);
 
@@ -191,13 +188,13 @@ public class NuVotifierBukkit extends JavaPlugin implements VoteHandler, Votifie
                     throw new RuntimeException("Unable to create the RSA key folder " + rsaDirectory);
                 }
 
-                this.keyPair = RSAKeygen.generate(2048);
-                RSAIO.save(rsaDirectory, keyPair);
+                this.keyPair = CryptoUtil.generateKeyPair(2048);
+                CryptoUtil.save(rsaDirectory, keyPair);
             } else {
-                this.keyPair = RSAIO.load(rsaDirectory);
+                this.keyPair = CryptoUtil.load(rsaDirectory);
             }
         } catch (Exception ex) {
-            getLogger().log(Level.SEVERE, "Error reading configuration file or RSA tokens", ex);
+            getLogger().log(Level.SEVERE, "Could not load or create RSA keys", ex);
             return false;
         }
 
@@ -215,14 +212,14 @@ public class NuVotifierBukkit extends JavaPlugin implements VoteHandler, Votifie
         if (tokenSection != null) {
             Map<String, Object> websites = tokenSection.getValues(false);
             for (Map.Entry<String, Object> website : websites.entrySet()) {
-                tokens.put(website.getKey(), KeyCreator.createKeyFrom(website.getValue().toString()));
+                tokens.put(website.getKey(), TokenUtil.toKey(website.getValue().toString()));
                 getLogger().info("Loaded token for website: " + website.getKey());
             }
         } else {
             String token = TokenUtil.newToken();
             tokenSection = cfg.createSection("tokens");
             tokenSection.set("default", token);
-            tokens.put("default", KeyCreator.createKeyFrom(token));
+            tokens.put("default", TokenUtil.toKey(token));
 
             try {
                 cfg.save(config);
@@ -418,7 +415,7 @@ public class NuVotifierBukkit extends JavaPlugin implements VoteHandler, Votifie
     @Override
     public void onVoteReceived(final Vote vote, VotifierSession.ProtocolVersion protocolVersion, String remoteAddress) {
         if (debug) {
-            getLogger().info("Got a " + protocolVersion.humanReadable
+            getLogger().info("Got a " + protocolVersion.getHumanReadable()
                     + " vote record from " + remoteAddress + " -> " + vote);
         }
 
@@ -440,12 +437,12 @@ public class NuVotifierBukkit extends JavaPlugin implements VoteHandler, Votifie
     }
 
     @Override
-    public void onForward(final Vote v) {
+    public void onForward(final Vote vote) {
         if (debug) {
-            getLogger().info("Got a forwarded vote -> " + v);
+            getLogger().info("Got a forwarded vote -> " + vote);
         }
 
-        fireVotifierEvent(v);
+        fireVotifierEvent(vote);
     }
 
     private void fireVotifierEvent(Vote vote) {

@@ -1,27 +1,26 @@
 package com.vexsoftware.votifier.fabric;
 
+import com.vexsoftware.votifier.network.VotifierServerBootstrap;
+import com.vexsoftware.votifier.util.CryptoUtil;
 import com.vexsoftware.votifier.fabric.configuration.FabricConfig;
 import com.vexsoftware.votifier.fabric.configuration.loader.ConfigLoader;
 import com.vexsoftware.votifier.fabric.event.VoteListener;
 import com.vexsoftware.votifier.fabric.event.listener.CommandRegistrationCallbackListener;
 import com.vexsoftware.votifier.fabric.event.listener.DefaultVoteListener;
-import com.vexsoftware.votifier.fabric.forwarding.FabricMessagingForwardingSink;
-import com.vexsoftware.votifier.fabric.utils.provider.MinecraftServerProvider;
+import com.vexsoftware.votifier.fabric.platform.forwarding.FabricMessagingForwardingSink;
+import com.vexsoftware.votifier.fabric.platform.provider.MinecraftServerProvider;
 import com.vexsoftware.votifier.model.Vote;
-import com.vexsoftware.votifier.net.VotifierServerBootstrap;
-import com.vexsoftware.votifier.net.VotifierSession;
-import com.vexsoftware.votifier.net.protocol.v1crypto.RSAIO;
-import com.vexsoftware.votifier.net.protocol.v1crypto.RSAKeygen;
-import com.vexsoftware.votifier.platform.VotifierPlugin;
+import com.vexsoftware.votifier.network.protocol.session.VotifierSession;
+import com.vexsoftware.votifier.platform.plugin.VotifierPlugin;
 import com.vexsoftware.votifier.platform.logger.LoggingAdapter;
 import com.vexsoftware.votifier.platform.logger.impl.SLF4JLoggingAdapter;
 import com.vexsoftware.votifier.platform.scheduler.VotifierScheduler;
 import com.vexsoftware.votifier.platform.scheduler.impl.StandaloneVotifierScheduler;
-import com.vexsoftware.votifier.support.forwarding.ForwardedVoteListener;
-import com.vexsoftware.votifier.support.forwarding.ForwardingVoteSink;
-import com.vexsoftware.votifier.support.forwarding.redis.RedisCredentials;
-import com.vexsoftware.votifier.support.forwarding.redis.RedisForwardingSink;
-import com.vexsoftware.votifier.util.KeyCreator;
+import com.vexsoftware.votifier.platform.forwarding.listener.ForwardedVoteListener;
+import com.vexsoftware.votifier.platform.forwarding.sink.ForwardingVoteSink;
+import com.vexsoftware.votifier.redis.RedisCredentials;
+import com.vexsoftware.votifier.platform.forwarding.sink.redis.RedisForwardingSink;
+import com.vexsoftware.votifier.util.TokenUtil;
 import net.fabricmc.api.DedicatedServerModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
@@ -106,10 +105,10 @@ public class AzuVotifierFabric implements DedicatedServerModInitializer, Votifie
                     return false;
                 }
 
-                this.keyPair = RSAKeygen.generate(2048);
-                RSAIO.save(rsaDirectory, keyPair);
+                this.keyPair = CryptoUtil.generateKeyPair(2048);
+                CryptoUtil.save(rsaDirectory, keyPair);
             } else {
-                this.keyPair = RSAIO.load(rsaDirectory);
+                this.keyPair = CryptoUtil.load(rsaDirectory);
             }
         } catch (Exception ex) {
             logger.error("Error creating or reading RSA tokens", ex);
@@ -118,7 +117,7 @@ public class AzuVotifierFabric implements DedicatedServerModInitializer, Votifie
 
         this.debug = config.debug;
         config.tokens.forEach((s, t) -> {
-            tokens.put(s, KeyCreator.createKeyFrom(t));
+            tokens.put(s, TokenUtil.toKey(t));
             logger.info("Loaded token for website {}", s);
         });
 
@@ -273,7 +272,7 @@ public class AzuVotifierFabric implements DedicatedServerModInitializer, Votifie
             var player = server.getPlayerManager().getPlayer(username);
 
             if (player == null) {
-                logger.info("Skipping vote from {} on this server as player is offline.", username);
+                logger.info("Skipping vote from {} on this server as the player is offline.", username);
                 return;
             }
         }

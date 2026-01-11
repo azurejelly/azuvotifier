@@ -2,8 +2,8 @@ package com.vexsoftware.votifier.sponge.platform.forwarding;
 
 import com.vexsoftware.votifier.platform.logger.LoggingAdapter;
 import com.vexsoftware.votifier.sponge.NuVotifierSponge;
-import com.vexsoftware.votifier.support.forwarding.AbstractPluginMessagingForwardingSink;
-import com.vexsoftware.votifier.support.forwarding.ForwardedVoteListener;
+import com.vexsoftware.votifier.platform.forwarding.sink.messaging.AbstractPluginMessagingForwardingSink;
+import com.vexsoftware.votifier.platform.forwarding.listener.ForwardedVoteListener;
 import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.network.ServerConnectionState;

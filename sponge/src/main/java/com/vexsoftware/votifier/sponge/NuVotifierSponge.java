@@ -2,12 +2,11 @@ package com.vexsoftware.votifier.sponge;
 
 import com.google.inject.Inject;
 import com.vexsoftware.votifier.VoteHandler;
+import com.vexsoftware.votifier.util.CryptoUtil;
 import com.vexsoftware.votifier.model.Vote;
-import com.vexsoftware.votifier.net.VotifierServerBootstrap;
-import com.vexsoftware.votifier.net.VotifierSession;
-import com.vexsoftware.votifier.net.protocol.v1crypto.RSAIO;
-import com.vexsoftware.votifier.net.protocol.v1crypto.RSAKeygen;
-import com.vexsoftware.votifier.platform.VotifierPlugin;
+import com.vexsoftware.votifier.network.VotifierServerBootstrap;
+import com.vexsoftware.votifier.network.protocol.session.VotifierSession;
+import com.vexsoftware.votifier.platform.plugin.VotifierPlugin;
 import com.vexsoftware.votifier.platform.logger.LoggingAdapter;
 import com.vexsoftware.votifier.platform.scheduler.VotifierScheduler;
 import com.vexsoftware.votifier.sponge.commands.TestVoteCommand;
@@ -19,11 +18,11 @@ import com.vexsoftware.votifier.sponge.platform.forwarding.SpongePluginMessaging
 import com.vexsoftware.votifier.sponge.platform.logger.Log4JLoggingAdapter;
 import com.vexsoftware.votifier.sponge.platform.scheduler.SpongeScheduler;
 import com.vexsoftware.votifier.sponge.util.Constants;
-import com.vexsoftware.votifier.support.forwarding.ForwardedVoteListener;
-import com.vexsoftware.votifier.support.forwarding.ForwardingVoteSink;
-import com.vexsoftware.votifier.support.forwarding.redis.RedisCredentials;
-import com.vexsoftware.votifier.support.forwarding.redis.RedisForwardingSink;
-import com.vexsoftware.votifier.util.KeyCreator;
+import com.vexsoftware.votifier.platform.forwarding.listener.ForwardedVoteListener;
+import com.vexsoftware.votifier.platform.forwarding.sink.ForwardingVoteSink;
+import com.vexsoftware.votifier.redis.RedisCredentials;
+import com.vexsoftware.votifier.platform.forwarding.sink.redis.RedisForwardingSink;
+import com.vexsoftware.votifier.util.TokenUtil;
 import org.apache.logging.log4j.Logger;
 import org.bstats.charts.SimplePie;
 import org.bstats.sponge.Metrics;
@@ -98,10 +97,10 @@ public class NuVotifierSponge implements VoteHandler, VotifierPlugin, ForwardedV
                     throw new RuntimeException("Unable to create the RSA key folder " + rsaDirectory);
                 }
 
-                this.keyPair = RSAKeygen.generate(2048);
-                RSAIO.save(rsaDirectory, keyPair);
+                this.keyPair = CryptoUtil.generateKeyPair(2048);
+                CryptoUtil.save(rsaDirectory, keyPair);
             } else {
-                this.keyPair = RSAIO.load(rsaDirectory);
+                this.keyPair = CryptoUtil.load(rsaDirectory);
             }
         } catch (Exception ex) {
             logger.error("Error creating or reading RSA tokens", ex);
@@ -112,7 +111,7 @@ public class NuVotifierSponge implements VoteHandler, VotifierPlugin, ForwardedV
 
         // Load Votifier tokens.
         config.tokens.forEach((w, t) -> {
-            tokens.put(w, KeyCreator.createKeyFrom(t));
+            tokens.put(w, TokenUtil.toKey(t));
             logger.info("Loaded token for website: {}", w);
         });
 

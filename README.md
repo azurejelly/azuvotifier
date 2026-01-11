@@ -67,7 +67,7 @@ $ docker run -p 8192:8192 \
 
 This will:
 - Expose port 8192 on the host machine;
-- Map `/etc/nuvotifier` (host) to `/app/config` (container) using bind mounts;
+- Map `/etc/nuvotifier` (host) to `/app/config` (container) using socket mounts;
 - Restart the container automatically unless stopped;
 - Name the container `nuvotifier`;
 - Use the `azurejelly/standalone-nuvotifier:latest` image;

@@ -5,10 +5,10 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.vexsoftware.votifier.fabric.AzuVotifierFabric;
-import com.vexsoftware.votifier.fabric.utils.CommandResult;
-import com.vexsoftware.votifier.fabric.utils.FabricUtils;
+import com.vexsoftware.votifier.fabric.util.CommandResult;
+import com.vexsoftware.votifier.fabric.util.FabricUtil;
 import com.vexsoftware.votifier.model.Vote;
-import com.vexsoftware.votifier.net.VotifierSession;
+import com.vexsoftware.votifier.network.protocol.session.VotifierSession;
 import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
@@ -55,7 +55,7 @@ public class VotifierCommand {
     }
 
     private static int info(CommandContext<ServerCommandSource> ctx) {
-        var version = FabricUtils.getModVersion("azuvotifier");
+        var version = FabricUtil.getModVersion("azuvotifier");
         var text = Text.literal("This server is running ")
                 .withColor(0xf3b0ff)
                 .append(
@@ -70,9 +70,9 @@ public class VotifierCommand {
                 );
 
         if (Permissions.check(ctx.getSource(), "azuvotifier.more-info", 2)) {
-            var minecraft = FabricUtils.getMinecraftVersion();
-            var fabric = FabricUtils.getModVersion("fabric-api");
-            var loader = FabricUtils.getModVersion("fabricloader");
+            var minecraft = FabricUtil.getMinecraftVersion();
+            var fabric = FabricUtil.getModVersion("fabric-api");
+            var loader = FabricUtil.getModVersion("fabricloader");
 
             text.append(
                     Text.literal("\nServer: ")

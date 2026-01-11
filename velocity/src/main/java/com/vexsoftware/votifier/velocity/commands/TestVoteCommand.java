@@ -3,7 +3,7 @@ package com.vexsoftware.votifier.velocity.commands;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.command.SimpleCommand;
 import com.vexsoftware.votifier.model.Vote;
-import com.vexsoftware.votifier.net.VotifierSession;
+import com.vexsoftware.votifier.network.protocol.session.VotifierSession;
 import com.vexsoftware.votifier.util.ArgsToVote;
 import com.vexsoftware.votifier.velocity.NuVotifierVelocity;
 import net.kyori.adventure.text.Component;
@@ -30,8 +30,12 @@ public class TestVoteCommand implements SimpleCommand {
             return;
         }
 
-        plugin.onVoteReceived(v, VotifierSession.ProtocolVersion.TEST, "localhost.test");
-        sender.sendMessage(Component.text("Test vote executed: " + v, NamedTextColor.GREEN));
+        try {
+            plugin.onVoteReceived(v, VotifierSession.ProtocolVersion.TEST, "localhost.test");
+            sender.sendMessage(Component.text("Test vote executed: " + v, NamedTextColor.GREEN));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

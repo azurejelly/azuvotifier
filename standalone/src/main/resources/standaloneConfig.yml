@@ -6,7 +6,7 @@ host: 0.0.0.0
 port: 8192
 
 # Whether or not to print debug messages. In a production system, this should be set to false.
-# This is useful when initially setting up NuVotifier to ensure votes are being delivered.
+# This is useful when initially setting up azuvotifier to ensure votes are being delivered.
 debug: true
 
 # All tokens, labeled by the serviceName of each server list.
@@ -29,7 +29,7 @@ redis:
   uri: "" # will have priority over the other options
   channel: nuvotifier:votes
 
-# Configuration section for all vote forwarding to NuVotifier
+# Configuration section for all vote forwarding to azuvotifier
 forwarding:
   # Specify servers to proxy votes for.
   lobby:

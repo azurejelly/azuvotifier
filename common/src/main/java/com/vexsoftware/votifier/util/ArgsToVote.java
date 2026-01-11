@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Deprecated
 public class ArgsToVote {
 
     private static final Pattern ARGUMENT_PATTERN = Pattern.compile("([a-zA-Z]+)=(\\S*)");
