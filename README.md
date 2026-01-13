@@ -33,7 +33,8 @@ Drag and drop the downloaded JAR into your `plugins/` folder. You should've down
 If you've done everything right, it should work out of the box.
 
 ### Fabric
-Download [Fabric API](https://modrinth.com/mod/fabric-api), then drag and drop both JARs into your `mods/` folder.
+Drag and drop the downloaded JAR into your `mods/` folder. You'll also need to download and install
+[Fabric API](https://modrinth.com/mod/fabric-api).
 
 ### Standalone
 Open up the terminal, go into the directory the previously downloaded JAR is at, and then run it like this:
