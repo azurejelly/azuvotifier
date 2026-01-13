@@ -13,14 +13,14 @@ RUN --mount=type=cache,target=/home/gradle/.gradle/caches \
 COPY . .
 
 RUN --mount=type=cache,target=/home/gradle/.gradle/caches \
-    ./gradlew --no-daemon nuvotifier-standalone:build
+    ./gradlew --no-daemon azuvotifier-standalone:build
 
 FROM eclipse-temurin:21-jre-alpine
 
 WORKDIR /app
 
-COPY --from=build "/build/standalone/build/libs/nuvotifier-standalone-*-dist.jar" ./nuvotifier-standalone.jar
+COPY --from=build "/build/standalone/build/libs/azuvotifier-standalone-*-dist.jar" ./azuvotifier-standalone.jar
 
 EXPOSE 8192/tcp
 
-ENTRYPOINT ["java", "-jar", "nuvotifier-standalone.jar"]
+ENTRYPOINT ["java", "-jar", "azuvotifier-standalone.jar"]

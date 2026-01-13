@@ -40,6 +40,7 @@ public class VotifierServerBuilder {
         if (!(v1Key.getPrivate() instanceof RSAKey)) {
             throw new IllegalArgumentException("Provided key is not an RSA key.");
         }
+
         return this;
     }
 
