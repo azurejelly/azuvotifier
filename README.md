@@ -39,21 +39,21 @@ Drag and drop the downloaded JAR into your `mods/` folder. You'll also need to d
 ### Standalone
 Open up the terminal, go into the directory the previously downloaded JAR is at, and then run it like this:
 ```shell
-$ java -Xms512M -Xmx512M -jar nuvotifier-standalone.jar
+$ java -Xms512M -Xmx512M -jar azuvotifier-standalone.jar
 ```
 
 You can also use command line arguments to configure some settings, such as the hostname:
 ```shell
-$ java -Xms512M -Xmx512M -jar nuvotifier-standalone.jar --host 127.0.0.1 --config /etc/nuvotifier/
+$ java -Xms512M -Xmx512M -jar azuvotifier-standalone.jar --host 127.0.0.1 --config /etc/nuvotifier/
 ```
 
 To get a full list of options, run:
 ```shell
-$ java -jar nuvotifier-standalone.jar --help
+$ java -jar azuvotifier-standalone.jar --help
 ```
 
 ### Standalone with Docker
-A Docker image for the standalone NuVotifier implementation is available at [Docker Hub](https://hub.docker.com/r/azurejelly/standalone-nuvotifier). To pull it, run:
+A Docker image for the standalone version is available at [Docker Hub](https://hub.docker.com/r/azurejelly/standalone-nuvotifier). To pull it, run:
 ```shell
 $ docker pull azurejelly/standalone-nuvotifier:latest   # for the latest stable release
 $ docker pull azurejelly/standalone-nuvotifier:unstable # for the latest commit on master
