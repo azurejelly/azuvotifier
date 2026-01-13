@@ -1,5 +1,7 @@
 # azuvotifier ![Build status](https://img.shields.io/github/actions/workflow/status/azurejelly/azuvotifier/build.yml?logo=githubactions&logoColor=ffffff) ![Docker Pulls](https://img.shields.io/docker/pulls/azurejelly/standalone-nuvotifier?logo=docker) [![Modrinth](https://img.shields.io/modrinth/dt/azuvotifier?logo=modrinth&color=00AF5C)](https://modrinth.com/plugin/azuvotifier)
-A fork of NuVotifier with Redis forwarding support, a standalone server implementation and Sponge 11+ support. From the original README:
+
+A fork of NuVotifier with various enhancements, such as Redis forwarding and support for additional platforms.
+From the original README:
 > NuVotifier is a secure alternative to using the original Votifier project.
 > NuVotifier will work in place of Votifier - any vote listener that supports
 > Votifier will also support NuVotifier.
@@ -14,23 +16,24 @@ azuvotifier is currently supported on the following platforms:
 - CraftBukkit, Spigot, Paper, Pufferfish or Purpur (1.8.8+)
   - Older versions might work but no support will be provided
   - Any fork without significant breaking changes should also work
-- Folia (1.21.5+)*
-- Fabric (1.21.10+)*
+- Folia (1.21.5+)
+- Fabric (1.21.10)
 - Sponge 11 (1.20+)
 - BungeeCord/Waterfall
 - Velocity
 
-*support for Folia and Fabric is experimental. Please let me know if it breaks!
-
-It can also run as a standalone application.
+It can also run as a standalone application using the `redis` and `proxy` forwarding methods.
 
 ## Running
 You can get the latest release directly from [GitHub](https://github.com/azurejelly/azuvotifier/releases) or [Modrinth](https://modrinth.com/plugin/azuvotifier).
 Then, follow the instructions for your server software or the standalone version:
 
-### Bukkit, Sponge, BungeeCord and Velocity
+### Bukkit, Folia, Sponge, BungeeCord and Velocity
 Drag and drop the downloaded JAR into your `plugins/` folder. You should've downloaded the JAR that has your server software in its name.
-If you've done everything right, it should work out of the box. If it doesn't, feel free to ask for help [here](https://github.com/azurejelly/azuvotifier/issues).
+If you've done everything right, it should work out of the box.
+
+### Fabric
+Download [Fabric API](https://modrinth.com/mod/fabric-api), then drag and drop both JARs into your `mods/` folder.
 
 ### Standalone
 Open up the terminal, go into the directory the previously downloaded JAR is at, and then run it like this:
@@ -77,4 +80,4 @@ This will:
 If you want to use Docker Compose, an example [`docker-compose.yml`](https://github.com/azurejelly/azuvotifier/blob/master/docker-compose.yml) file is available on the repository.
 
 ## License
-AzuVotifier is GNU GPLv3 licensed. This project's license can be viewed [here](LICENSE).
+azuvotifier is GNU GPLv3 licensed. This project's license can be viewed [here](LICENSE).
