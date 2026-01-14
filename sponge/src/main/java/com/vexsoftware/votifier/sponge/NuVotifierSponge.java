@@ -276,14 +276,6 @@ public class NuVotifierSponge implements VoteHandler, VotifierPlugin, ForwardedV
             logger.info("Got a {} vote record from {} -> {}", protocolVersion.getHumanReadable(), remoteAddress, vote);
         }
 
-        if (config.experimental.skipOfflinePlayers) {
-            String name = vote.getUsername();
-            if (Sponge.server().player(name).isEmpty()) {
-                logger.info("Skipping vote from {} on this server as player is offline.", name);
-                return;
-            }
-        }
-
         this.fireVoteEvent(vote);
     }
 
@@ -310,6 +302,14 @@ public class NuVotifierSponge implements VoteHandler, VotifierPlugin, ForwardedV
     }
 
     private void fireVoteEvent(final Vote vote) {
+        if (config.experimental.skipOfflinePlayers) {
+            String name = vote.getUsername();
+            if (Sponge.server().player(name).isEmpty()) {
+                logger.info("Skipping vote from {} on this server as player is offline.", name);
+                return;
+            }
+        }
+
         Sponge.server()
                 .scheduler()
                 .submit(Task.builder()
