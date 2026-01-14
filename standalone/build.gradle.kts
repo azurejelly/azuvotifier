@@ -1,13 +1,7 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
-    id("java")
     alias(libs.plugins.shadow)
-    `java-library`
-}
-
-repositories {
-    mavenCentral()
 }
 
 dependencies {

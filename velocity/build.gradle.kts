@@ -7,7 +7,10 @@ plugins {
 }
 
 repositories {
-    maven("https://repo.papermc.io/repository/maven-public/")
+    maven {
+        name = "Paper"
+        url = uri("https://repo.papermc.io/repository/maven-public/")
+    }
 }
 
 dependencies {
@@ -61,6 +64,7 @@ tasks.withType(xyz.jpenilla.runtask.task.AbstractRun::class) {
         vendor = JvmVendorSpec.JETBRAINS
         languageVersion = JavaLanguageVersion.of(21)
     }
+
     jvmArgs("-XX:+AllowEnhancedClassRedefinition")
 }
 

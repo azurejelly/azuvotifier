@@ -9,7 +9,10 @@ plugins {
 }
 
 repositories {
-    maven("https://repo.papermc.io/repository/maven-public")
+    maven {
+        name = "Paper"
+        url = uri("https://repo.papermc.io/repository/maven-public/")
+    }
 }
 
 dependencies {

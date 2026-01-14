@@ -7,16 +7,26 @@ plugins {
 }
 
 subprojects {
-    apply(plugin = "java")
-    apply(plugin = "maven-publish")
+    apply(plugin = "azuvotifier.java-conventions")
+    apply(plugin = "azuvotifier.publishing-conventions")
 
     group = rootProject.group
     version = rootProject.version
 
     repositories {
         mavenCentral()
-        maven("https://repo.glaremasters.me/repository/public")
-        maven("https://oss.sonatype.org/content/repositories/snapshots/")
+        maven {
+            name = "Glaremasters"
+            url = uri("https://repo.glaremasters.me/repository/public")
+        }
+        maven {
+            name = "Sonatype"
+            url = uri("https://oss.sonatype.org/content/repositories/snapshots/")
+        }
+        maven {
+            name = "azurejelly"
+            url = uri("https://repo.azuuure.dev/repository/maven-proxy/")
+        }
     }
 
     dependencies {
@@ -32,53 +42,9 @@ subprojects {
         testRuntimeOnly(libs.junit.launcher)
     }
 
-    configurations.all {
-        resolutionStrategy {
-            cacheChangingModulesFor(5, "MINUTES")
-        }
-    }
-
     tasks {
-        configure<JavaPluginExtension> {
-            toolchain {
-                languageVersion.set(JavaLanguageVersion.of(21))
-            }
-
-            disableAutoTargetJvm()
-            withJavadocJar()
-            withSourcesJar()
-        }
-
-        withType<JavaCompile> {
-            val disabledLint = listOf("processing", "path", "fallthrough", "serial")
-
-            options.release.set(11)
-            options.compilerArgs.addAll(listOf("-Xlint:all") + disabledLint.map { "-Xlint:-$it" })
-            options.isDeprecation = true
-            options.encoding = "UTF-8"
-            options.compilerArgs.add("-parameters")
-        }
-
-        withType<Test>().configureEach {
+        test {
             useJUnitPlatform()
-        }
-
-        withType<Javadoc>().configureEach {
-            options.encoding = "UTF-8"
-            (options as StandardJavadocDocletOptions).apply {
-                addStringOption("Xdoclint:none", "-quiet")
-                tags(
-                    "apiNote:a:API Note:",
-                    "implSpec:a:Implementation Requirements:",
-                    "implNote:a:Implementation Note:"
-                )
-            }
-        }
-
-        named<Jar>("jar") {
-            manifest {
-                attributes("Implementation-Version" to rootProject.version)
-            }
         }
     }
 }
