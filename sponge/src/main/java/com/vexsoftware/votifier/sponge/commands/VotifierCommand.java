@@ -3,8 +3,10 @@ package com.vexsoftware.votifier.sponge.commands;
 import com.vexsoftware.votifier.sponge.NuVotifierSponge;
 import com.vexsoftware.votifier.sponge.util.Constants;
 import com.vexsoftware.votifier.sponge.util.SpongeUtil;
+import com.vexsoftware.votifier.util.CommonConstants;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.TextColor;
 import org.spongepowered.api.Platform;
 import org.spongepowered.api.command.Command;
@@ -55,7 +57,8 @@ public class VotifierCommand implements CommandExecutor {
                 Component.text("\nModrinth: ")
                         .color(TextColor.color(0xF3B0FF))
         ).append(
-                Component.text("https://modrinth.com/project/azuvotifier")
+                Component.text(CommonConstants.MODRINTH_URL)
+                        .clickEvent(ClickEvent.openUrl(CommonConstants.MODRINTH_URL))
                         .color(TextColor.color(0xE867FF))
         );
 

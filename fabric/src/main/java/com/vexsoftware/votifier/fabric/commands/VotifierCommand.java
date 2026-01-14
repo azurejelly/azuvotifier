@@ -9,12 +9,15 @@ import com.vexsoftware.votifier.fabric.util.CommandResult;
 import com.vexsoftware.votifier.fabric.util.FabricUtil;
 import com.vexsoftware.votifier.model.Vote;
 import com.vexsoftware.votifier.network.protocol.session.VotifierSession;
+import com.vexsoftware.votifier.util.CommonConstants;
 import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.text.ClickEvent;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 
+import java.net.URI;
 import java.time.Instant;
 import java.util.List;
 
@@ -87,8 +90,12 @@ public class VotifierCommand {
                 Text.literal("\nModrinth: ")
                         .withColor(0xf3b0ff)
         ).append(
-                Text.literal("https://modrinth.com/project/azuvotifier")
-                        .withColor(0xe867ff)
+                Text.literal(CommonConstants.MODRINTH_URL)
+                        .styled(s -> s.withClickEvent(
+                                new ClickEvent.OpenUrl(
+                                        URI.create(CommonConstants.MODRINTH_URL)
+                                )
+                        )).withColor(0xe867ff)
         );
 
         ctx.getSource().sendMessage(text);
