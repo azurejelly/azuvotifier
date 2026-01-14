@@ -26,6 +26,7 @@ public class MinecraftServerProvider {
      *
      * @return a {@link MinecraftServer} instance.
      */
+    @SuppressWarnings({"LombokGetterMayBeUsed", "RedundantSuppression"})
     public static MinecraftServer getServer() {
         return server;
     }

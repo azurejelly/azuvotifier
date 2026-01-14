@@ -1,10 +1,12 @@
 package com.vexsoftware.votifier.fabric.platform.forwarding.packet;
 
+import lombok.Getter;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.packet.CustomPayload;
 import org.jetbrains.annotations.NotNull;
 
+@Getter
 public class FabricVotifierPacket implements CustomPayload {
 
     public static CustomPayload.Id<FabricVotifierPacket> PACKET_ID;
@@ -20,10 +22,6 @@ public class FabricVotifierPacket implements CustomPayload {
 
     public void write(RegistryByteBuf buf) {
         buf.writeBytes(data);
-    }
-
-    public byte[] getData() {
-        return this.data;
     }
 
     @Override

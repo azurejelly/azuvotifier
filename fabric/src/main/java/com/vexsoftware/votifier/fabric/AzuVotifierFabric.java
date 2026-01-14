@@ -21,6 +21,7 @@ import com.vexsoftware.votifier.platform.scheduler.impl.StandaloneVotifierSchedu
 import com.vexsoftware.votifier.redis.RedisCredentials;
 import com.vexsoftware.votifier.util.CryptoUtil;
 import com.vexsoftware.votifier.util.TokenUtil;
+import lombok.Getter;
 import net.fabricmc.api.DedicatedServerModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
@@ -38,8 +39,9 @@ import java.util.Map;
 
 public class AzuVotifierFabric implements DedicatedServerModInitializer, VotifierPlugin, ForwardedVoteListener {
 
-    private static AzuVotifierFabric instance;
+    @Getter private static AzuVotifierFabric instance;
 
+    @Getter
     private Logger logger;
     private LoggingAdapter loggingAdapter;
     private Map<String, Key> tokens;
@@ -75,14 +77,6 @@ public class AzuVotifierFabric implements DedicatedServerModInitializer, Votifie
     public void stop(MinecraftServer server) {
         halt();
         logger.info("azuvotifier disabled.");
-    }
-
-    public static AzuVotifierFabric getInstance() {
-        return instance;
-    }
-
-    public Logger getLogger() {
-        return logger;
     }
 
     public boolean init() {
