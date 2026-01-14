@@ -8,6 +8,7 @@ import org.spongepowered.api.command.CommandExecutor;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.parameter.CommandContext;
 
+@Deprecated
 public class VotifierReloadCommand implements CommandExecutor {
 
     private final NuVotifierSponge plugin;

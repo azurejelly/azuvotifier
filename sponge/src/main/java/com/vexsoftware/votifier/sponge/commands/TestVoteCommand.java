@@ -10,6 +10,7 @@ import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.parameter.CommandContext;
 import org.spongepowered.api.command.parameter.Parameter;
 
+@Deprecated
 public class TestVoteCommand implements CommandExecutor {
 
     private final NuVotifierSponge plugin;
