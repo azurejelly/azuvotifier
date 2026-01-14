@@ -72,7 +72,7 @@ tasks {
 }
 
 dependencies {
-    compileOnly(libs.spongeapi)
+    compileOnly(libs.sponge)
     implementation(libs.jedis)
     implementation(libs.bstats.sponge)
 

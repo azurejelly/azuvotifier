@@ -1,58 +1,82 @@
+[versions]
+# server software
+sponge = "7.2.0"
+paper = "1.21.11-R0.1-SNAPSHOT"
+
+# fabric
+fabric-minecraft = "1.21.10"
+fabric-api = "0.138.3+1.21.10"
+fabric-loader = "0.18.1"
+fabric-yarn = "1.21.10+build.3"
+fabric-permissions = "0.5.0"
+
+# proxies
+bungeecord = "1.21-R0.1-SNAPSHOT"
+velocity = "3.4.0-SNAPSHOT"
+
+# other dependencies
+lombok = "1.18.42"
+slf4j = "2.0.16"
+bstats = "3.1.0"
+netty = "4.1.116.Final"
+apache-cli = "1.9.0"
+jackson-yaml = "2.17.2"
+configurate = "4.2.0"
+guava = "28.1-jre"
+json = "20180130"
+jedis = "5.2.0"
+gson = "2.9.0"
+
+# test dependencies
+junit = "5.10.0"
+mockito = "4.3.1"
+
+# gradle plugins
+fabric-loom = "1.14-SNAPSHOT"
+shadow = "9.2.2"
+sponge-gradle-plugin = "2.2.0"
+plugin-yml = "0.6.0"
+run-task = "2.3.1"
+idea = "1.2"
+
 [plugins]
-shadow = "com.gradleup.shadow:9.2.2"
-sponge = "org.spongepowered.gradle.plugin:2.2.0"
+shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }
+sponge = { id = "org.spongepowered.gradle.plugin", version.ref = "sponge-gradle-plugin" }
 pluginyml-bukkit = { id = "net.minecrell.plugin-yml.bukkit", version.ref = "plugin-yml" }
 pluginyml-bungee = { id = "net.minecrell.plugin-yml.bungee", version.ref = "plugin-yml" }
 run-paper = { id = "xyz.jpenilla.run-paper", version.ref = "run-task" }
 run-velocity = { id = "xyz.jpenilla.run-velocity", version.ref = "run-task" }
 run-waterfall = { id = "xyz.jpenilla.run-waterfall", version.ref = "run-task" }
-idea = "org.jetbrains.gradle.plugin.idea-ext:1.2"
+idea = { id = "org.jetbrains.gradle.plugin.idea-ext", version.ref = "idea" }
 fabric-loom = { id = "fabric-loom", version.ref = "fabric-loom" }
 
-[versions]
-netty = "4.1.116.Final"
-mockito = "4.3.1"
-junit-jupiter = "5.10.0"
-slf4j = "2.0.16"
-plugin-yml = "0.6.0"
-run-task = "2.3.1"
-bstats = "3.1.0"
-
-# fabric - see https://fabricmc.net/develop
-fabric-minecraft = "1.21.10"
-fabric-api = "0.138.3+1.21.10"
-fabric-loader = "0.18.1"
-fabric-loom = "1.14-SNAPSHOT"
-fabric-yarn = "1.21.10+build.3"
-fabric-permissions = "0.5.0"
-
 [libraries]
+lombok = { group = "org.projectlombok", name = "lombok", version.ref = "lombok" }
 fabric-minecraft = { module = "com.mojang:minecraft", version.ref = "fabric-minecraft" }
 fabric-api = { module = "net.fabricmc.fabric-api:fabric-api", version.ref = "fabric-api" }
 fabric-yarn = { module = "net.fabricmc:yarn", version.ref = "fabric-yarn" }
 fabric-loader = { module = "net.fabricmc:fabric-loader", version.ref = "fabric-loader" }
 fabric-permissions = { module = "me.lucko:fabric-permissions-api", version.ref = "fabric-permissions" }
-velocity = "com.velocitypowered:velocity-api:3.4.0-SNAPSHOT"
-gson = "com.google.code.gson:gson:2.9.0"
-spongeapi = "org.spongepowered:spongeapi:7.2.0"
+velocity = { module = "com.velocitypowered:velocity-api", version.ref = "velocity" }
+gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
+sponge = { module = "org.spongepowered:spongeapi", version.ref = "sponge" }
 netty-handler = { module = "io.netty:netty-handler", version.ref = "netty" }
 netty-transport-native-epoll = { module = "io.netty:netty-transport-native-epoll", version.ref = "netty" }
-findbugs = "com.google.code.findbugs:jsr305:3.0.2"
-jedis = "redis.clients:jedis:5.2.0"
-bungeecord = "net.md-5:bungeecord-api:1.21-R0.1-SNAPSHOT"
-paper = "io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT"
-json = "org.json:json:20180130"
-guava = "com.google.guava:guava:28.1-jre"
-configurate = "org.spongepowered:configurate-yaml:4.2.0"
+jedis = { module = "redis.clients:jedis", version.ref = "jedis" }
+bungeecord = { module = "net.md-5:bungeecord-api", version.ref = "bungeecord" }
+paper = { module = "io.papermc.paper:paper-api", version.ref = "paper" }
+json = { module = "org.json:json", version.ref = "json" }
+guava = { module = "com.google.guava:guava", version.ref = "guava" }
+configurate = { module = "org.spongepowered:configurate-yaml", version.ref = "configurate" }
 mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }
 mockito-junit-jupiter = { module = "org.mockito:mockito-junit-jupiter", version.ref = "mockito" }
-junit-juniter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit-jupiter" }
-junit-jupiter-params = { module = "org.junit.jupiter:junit-jupiter-params", version.ref = "junit-jupiter" }
-junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit-jupiter"}
+junit-bom = { group = "org.junit", name = "junit-bom", version.ref = "junit" }
+junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter" }
+junit-launcher = { group = "org.junit.platform", name = "junit-platform-launcher" }
 slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
 slf4j-simple = { module = "org.slf4j:slf4j-simple", version.ref = "slf4j" }
-jackson-yaml = "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.17.2"
-apache-cli = "commons-cli:commons-cli:1.9.0"
+jackson-yaml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml", version.ref = "jackson-yaml" }
+apache-cli = { module = "commons-cli:commons-cli", version.ref = "apache-cli" }
 bstats-bukkit = { module = "org.bstats:bstats-bukkit", version.ref = "bstats" }
 bstats-bungeecord = { module = "org.bstats:bstats-bungeecord", version.ref = "bstats" }
 bstats-velocity = { module = "org.bstats:bstats-velocity", version.ref = "bstats" }
@@ -61,5 +85,4 @@ bstats-sponge = { module = "org.bstats:bstats-sponge", version.ref = "bstats" }
 [bundles]
 netty = [ "netty-handler", "netty-transport-native-epoll" ]
 mockito = [ "mockito-core", "mockito-junit-jupiter" ]
-junit-jupiter = [ "junit-juniter-api", "junit-jupiter-engine", "junit-jupiter-params" ]
 slf4j = [ "slf4j-api", "slf4j-simple" ]

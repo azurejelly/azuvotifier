@@ -20,12 +20,16 @@ subprojects {
     }
 
     dependencies {
-        compileOnly(rootProject.libs.findbugs)
-        testImplementation(rootProject.libs.bundles.junit.jupiter)
-        testImplementation(rootProject.libs.bundles.mockito)
+        val libs = rootProject.libs
 
-        // as per https://github.com/gradle/gradle/issues/34512#issuecomment-3145182665
-        testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+        compileOnly(libs.lombok)
+        annotationProcessor(libs.lombok)
+
+        testCompileOnly(libs.lombok)
+        testAnnotationProcessor(libs.lombok)
+        testImplementation(platform(libs.junit.bom))
+        testImplementation(libs.junit.jupiter)
+        testRuntimeOnly(libs.junit.launcher)
     }
 
     configurations.all {
