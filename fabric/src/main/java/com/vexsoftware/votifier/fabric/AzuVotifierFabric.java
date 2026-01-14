@@ -1,7 +1,5 @@
 package com.vexsoftware.votifier.fabric;
 
-import com.vexsoftware.votifier.network.VotifierServerBootstrap;
-import com.vexsoftware.votifier.util.CryptoUtil;
 import com.vexsoftware.votifier.fabric.configuration.FabricConfig;
 import com.vexsoftware.votifier.fabric.configuration.loader.ConfigLoader;
 import com.vexsoftware.votifier.fabric.event.VoteListener;
@@ -10,16 +8,18 @@ import com.vexsoftware.votifier.fabric.event.listener.DefaultVoteListener;
 import com.vexsoftware.votifier.fabric.platform.forwarding.FabricMessagingForwardingSink;
 import com.vexsoftware.votifier.fabric.platform.provider.MinecraftServerProvider;
 import com.vexsoftware.votifier.model.Vote;
+import com.vexsoftware.votifier.network.VotifierServerBootstrap;
 import com.vexsoftware.votifier.network.protocol.session.VotifierSession;
-import com.vexsoftware.votifier.platform.plugin.VotifierPlugin;
-import com.vexsoftware.votifier.platform.logger.LoggingAdapter;
-import com.vexsoftware.votifier.platform.logger.impl.SLF4JLoggingAdapter;
-import com.vexsoftware.votifier.platform.scheduler.VotifierScheduler;
-import com.vexsoftware.votifier.platform.scheduler.impl.StandaloneVotifierScheduler;
 import com.vexsoftware.votifier.platform.forwarding.listener.ForwardedVoteListener;
 import com.vexsoftware.votifier.platform.forwarding.sink.ForwardingVoteSink;
-import com.vexsoftware.votifier.redis.RedisCredentials;
 import com.vexsoftware.votifier.platform.forwarding.sink.redis.RedisForwardingSink;
+import com.vexsoftware.votifier.platform.logger.LoggingAdapter;
+import com.vexsoftware.votifier.platform.logger.impl.SLF4JLoggingAdapter;
+import com.vexsoftware.votifier.platform.plugin.VotifierPlugin;
+import com.vexsoftware.votifier.platform.scheduler.VotifierScheduler;
+import com.vexsoftware.votifier.platform.scheduler.impl.StandaloneVotifierScheduler;
+import com.vexsoftware.votifier.redis.RedisCredentials;
+import com.vexsoftware.votifier.util.CryptoUtil;
 import com.vexsoftware.votifier.util.TokenUtil;
 import net.fabricmc.api.DedicatedServerModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
@@ -65,6 +65,7 @@ public class AzuVotifierFabric implements DedicatedServerModInitializer, Votifie
         MinecraftServerProvider.setServer(server);
 
         if (init()) {
+            // initialization was successful
             return;
         }
 
