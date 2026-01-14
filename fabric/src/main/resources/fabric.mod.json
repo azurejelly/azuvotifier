@@ -15,6 +15,9 @@
       "com.vexsoftware.votifier.fabric.AzuVotifierFabric"
     ]
   },
+  "breaks": {
+    "quilt_loader": "*"
+  },
   "depends": {
     "fabricloader": ">=${loader_version}",
     "fabric": "*",
