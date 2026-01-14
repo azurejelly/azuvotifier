@@ -44,20 +44,28 @@ dependencies {
     add("shade", libs.configurate)
 }
 
-tasks.processResources {
-    inputs.property("version", project.version)
-    inputs.property("minecraft_version", libs.versions.fabric.minecraft.get())
-    inputs.property("loader_version", libs.versions.fabric.loader.get())
-    filteringCharset = "utf-8"
+tasks {
+    withType<JavaCompile> {
+        // override the java 11 target. the minecraft version we are building against
+        // requires java 21 anyway, so not much is lost here
+        options.release.set(21)
+    }
 
-    filesMatching("fabric.mod.json") {
-        expand(
-            mapOf(
-                "version" to project.version,
-                "minecraft_version" to libs.versions.fabric.minecraft.get(),
-                "loader_version" to libs.versions.fabric.loader.get()
+    processResources {
+        inputs.property("version", project.version)
+        inputs.property("minecraft_version", libs.versions.fabric.minecraft.get())
+        inputs.property("loader_version", libs.versions.fabric.loader.get())
+        filteringCharset = "utf-8"
+
+        filesMatching("fabric.mod.json") {
+            expand(
+                mapOf(
+                    "version" to project.version,
+                    "minecraft_version" to libs.versions.fabric.minecraft.get(),
+                    "loader_version" to libs.versions.fabric.loader.get()
+                )
             )
-        )
+        }
     }
 }
 
