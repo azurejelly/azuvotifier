@@ -272,19 +272,15 @@ public class NuVotifierSponge implements VoteHandler, VotifierPlugin, ForwardedV
 
     @Override
     public void onVoteReceived(final Vote vote, VotifierSession.ProtocolVersion protocolVersion, String remoteAddress) {
+        if (debug) {
+            logger.info("Got a {} vote record from {} -> {}", protocolVersion.getHumanReadable(), remoteAddress, vote);
+        }
+
         if (config.experimental.skipOfflinePlayers) {
             String name = vote.getUsername();
             if (Sponge.server().player(name).isEmpty()) {
                 logger.info("Skipping vote from {} on this server as player is offline.", name);
                 return;
-            }
-        }
-
-        if (debug) {
-            if (protocolVersion == VotifierSession.ProtocolVersion.ONE) {
-                logger.info("Got a protocol v1 vote record from {} -> {}", remoteAddress, vote);
-            } else {
-                logger.info("Got a protocol v2 vote record from {} -> {}", remoteAddress, vote);
             }
         }
 

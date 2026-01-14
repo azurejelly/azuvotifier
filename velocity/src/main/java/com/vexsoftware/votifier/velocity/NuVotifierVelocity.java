@@ -487,11 +487,7 @@ public class NuVotifierVelocity implements VoteHandler, ProxyVotifierPlugin {
     @Override
     public void onVoteReceived(final Vote vote, VotifierSession.ProtocolVersion protocolVersion, String remoteAddress) {
         if (debug) {
-            if (protocolVersion == VotifierSession.ProtocolVersion.ONE) {
-                logger.info("Got a protocol v1 vote record from {} -> {}", remoteAddress, vote);
-            } else {
-                logger.info("Got a protocol v2 vote record from {} -> {}", remoteAddress, vote);
-            }
+            logger.info("Got a {} vote record from {} -> {}", protocolVersion.getHumanReadable(), remoteAddress, vote);
         }
 
         server.getEventManager().fire(new VotifierEvent(vote)).thenAccept(v -> {

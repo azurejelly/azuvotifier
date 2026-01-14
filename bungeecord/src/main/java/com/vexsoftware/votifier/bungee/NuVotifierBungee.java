@@ -443,11 +443,8 @@ public class NuVotifierBungee extends Plugin implements VoteHandler, ProxyVotifi
     @Override
     public void onVoteReceived(final Vote vote, VotifierSession.ProtocolVersion protocolVersion, String remoteAddress) {
         if (debug) {
-            if (protocolVersion == VotifierSession.ProtocolVersion.ONE) {
-                getLogger().info("Got a protocol v1 vote record from " + remoteAddress + " -> " + vote);
-            } else {
-                getLogger().info("Got a protocol v2 vote record from " + remoteAddress + " -> " + vote);
-            }
+            getLogger().info("Got a " + protocolVersion.getHumanReadable() + " vote record from "
+                    + remoteAddress + " -> " + vote);
         }
 
         getProxy().getScheduler().runAsync(this, () -> {

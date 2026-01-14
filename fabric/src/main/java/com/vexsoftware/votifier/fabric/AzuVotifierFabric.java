@@ -227,11 +227,7 @@ public class AzuVotifierFabric implements DedicatedServerModInitializer, Votifie
     @Override
     public void onVoteReceived(Vote vote, VotifierSession.ProtocolVersion proto, String address) {
         if (debug) {
-            if (proto == VotifierSession.ProtocolVersion.ONE) {
-                logger.info("Got a protocol v1 vote record from {} -> {}", address, vote);
-            } else {
-                logger.info("Got a protocol v2 vote record from {} -> {}", address, vote);
-            }
+            logger.info("Got a {} vote record from {} -> {}", proto.getHumanReadable(), address, vote);
         }
 
         fireVoteEvent(vote);
