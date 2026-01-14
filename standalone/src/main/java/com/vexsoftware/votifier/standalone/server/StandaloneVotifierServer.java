@@ -3,17 +3,17 @@ package com.vexsoftware.votifier.standalone.server;
 import com.vexsoftware.votifier.model.Vote;
 import com.vexsoftware.votifier.network.VotifierServerBootstrap;
 import com.vexsoftware.votifier.network.protocol.session.VotifierSession;
-import com.vexsoftware.votifier.platform.plugin.VotifierPlugin;
-import com.vexsoftware.votifier.platform.logger.LoggingAdapter;
-import com.vexsoftware.votifier.platform.logger.impl.SLF4JLoggingAdapter;
-import com.vexsoftware.votifier.platform.scheduler.VotifierScheduler;
-import com.vexsoftware.votifier.platform.scheduler.impl.StandaloneVotifierScheduler;
-import com.vexsoftware.votifier.standalone.config.redis.RedisVotifierConfiguration;
-import com.vexsoftware.votifier.standalone.config.server.ForwardableServer;
 import com.vexsoftware.votifier.platform.forwarding.source.ForwardingVoteSource;
 import com.vexsoftware.votifier.platform.forwarding.source.proxy.ProxyForwardingVoteSource;
-import com.vexsoftware.votifier.redis.RedisCredentials;
 import com.vexsoftware.votifier.platform.forwarding.source.redis.RedisForwardingVoteSource;
+import com.vexsoftware.votifier.platform.logger.LoggingAdapter;
+import com.vexsoftware.votifier.platform.logger.impl.SLF4JLoggingAdapter;
+import com.vexsoftware.votifier.platform.plugin.VotifierPlugin;
+import com.vexsoftware.votifier.platform.scheduler.VotifierScheduler;
+import com.vexsoftware.votifier.platform.scheduler.impl.StandaloneVotifierScheduler;
+import com.vexsoftware.votifier.redis.RedisCredentials;
+import com.vexsoftware.votifier.standalone.config.redis.RedisVotifierConfiguration;
+import com.vexsoftware.votifier.standalone.config.server.ForwardableServer;
 import com.vexsoftware.votifier.util.TokenUtil;
 
 import java.net.InetAddress;
@@ -173,9 +173,16 @@ public class StandaloneVotifierServer implements VotifierPlugin {
     }
 
     @Override
-    public void onError(Throwable throwable, boolean alreadyHandledVote, String remoteAddress) {
-        logger.error("Caught exception while processing vote from " + remoteAddress + " (already handled: "
-                + alreadyHandledVote + ")", throwable);
+    public void onError(Throwable t, boolean alreadyHandledVote, String remoteAddress) {
+        if (debug) {
+            if (alreadyHandledVote) {
+                logger.warn("Vote processed, however an exception occurred with a vote from " + remoteAddress, t);
+            } else {
+                logger.warn("Unable to process vote from " + remoteAddress, t);
+            }
+        } else if (!alreadyHandledVote) {
+            logger.warn("Unable to process vote from " + remoteAddress);
+        }
     }
 
     @Override
