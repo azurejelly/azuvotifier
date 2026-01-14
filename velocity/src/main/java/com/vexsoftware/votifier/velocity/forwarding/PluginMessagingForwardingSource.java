@@ -9,7 +9,7 @@ import com.vexsoftware.votifier.platform.forwarding.ServerFilter;
 import com.vexsoftware.votifier.platform.forwarding.source.messaging.AbstractPluginMessagingForwardingSource;
 import com.vexsoftware.votifier.velocity.NuVotifierVelocity;
 import com.vexsoftware.votifier.velocity.platform.server.VelocityBackendServer;
-import com.vexsoftware.votifier.velocity.utils.VelocityUtil;
+import com.vexsoftware.votifier.velocity.util.VelocityUtil;
 
 public class PluginMessagingForwardingSource extends AbstractPluginMessagingForwardingSource {
 

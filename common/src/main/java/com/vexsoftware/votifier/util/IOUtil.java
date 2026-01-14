@@ -1,9 +1,12 @@
 package com.vexsoftware.votifier.util;
 
+import lombok.experimental.UtilityClass;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+@UtilityClass
 public class IOUtil {
 
     public static byte[] readAllBytes(InputStream from) throws IOException {

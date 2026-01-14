@@ -1,16 +1,15 @@
 package com.vexsoftware.votifier.util;
 
+import lombok.experimental.UtilityClass;
+
 import javax.crypto.spec.SecretKeySpec;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.security.SecureRandom;
 
+@UtilityClass
 public class TokenUtil {
-
-    private TokenUtil() {
-        throw new UnsupportedOperationException("This class cannot be instantiated");
-    }
 
     private static final SecureRandom RANDOM = new SecureRandom();
 

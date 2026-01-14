@@ -1,5 +1,7 @@
 package com.vexsoftware.votifier.util;
 
+import lombok.experimental.UtilityClass;
+
 import javax.crypto.Cipher;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -12,11 +14,8 @@ import java.security.spec.RSAKeyGenParameterSpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 
+@UtilityClass
 public final class CryptoUtil {
-
-    private CryptoUtil() {
-        throw new UnsupportedOperationException("This class cannot be instantiated");
-    }
 
     /**
      * Loads an RSA key pair from a directory.

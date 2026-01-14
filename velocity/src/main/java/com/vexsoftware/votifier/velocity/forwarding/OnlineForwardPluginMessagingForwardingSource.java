@@ -8,13 +8,13 @@ import com.velocitypowered.api.proxy.ServerConnection;
 import com.velocitypowered.api.proxy.messages.ChannelIdentifier;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 import com.vexsoftware.votifier.cache.VoteCache;
-import com.vexsoftware.votifier.platform.forwarding.ServerFilter;
-import com.vexsoftware.votifier.platform.forwarding.source.messaging.AbstractPluginMessagingForwardingSource;
 import com.vexsoftware.votifier.model.Vote;
 import com.vexsoftware.votifier.platform.BackendServer;
+import com.vexsoftware.votifier.platform.forwarding.ServerFilter;
+import com.vexsoftware.votifier.platform.forwarding.source.messaging.AbstractPluginMessagingForwardingSource;
 import com.vexsoftware.votifier.velocity.NuVotifierVelocity;
 import com.vexsoftware.votifier.velocity.platform.server.VelocityBackendServer;
-import com.vexsoftware.votifier.velocity.utils.VelocityUtil;
+import com.vexsoftware.votifier.velocity.util.VelocityUtil;
 
 import java.util.Optional;
 

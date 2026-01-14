@@ -1,14 +1,12 @@
-package com.vexsoftware.votifier.velocity.utils;
+package com.vexsoftware.votifier.velocity.util;
 
 import com.velocitypowered.api.proxy.messages.ChannelIdentifier;
 import com.velocitypowered.api.proxy.messages.LegacyChannelIdentifier;
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
+import lombok.experimental.UtilityClass;
 
+@UtilityClass
 public class VelocityUtil {
-
-    private VelocityUtil() {
-        throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
-    }
 
     public static ChannelIdentifier getId(String channel) {
         if (channel.contains(":")) {

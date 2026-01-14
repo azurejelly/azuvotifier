@@ -1,12 +1,14 @@
 package com.vexsoftware.votifier.util;
 
 import com.vexsoftware.votifier.model.Vote;
+import lombok.experimental.UtilityClass;
 
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Deprecated
+@UtilityClass
 public class ArgsToVote {
 
     private static final Pattern ARGUMENT_PATTERN = Pattern.compile("([a-zA-Z]+)=(\\S*)");
