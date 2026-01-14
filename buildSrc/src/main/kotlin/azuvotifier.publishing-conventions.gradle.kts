@@ -17,10 +17,7 @@ publishing {
         maven {
             val version = project.version.toString().toDefaultLowerCase()
             val repo = when {
-                version.contains("snapshot") ||
-                        version.contains("beta") ||
-                        version.contains("alpha") ||
-                        version.contains("dev") -> "snapshots"
+                version.contains("snapshot") -> "snapshots"
                 else -> "releases"
             }
 
@@ -32,6 +29,17 @@ publishing {
 }
 
 signing {
-    useGpgCmd()
+    if (System.getenv("GITHUB_ACTIONS") == "true") {
+        // prefer in memory pgp keys when publications are being
+        // made from github actions
+        useInMemoryPgpKeys(
+            System.getenv("GPG_PRIVATE_KEY"),
+            System.getenv("GPG_PASSPHRASE")
+        )
+    } else {
+        // use the gpg command on local development environments
+        useGpgCmd()
+    }
+
     sign(publishing.publications["mavenJava"])
 }
