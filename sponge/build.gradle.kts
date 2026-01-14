@@ -75,10 +75,9 @@ tasks {
 }
 
 dependencies {
-    compileOnly(libs.sponge)
-    implementation(libs.jedis)
-    implementation(libs.bstats.sponge)
-
     api(project(":azuvotifier-api"))
     api(project(":azuvotifier-common"))
+
+    implementation(libs.jedis)
+    implementation(libs.bstats.sponge)
 }

@@ -1,6 +1,5 @@
 [versions]
 # server software
-sponge = "7.2.0"
 paper = "1.21.11-R0.1-SNAPSHOT"
 
 # fabric
@@ -59,7 +58,6 @@ fabric-loader = { module = "net.fabricmc:fabric-loader", version.ref = "fabric-l
 fabric-permissions = { module = "me.lucko:fabric-permissions-api", version.ref = "fabric-permissions" }
 velocity = { module = "com.velocitypowered:velocity-api", version.ref = "velocity" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
-sponge = { module = "org.spongepowered:spongeapi", version.ref = "sponge" }
 netty-handler = { module = "io.netty:netty-handler", version.ref = "netty" }
 netty-transport-native-epoll = { module = "io.netty:netty-transport-native-epoll", version.ref = "netty" }
 jedis = { module = "redis.clients:jedis", version.ref = "jedis" }
