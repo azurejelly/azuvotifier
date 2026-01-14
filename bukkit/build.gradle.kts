@@ -14,7 +14,6 @@ repositories {
 
 dependencies {
     api(project(":azuvotifier-common"))
-    api(project(":azuvotifier-folia"))
 
     compileOnly(libs.paper)
     implementation(libs.jedis)

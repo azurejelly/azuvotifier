@@ -20,28 +20,27 @@ package com.vexsoftware.votifier;
 
 import com.vexsoftware.votifier.commands.TestVoteCommand;
 import com.vexsoftware.votifier.commands.VotifierReloadCommand;
-import com.vexsoftware.votifier.util.CryptoUtil;
-import com.vexsoftware.votifier.folia.platform.FoliaScheduler;
-import com.vexsoftware.votifier.folia.util.FoliaUtils;
 import com.vexsoftware.votifier.model.Vote;
 import com.vexsoftware.votifier.model.VotifierEvent;
 import com.vexsoftware.votifier.network.VotifierServerBootstrap;
 import com.vexsoftware.votifier.network.protocol.session.VotifierSession;
-import com.vexsoftware.votifier.platform.plugin.VotifierPlugin;
 import com.vexsoftware.votifier.platform.forwarding.BukkitPluginMessagingForwardingSink;
-import com.vexsoftware.votifier.platform.logger.LoggingAdapter;
-import com.vexsoftware.votifier.platform.logger.impl.JavaLoggingAdapter;
-import com.vexsoftware.votifier.platform.scheduler.BukkitScheduler;
-import com.vexsoftware.votifier.platform.scheduler.VotifierScheduler;
 import com.vexsoftware.votifier.platform.forwarding.listener.ForwardedVoteListener;
 import com.vexsoftware.votifier.platform.forwarding.sink.ForwardingVoteSink;
-import com.vexsoftware.votifier.redis.RedisCredentials;
 import com.vexsoftware.votifier.platform.forwarding.sink.redis.RedisForwardingSink;
+import com.vexsoftware.votifier.platform.logger.LoggingAdapter;
+import com.vexsoftware.votifier.platform.logger.impl.JavaLoggingAdapter;
+import com.vexsoftware.votifier.platform.plugin.VotifierPlugin;
+import com.vexsoftware.votifier.platform.scheduler.VotifierScheduler;
+import com.vexsoftware.votifier.platform.scheduler.bukkit.BukkitScheduler;
+import com.vexsoftware.votifier.platform.scheduler.folia.FoliaScheduler;
+import com.vexsoftware.votifier.redis.RedisCredentials;
 import com.vexsoftware.votifier.util.Constants;
+import com.vexsoftware.votifier.util.CryptoUtil;
+import com.vexsoftware.votifier.util.FoliaUtil;
 import com.vexsoftware.votifier.util.TokenUtil;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SimplePie;
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -94,7 +93,7 @@ public class NuVotifierBukkit extends JavaPlugin implements VoteHandler, Votifie
     private boolean isFolia;
 
     private boolean loadAndBind() {
-        if (FoliaUtils.isFolia()) {
+        if (FoliaUtil.isFolia()) {
             this.scheduler = new FoliaScheduler(this);
             this.isFolia = true;
 

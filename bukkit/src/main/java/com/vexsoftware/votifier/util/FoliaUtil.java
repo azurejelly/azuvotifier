@@ -1,6 +1,6 @@
-package com.vexsoftware.votifier.folia.util;
+package com.vexsoftware.votifier.util;
 
-public final class FoliaUtils {
+public final class FoliaUtil {
 
     public static boolean isFolia() {
         try {

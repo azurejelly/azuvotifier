@@ -1,8 +1,8 @@
-package com.vexsoftware.votifier.folia.platform;
+package com.vexsoftware.votifier.platform.scheduler.folia;
 
-import com.vexsoftware.votifier.folia.platform.task.FoliaVotifierTask;
 import com.vexsoftware.votifier.platform.scheduler.VotifierScheduler;
 import com.vexsoftware.votifier.platform.scheduler.VotifierTask;
+import com.vexsoftware.votifier.platform.scheduler.folia.task.FoliaVotifierTask;
 import io.papermc.paper.threadedregions.scheduler.AsyncScheduler;
 import io.papermc.paper.threadedregions.scheduler.GlobalRegionScheduler;
 import org.bukkit.plugin.Plugin;

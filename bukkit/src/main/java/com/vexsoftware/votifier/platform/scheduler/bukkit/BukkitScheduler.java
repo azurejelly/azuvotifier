@@ -1,9 +1,9 @@
-package com.vexsoftware.votifier.platform.scheduler;
+package com.vexsoftware.votifier.platform.scheduler.bukkit;
 
 import com.vexsoftware.votifier.NuVotifierBukkit;
-import com.vexsoftware.votifier.platform.scheduler.task.BukkitVotifierTask;
 import com.vexsoftware.votifier.platform.scheduler.VotifierScheduler;
 import com.vexsoftware.votifier.platform.scheduler.VotifierTask;
+import com.vexsoftware.votifier.platform.scheduler.bukkit.task.BukkitVotifierTask;
 
 import java.util.concurrent.TimeUnit;
 

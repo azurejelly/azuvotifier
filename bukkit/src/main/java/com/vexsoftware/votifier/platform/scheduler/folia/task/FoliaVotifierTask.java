@@ -1,4 +1,4 @@
-package com.vexsoftware.votifier.folia.platform.task;
+package com.vexsoftware.votifier.platform.scheduler.folia.task;
 
 import com.vexsoftware.votifier.platform.scheduler.VotifierTask;
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;

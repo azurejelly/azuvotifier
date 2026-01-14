@@ -16,8 +16,7 @@ plugins {
 
 listOf(
     "api", "common", "bukkit", "bungeecord",
-    "velocity", "standalone", "sponge", "folia",
-    "fabric"
+    "velocity", "standalone", "sponge", "fabric"
 ).forEach {
     include(":azuvotifier-$it")
     project(":azuvotifier-$it").projectDir = file(it)
