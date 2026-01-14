@@ -2,6 +2,7 @@ package com.vexsoftware.votifier.sponge;
 
 import com.google.inject.Inject;
 import com.vexsoftware.votifier.VoteHandler;
+import com.vexsoftware.votifier.sponge.commands.VotifierCommand;
 import com.vexsoftware.votifier.util.CryptoUtil;
 import com.vexsoftware.votifier.model.Vote;
 import com.vexsoftware.votifier.network.VotifierServerBootstrap;
@@ -9,8 +10,6 @@ import com.vexsoftware.votifier.network.protocol.session.VotifierSession;
 import com.vexsoftware.votifier.platform.plugin.VotifierPlugin;
 import com.vexsoftware.votifier.platform.logger.LoggingAdapter;
 import com.vexsoftware.votifier.platform.scheduler.VotifierScheduler;
-import com.vexsoftware.votifier.sponge.commands.TestVoteCommand;
-import com.vexsoftware.votifier.sponge.commands.VotifierReloadCommand;
 import com.vexsoftware.votifier.sponge.configuration.SpongeConfig;
 import com.vexsoftware.votifier.sponge.configuration.loader.ConfigLoader;
 import com.vexsoftware.votifier.sponge.event.VotifierEvent;
@@ -212,6 +211,8 @@ public class NuVotifierSponge implements VoteHandler, VotifierPlugin, ForwardedV
     }
 
     public boolean reload() {
+        logger.info("Reloading azuvotifier...");
+
         try {
             halt();
         } catch (Exception ex) {
@@ -255,8 +256,7 @@ public class NuVotifierSponge implements VoteHandler, VotifierPlugin, ForwardedV
 
     @Listener
     public void onRegisterCommands(final RegisterCommandEvent<Command.Parameterized> event) {
-        event.register(container, new TestVoteCommand(this).build(), "testvote");
-        event.register(container, new VotifierReloadCommand(this).build(), "nvreload");
+        event.register(container, new VotifierCommand(this).build(), "votifier", "azuvotifier", "nuvotifier");
     }
 
     @Listener
