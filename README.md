@@ -16,7 +16,6 @@ azuvotifier is currently supported on the following platforms:
 - CraftBukkit, Spigot, Paper, Pufferfish or Purpur (1.8.8+)
   - Older versions might work but no support will be provided.
   - Any fork without significant breaking changes should also work.
-  - We are building against Java 21. On older versions such as 1.8.8, you will need to use some kind of PaperSpigot fork that supports newer Java versions.
 - Folia (1.21.5+)
 - Fabric (1.21.10)
 - Sponge 11 (1.20+)
