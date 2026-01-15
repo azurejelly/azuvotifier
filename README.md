@@ -1,4 +1,4 @@
-# azuvotifier ![Build status](https://img.shields.io/github/actions/workflow/status/azurejelly/azuvotifier/build.yml?logo=githubactions&logoColor=ffffff) ![Docker Pulls](https://img.shields.io/docker/pulls/azurejelly/standalone-nuvotifier?logo=docker) [![Modrinth](https://img.shields.io/modrinth/dt/azuvotifier?logo=modrinth&color=00AF5C)](https://modrinth.com/plugin/azuvotifier)
+# azuvotifier ![Build status](https://img.shields.io/github/actions/workflow/status/azurejelly/azuvotifier/gradle.yml?logo=github&logoColor=ffffff) ![Docker Pulls](https://img.shields.io/docker/pulls/azurejelly/standalone-nuvotifier?logo=docker) [![Modrinth](https://img.shields.io/modrinth/dt/azuvotifier?logo=modrinth&color=00AF5C)](https://modrinth.com/plugin/azuvotifier)
 
 A fork of NuVotifier with various enhancements, such as Redis forwarding and support for additional platforms.
 From the original README:
