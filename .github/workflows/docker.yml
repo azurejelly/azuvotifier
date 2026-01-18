@@ -39,7 +39,7 @@ jobs:
           tags: ${{ vars.DOCKER_HUB_USERNAME }}/standalone-nuvotifier:unstable
 
       - name: Build and push (release, stable)
-        if: ${{ github.event_name == 'release' && github.event.action == 'published' }}
+        if: ${{ github.event_name == 'release' && github.event.action == 'published' && github.event.release.prerelease == false }}
         uses: docker/build-push-action@v6
         with:
           push: true
