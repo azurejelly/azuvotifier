@@ -1,5 +1,8 @@
 package com.vexsoftware.votifier.standalone.utils;
 
+import lombok.experimental.UtilityClass;
+
+@UtilityClass
 public class NumberUtil {
 
     public static int toInt(String str) {
