@@ -18,8 +18,8 @@
 
 package com.vexsoftware.votifier;
 
-import com.vexsoftware.votifier.commands.TestVoteCommand;
-import com.vexsoftware.votifier.commands.VotifierReloadCommand;
+import com.vexsoftware.votifier.commands.VotifierCommand;
+import com.vexsoftware.votifier.commands.VotifierTabCompleter;
 import com.vexsoftware.votifier.model.Vote;
 import com.vexsoftware.votifier.model.VotifierEvent;
 import com.vexsoftware.votifier.network.VotifierServerBootstrap;
@@ -35,7 +35,7 @@ import com.vexsoftware.votifier.platform.scheduler.VotifierScheduler;
 import com.vexsoftware.votifier.platform.scheduler.bukkit.BukkitScheduler;
 import com.vexsoftware.votifier.platform.scheduler.folia.FoliaScheduler;
 import com.vexsoftware.votifier.redis.RedisCredentials;
-import com.vexsoftware.votifier.util.Constants;
+import com.vexsoftware.votifier.util.BukkitConstants;
 import com.vexsoftware.votifier.util.CryptoUtil;
 import com.vexsoftware.votifier.util.FoliaUtil;
 import com.vexsoftware.votifier.util.TokenUtil;
@@ -268,7 +268,7 @@ public class NuVotifierBukkit extends JavaPlugin implements VoteHandler, Votifie
 
         String method = forwardingConfig.getString("method", "none").toLowerCase();
         if (cfg.getBoolean("bstats", true)) {
-            Metrics metrics = new Metrics(this, Constants.BSTATS_ID);
+            Metrics metrics = new Metrics(this, BukkitConstants.BSTATS_ID);
             metrics.addCustomChart(new SimplePie("forwarding_method", () -> method));
         }
 
@@ -346,8 +346,8 @@ public class NuVotifierBukkit extends JavaPlugin implements VoteHandler, Votifie
 
     @Override
     public void onEnable() {
-        getCommand("nvreload").setExecutor(new VotifierReloadCommand(this));
-        getCommand("testvote").setExecutor(new TestVoteCommand(this));
+        getCommand("votifier").setExecutor(new VotifierCommand(this));
+        getCommand("votifier").setTabCompleter(new VotifierTabCompleter());
 
         if (!loadAndBind()) {
             gracefulExit();
@@ -448,6 +448,7 @@ public class NuVotifierBukkit extends JavaPlugin implements VoteHandler, Votifie
         if (getConfig().getBoolean("experimental.skip-offline-players", false)) {
             String name = vote.getUsername();
             Player player = getServer().getPlayer(name);
+
             if (player == null) {
                 pluginLogger.info("Skipping vote from " + name + " on this server as player is offline.");
                 return;
