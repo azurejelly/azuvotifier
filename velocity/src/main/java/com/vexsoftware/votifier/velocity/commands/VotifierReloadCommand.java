@@ -14,7 +14,6 @@ public class VotifierReloadCommand implements SimpleCommand {
         this.plugin = plugin;
     }
 
-
     @Override
     public void execute(Invocation invocation) {
         CommandSource sender = invocation.source();

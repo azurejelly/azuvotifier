@@ -10,6 +10,7 @@ import com.vexsoftware.votifier.fabric.util.FabricUtil;
 import com.vexsoftware.votifier.model.Vote;
 import com.vexsoftware.votifier.network.protocol.session.VotifierSession;
 import com.vexsoftware.votifier.util.CommonConstants;
+import com.vexsoftware.votifier.util.UsernameUtil;
 import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
@@ -145,17 +146,26 @@ public class VotifierCommand {
             username = ctx.getSource().getName();
         }
 
+        if (!UsernameUtil.isValid(username)) {
+            ctx.getSource().sendMessage(
+                    Text.literal("You must provide a valid Minecraft username.")
+                            .withColor(CommonConstants.FAILURE_COLOR)
+            );
+
+            return CommandResult.SUCCESS; // not really
+        }
+
         if (service == null) {
-            service = "azuuure.dev";
+            service = CommonConstants.DEFAULT_TEST_SERVICE;
         }
 
         var plugin = AzuVotifierFabric.getInstance();
         var timestamp = String.valueOf(Instant.now().getEpochSecond());
-        var vote = new Vote(service, username, "127.0.0.1", timestamp);
+        var vote = new Vote(service, username, CommonConstants.DEFAULT_TEST_ADDRESS, timestamp);
 
         plugin.onVoteReceived(vote, VotifierSession.ProtocolVersion.TEST, vote.getAddress());
         ctx.getSource().sendMessage(
-                Text.literal("Sent a test vote for " + username + " using service \"" + service + "\"")
+                Text.literal("Sent a test vote for " + username + " with service " + service)
                         .withColor(CommonConstants.SUCCESS_COLOR)
         );
 

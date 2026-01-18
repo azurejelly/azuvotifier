@@ -5,6 +5,7 @@ import com.vexsoftware.votifier.model.Vote;
 import com.vexsoftware.votifier.network.protocol.session.VotifierSession;
 import com.vexsoftware.votifier.util.BukkitColors;
 import com.vexsoftware.votifier.util.CommonConstants;
+import com.vexsoftware.votifier.util.UsernameUtil;
 import io.papermc.paper.ServerBuildInfo;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -103,6 +104,11 @@ public class VotifierCommand implements CommandExecutor {
         String target = args.length >= 2 ? args[1] : sender.getName();
         String service = args.length >= 3 ? args[2] : CommonConstants.DEFAULT_TEST_SERVICE;
         String timestamp = String.valueOf(Instant.now().getEpochSecond());
+
+        if (!UsernameUtil.isValid(target)) {
+            sender.sendMessage(BukkitColors.failure() + "You must provide a valid Minecraft username.");
+            return;
+        }
 
         Vote vote = new Vote(service, target, CommonConstants.DEFAULT_TEST_ADDRESS, timestamp);
         plugin.onVoteReceived(vote, VotifierSession.ProtocolVersion.TEST, vote.getAddress());

@@ -4,6 +4,7 @@ import com.vexsoftware.votifier.model.Vote;
 import com.vexsoftware.votifier.network.protocol.session.VotifierSession;
 import com.vexsoftware.votifier.sponge.NuVotifierSponge;
 import com.vexsoftware.votifier.util.CommonConstants;
+import com.vexsoftware.votifier.util.UsernameUtil;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
@@ -41,7 +42,14 @@ public class VotifierTestSubCommand implements CommandExecutor {
                                 .orElse("Console")
                 );
 
-        Vote vote = new Vote(service, caller, "127.0.0.1", timestamp);
+        if (!UsernameUtil.isValid(caller)) {
+            return CommandResult.error(
+                    Component.text("You must provide a valid Minecraft username.")
+                            .color(TextColor.color(CommonConstants.FAILURE_COLOR))
+            );
+        }
+
+        Vote vote = new Vote(service, caller, CommonConstants.DEFAULT_TEST_ADDRESS, timestamp);
         plugin.onVoteReceived(vote, VotifierSession.ProtocolVersion.TEST, vote.getAddress());
 
         audience.sendMessage(
