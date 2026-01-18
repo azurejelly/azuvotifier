@@ -26,16 +26,16 @@ public class VotifierCommand implements CommandExecutor {
     public CommandResult execute(CommandContext context) {
         Audience audience = context.cause().audience();
         Component text = Component.text("This server is running ")
-                .color(TextColor.color(0xF3B0FF))
+                .color(TextColor.color(CommonConstants.SECONDARY_COLOR))
                 .append(
                         Component.text("azuvotifier")
-                                .color(TextColor.color(0xE867FF))
+                                .color(TextColor.color(CommonConstants.PRIMARY_COLOR))
                 ).append(
                         Component.text(" version ")
-                                .color(TextColor.color(0xF3B0FF))
+                                .color(TextColor.color(CommonConstants.SECONDARY_COLOR))
                 ).append(
                         Component.text(SpongeUtil.getPluginVersion(Constants.PLUGIN_ID))
-                                .color(TextColor.color(0xE867FF))
+                                .color(TextColor.color(CommonConstants.PRIMARY_COLOR))
                 );
 
         if (context.cause().hasPermission("azuvotifier.more-info")) {
@@ -46,20 +46,20 @@ public class VotifierCommand implements CommandExecutor {
 
             text = text.append(
                     Component.text("\nServer: ")
-                            .color(TextColor.color(0xF3B0FF))
+                            .color(TextColor.color(CommonConstants.SECONDARY_COLOR))
             ).append(
                     Component.text("Minecraft " + minecraft + ", Sponge API " + api + ", " + implementation)
-                            .color(TextColor.color(0xE867FF))
+                            .color(TextColor.color(CommonConstants.PRIMARY_COLOR))
             );
         }
 
         text = text.append(
                 Component.text("\nModrinth: ")
-                        .color(TextColor.color(0xF3B0FF))
+                        .color(TextColor.color(CommonConstants.SECONDARY_COLOR))
         ).append(
                 Component.text(CommonConstants.MODRINTH_URL)
                         .clickEvent(ClickEvent.openUrl(CommonConstants.MODRINTH_URL))
-                        .color(TextColor.color(0xE867FF))
+                        .color(TextColor.color(CommonConstants.PRIMARY_COLOR))
         );
 
         audience.sendMessage(text);

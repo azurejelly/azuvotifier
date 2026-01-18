@@ -3,6 +3,7 @@ package com.vexsoftware.votifier.sponge.commands;
 import com.vexsoftware.votifier.model.Vote;
 import com.vexsoftware.votifier.network.protocol.session.VotifierSession;
 import com.vexsoftware.votifier.sponge.NuVotifierSponge;
+import com.vexsoftware.votifier.util.CommonConstants;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
@@ -41,11 +42,11 @@ public class VotifierTestSubCommand implements CommandExecutor {
                 );
 
         Vote vote = new Vote(service, caller, "127.0.0.1", timestamp);
-        plugin.onVoteReceived(vote, VotifierSession.ProtocolVersion.TEST, "127.0.0.1");
+        plugin.onVoteReceived(vote, VotifierSession.ProtocolVersion.TEST, vote.getAddress());
 
         audience.sendMessage(
-                Component.text("Sent a test vote for " + caller + " using service \"" + service + "\"")
-                        .color(TextColor.color(0x79F17B))
+                Component.text("Sent a test vote for " + caller + " with service " + service)
+                        .color(TextColor.color(CommonConstants.SUCCESS_COLOR))
         );
 
         return CommandResult.success();

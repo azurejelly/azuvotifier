@@ -1,6 +1,7 @@
 package com.vexsoftware.votifier.sponge.commands;
 
 import com.vexsoftware.votifier.sponge.NuVotifierSponge;
+import com.vexsoftware.votifier.util.CommonConstants;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
@@ -20,17 +21,24 @@ public class VotifierReloadSubCommand implements CommandExecutor {
     @Override
     public CommandResult execute(CommandContext context) {
         Audience audience = context.cause().audience();
-        audience.sendMessage(Component.text("Reloading azuvotifier...").color(TextColor.color(0xF1E079)));
+        audience.sendMessage(
+                Component.text("Reloading azuvotifier...")
+                        .color(TextColor.color(CommonConstants.PROCESSING_COLOR))
+        );
 
         if (!plugin.reload()) {
             return CommandResult.error(
                     Component.text("Reload failed. Check the server console for more information.")
-                            .color(TextColor.color(0xCB3A3A))
+                            .color(TextColor.color(CommonConstants.FAILURE_COLOR))
             );
         }
 
 
-        audience.sendMessage(Component.text("Reload successful.").color(TextColor.color(0x79F17B)));
+        audience.sendMessage(
+                Component.text("Reload successful.")
+                        .color(TextColor.color(CommonConstants.SUCCESS_COLOR))
+        );
+
         return CommandResult.success();
     }
 

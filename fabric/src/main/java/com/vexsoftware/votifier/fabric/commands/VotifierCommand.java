@@ -60,16 +60,16 @@ public class VotifierCommand {
     private static int info(CommandContext<ServerCommandSource> ctx) {
         var version = FabricUtil.getModVersion("azuvotifier");
         var text = Text.literal("This server is running ")
-                .withColor(0xf3b0ff)
+                .withColor(CommonConstants.SECONDARY_COLOR)
                 .append(
                         Text.literal("azuvotifier")
-                                .withColor(0xe867ff)
+                                .withColor(CommonConstants.PRIMARY_COLOR)
                 ).append(
                         Text.literal(" version ")
-                                .withColor(0xf3b0ff)
+                                .withColor(CommonConstants.SECONDARY_COLOR)
                 ).append(
                         Text.literal(version)
-                                .withColor(0xe867ff)
+                                .withColor(CommonConstants.PRIMARY_COLOR)
                 );
 
         if (Permissions.check(ctx.getSource(), "azuvotifier.more-info", 2)) {
@@ -79,23 +79,23 @@ public class VotifierCommand {
 
             text.append(
                     Text.literal("\nServer: ")
-                            .withColor(0xf3b0ff)
+                            .withColor(CommonConstants.SECONDARY_COLOR)
             ).append(
                     Text.literal("Minecraft " + minecraft + ", Fabric API " + fabric + ", Fabric Loader " + loader)
-                            .withColor(0xe867ff)
+                            .withColor(CommonConstants.PRIMARY_COLOR)
             );
         }
 
         text.append(
                 Text.literal("\nModrinth: ")
-                        .withColor(0xf3b0ff)
+                        .withColor(CommonConstants.SECONDARY_COLOR)
         ).append(
                 Text.literal(CommonConstants.MODRINTH_URL)
                         .styled(s -> s.withClickEvent(
                                 new ClickEvent.OpenUrl(
                                         URI.create(CommonConstants.MODRINTH_URL)
                                 )
-                        )).withColor(0xe867ff)
+                        )).withColor(CommonConstants.PRIMARY_COLOR)
         );
 
         ctx.getSource().sendMessage(text);
@@ -106,7 +106,10 @@ public class VotifierCommand {
         var plugin = AzuVotifierFabric.getInstance();
 
         plugin.getLogger().info("Reloading azuvotifier...");
-        ctx.getSource().sendMessage(Text.literal("Reloading azuvotifier...").withColor(0xf1e079));
+        ctx.getSource().sendMessage(
+                Text.literal("Reloading azuvotifier...")
+                        .withColor(CommonConstants.PROCESSING_COLOR)
+        );
 
         try {
             plugin.halt();
@@ -125,12 +128,12 @@ public class VotifierCommand {
 
             ctx.getSource().sendMessage(
                     Text.literal("Reload failed. Check the server console for more information.")
-                            .withColor(0xcb3a3a)
+                            .withColor(CommonConstants.FAILURE_COLOR)
             );
         } else {
             ctx.getSource().sendMessage(
                     Text.literal("Reload successful.")
-                            .withColor(0x79f17b)
+                            .withColor(CommonConstants.SUCCESS_COLOR)
             );
         }
 
@@ -153,7 +156,7 @@ public class VotifierCommand {
         plugin.onVoteReceived(vote, VotifierSession.ProtocolVersion.TEST, vote.getAddress());
         ctx.getSource().sendMessage(
                 Text.literal("Sent a test vote for " + username + " using service \"" + service + "\"")
-                        .withColor(0x79f17b)
+                        .withColor(CommonConstants.SUCCESS_COLOR)
         );
 
         return CommandResult.SUCCESS;
