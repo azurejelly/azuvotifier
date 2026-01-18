@@ -90,7 +90,7 @@ public class VotifierServerBootstrap {
                 .addListener((ChannelFutureListener) future -> {
                     if (future.isSuccess()) {
                         serverChannel = future.channel();
-                        plugin.getPluginLogger().info("Votifier enabled on socket " + serverChannel.localAddress() + ".");
+                        plugin.getPluginLogger().info("Votifier enabled on socket " + serverChannel.localAddress());
                         error.accept(null);
                     } else {
                         SocketAddress socketAddress = future.channel().localAddress();
