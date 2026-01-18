@@ -1,7 +1,7 @@
 package com.vexsoftware.votifier.sponge.commands;
 
 import com.vexsoftware.votifier.sponge.NuVotifierSponge;
-import com.vexsoftware.votifier.sponge.util.Constants;
+import com.vexsoftware.votifier.sponge.util.SpongeConstants;
 import com.vexsoftware.votifier.sponge.util.SpongeUtil;
 import com.vexsoftware.votifier.util.CommonConstants;
 import net.kyori.adventure.audience.Audience;
@@ -34,7 +34,7 @@ public class VotifierCommand implements CommandExecutor {
                         Component.text(" version ")
                                 .color(TextColor.color(CommonConstants.SECONDARY_COLOR))
                 ).append(
-                        Component.text(SpongeUtil.getPluginVersion(Constants.PLUGIN_ID))
+                        Component.text(SpongeUtil.getPluginVersion(SpongeConstants.PLUGIN_ID))
                                 .color(TextColor.color(CommonConstants.PRIMARY_COLOR))
                 );
 

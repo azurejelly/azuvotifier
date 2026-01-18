@@ -9,7 +9,7 @@ import com.vexsoftware.votifier.bungee.platform.forwarding.OnlineForwardPluginMe
 import com.vexsoftware.votifier.bungee.platform.forwarding.PluginMessagingForwardingSource;
 import com.vexsoftware.votifier.bungee.platform.scheduler.BungeeScheduler;
 import com.vexsoftware.votifier.bungee.platform.server.BungeeBackendServer;
-import com.vexsoftware.votifier.bungee.util.Constants;
+import com.vexsoftware.votifier.bungee.util.BungeeConstants;
 import com.vexsoftware.votifier.util.CryptoUtil;
 import com.vexsoftware.votifier.model.Vote;
 import com.vexsoftware.votifier.network.VotifierServerBootstrap;
@@ -237,7 +237,7 @@ public class NuVotifierBungee extends Plugin implements VoteHandler, ProxyVotifi
         String method = fwd.getString("method", "none").toLowerCase();
 
         if (configuration.getBoolean("bstats", true)) {
-            Metrics metrics = new Metrics(this, Constants.BSTATS_ID);
+            Metrics metrics = new Metrics(this, BungeeConstants.BSTATS_ID);
             metrics.addCustomChart(new SimplePie("forwarding_method", () -> method));
         }
 

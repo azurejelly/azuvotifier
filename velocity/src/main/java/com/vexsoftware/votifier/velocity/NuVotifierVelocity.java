@@ -36,7 +36,7 @@ import com.vexsoftware.votifier.velocity.forwarding.OnlineForwardPluginMessaging
 import com.vexsoftware.votifier.velocity.forwarding.PluginMessagingForwardingSource;
 import com.vexsoftware.votifier.velocity.platform.scheduler.VelocityScheduler;
 import com.vexsoftware.votifier.velocity.platform.server.VelocityBackendServer;
-import com.vexsoftware.votifier.velocity.utils.Constants;
+import com.vexsoftware.votifier.velocity.utils.VelocityConstants;
 import org.bstats.charts.SimplePie;
 import org.bstats.velocity.Metrics;
 import org.slf4j.Logger;
@@ -61,7 +61,7 @@ import java.util.stream.Collectors;
 @Plugin(
         id = "nuvotifier",
         name = "NuVotifier",
-        version = Constants.VERSION,
+        version = VelocityConstants.VERSION,
         authors = {"Ichbinjoe", "azurejelly"},
         description = "Safe, smart, and secure Votifier server plugin"
 )
@@ -148,7 +148,7 @@ public class NuVotifierVelocity implements VoteHandler, ProxyVotifierPlugin {
         String method = fwd.getString("method", "none").toLowerCase();
 
         if (config.getBoolean("bstats", true)) {
-            Metrics metrics = metricsFactory.make(this, Constants.BSTATS_ID);
+            Metrics metrics = metricsFactory.make(this, VelocityConstants.BSTATS_ID);
             metrics.addCustomChart(new SimplePie("forwarding_method", () -> method));
         }
 

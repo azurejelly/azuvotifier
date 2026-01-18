@@ -16,7 +16,7 @@ import com.vexsoftware.votifier.sponge.event.VotifierEvent;
 import com.vexsoftware.votifier.sponge.platform.forwarding.SpongePluginMessagingForwardingSink;
 import com.vexsoftware.votifier.sponge.platform.logger.Log4JLoggingAdapter;
 import com.vexsoftware.votifier.sponge.platform.scheduler.SpongeScheduler;
-import com.vexsoftware.votifier.sponge.util.Constants;
+import com.vexsoftware.votifier.sponge.util.SpongeConstants;
 import com.vexsoftware.votifier.platform.forwarding.listener.ForwardedVoteListener;
 import com.vexsoftware.votifier.platform.forwarding.sink.ForwardingVoteSink;
 import com.vexsoftware.votifier.redis.RedisCredentials;
@@ -239,7 +239,7 @@ public class NuVotifierSponge implements VoteHandler, VotifierPlugin, ForwardedV
     public void onConstructPluginEvent(final ConstructPluginEvent event) {
         ConfigLoader.loadConfig(this);
 
-        this.metrics = metricsFactory.make(Constants.BSTATS_ID);
+        this.metrics = metricsFactory.make(SpongeConstants.BSTATS_ID);
         this.metrics.startup(event);
     }
 
