@@ -72,7 +72,7 @@ tasks.withType(xyz.jpenilla.runtask.task.AbstractRun::class) {
 
 bukkit {
     name = "Votifier"
-    description = "A plugin that gets notified when votes are made for the server on toplists."
+    description = "Yet another Votifier fork with various enhancements, such as Redis forwarding and support for additional platforms."
     version = project.version.toString()
     main = "com.vexsoftware.votifier.NuVotifierBukkit"
     authors = listOf("azurejelly", "Ichbinjoe", "blakeman8192", "Kramer", "tuxed")
@@ -80,28 +80,24 @@ bukkit {
     foliaSupported = true
 
     commands {
-        register("nvreload") {
-            description = "Reloads the NuVotifier configuration"
-            permission = "nuvotifier.reload"
-            permissionMessage = "You do not have permission to run this command."
-            usage = "/nvreload"
-        }
-
-        register("testvote") {
-            description = "Sends a test vote to the server"
-            permission = "nuvotifier.testvote"
-            permissionMessage = "You do not have permission to run this command."
-            usage = "/testvote [username] [serviceName] [username] [address] [localTimestamp] [timestamp]"
+        register("votifier") {
+            description = "Main azuvotifier command."
+            aliases = listOf("azuvotifier")
         }
     }
 
     permissions {
-        register("nuvotifier.reload") {
-            description = "Allows you to reload the NuVotifier plugin"
+        register("azuvotifier.more-info") {
+            description = "Allows you to see server information when running the main azuvotifier command."
             default = BukkitPluginDescription.Permission.Default.OP
         }
 
-        register("nuvotifier.testvote") {
+        register("azuvotifier.reload") {
+            description = "Allows you to reload the azuvotifier plugin"
+            default = BukkitPluginDescription.Permission.Default.OP
+        }
+
+        register("azuvotifier.test") {
             description = "Allows you to send a test vote"
             default = BukkitPluginDescription.Permission.Default.OP
         }
