@@ -1,6 +1,8 @@
-package com.vexsoftware.votifier.net.protocol;
+package com.vexsoftware.votifier.network.protocol;
 
+import com.vexsoftware.votifier.network.VoteUtil;
 import com.vexsoftware.votifier.network.protocol.v1.VotifierProtocol1Decoder;
+import com.vexsoftware.votifier.platform.plugin.TestVotifierPlugin;
 import com.vexsoftware.votifier.platform.plugin.VotifierPlugin;
 import com.vexsoftware.votifier.model.Vote;
 import com.vexsoftware.votifier.network.protocol.session.VotifierSession;
@@ -78,7 +80,7 @@ public class VotifierProtocol1DecoderTest {
         byte[] encrypted = VoteUtil.encodePOJOv1(new Vote("Test", "test", "test", "test"), badPublicKey);
         ByteBuf encryptedByteBuf = Unpooled.wrappedBuffer(encrypted);
 
-        assertThrows(DecoderException.class, ()->channel.writeInbound(encryptedByteBuf));
+        assertThrows(DecoderException.class, () -> channel.writeInbound(encryptedByteBuf));
         channel.close();
     }
 }

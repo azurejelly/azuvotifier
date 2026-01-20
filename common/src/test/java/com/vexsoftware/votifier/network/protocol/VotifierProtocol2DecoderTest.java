@@ -1,9 +1,10 @@
-package com.vexsoftware.votifier.net.protocol;
+package com.vexsoftware.votifier.network.protocol;
 
 import com.google.gson.JsonObject;
 import com.vexsoftware.votifier.model.Vote;
 import com.vexsoftware.votifier.network.protocol.session.VotifierSession;
 import com.vexsoftware.votifier.network.protocol.v2.VotifierProtocol2Decoder;
+import com.vexsoftware.votifier.platform.plugin.TestVotifierPlugin;
 import com.vexsoftware.votifier.platform.plugin.VotifierPlugin;
 import com.vexsoftware.votifier.util.TokenUtil;
 import com.vexsoftware.votifier.util.gson.GsonInst;

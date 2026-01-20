@@ -1,6 +1,7 @@
-package com.vexsoftware.votifier.net.protocol;
+package com.vexsoftware.votifier.network;
 
 import com.vexsoftware.votifier.model.Vote;
+import com.vexsoftware.votifier.platform.plugin.TestVotifierPlugin;
 import com.vexsoftware.votifier.util.CryptoUtil;
 
 import java.nio.charset.StandardCharsets;
@@ -9,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class VoteUtil {
+
     public static byte[] encodePOJOv1(Vote vote) throws Exception {
         return encodePOJOv1(vote, TestVotifierPlugin.getI().getProtocolV1Key().getPublic());
     }

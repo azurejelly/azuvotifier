@@ -1,4 +1,4 @@
-package com.vexsoftware.votifier.support.forwarding;
+package com.vexsoftware.votifier.platform.forwarding;
 
 import com.vexsoftware.votifier.platform.forwarding.listener.ForwardedVoteListener;
 import com.vexsoftware.votifier.platform.forwarding.sink.messaging.AbstractPluginMessagingForwardingSink;
@@ -12,10 +12,10 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class PMForwardingSinkTest {
+public class PluginMessagingForwardingSinkTest {
 
     @Test
-    public void testSuccessfulMultiDecode() throws Exception {
+    public void testSuccessfulMultiDecode() {
         List<Vote> receivedVotes = new ArrayList<>();
         ForwardedVoteListener vl = receivedVotes::add;
 
@@ -25,7 +25,6 @@ public class PMForwardingSinkTest {
         ));
 
         StringBuilder message = new StringBuilder();
-
         for (Vote v : sentVotes) {
             message.append(v.serialize());
         }

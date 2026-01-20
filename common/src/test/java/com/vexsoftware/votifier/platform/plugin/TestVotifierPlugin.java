@@ -1,11 +1,11 @@
-package com.vexsoftware.votifier.net.protocol;
+package com.vexsoftware.votifier.platform.plugin;
 
 import com.vexsoftware.votifier.model.Vote;
 import com.vexsoftware.votifier.network.protocol.session.VotifierSession;
-import com.vexsoftware.votifier.platform.plugin.VotifierPlugin;
 import com.vexsoftware.votifier.platform.logger.LoggingAdapter;
 import com.vexsoftware.votifier.platform.scheduler.VotifierScheduler;
 import com.vexsoftware.votifier.util.TokenUtil;
+import lombok.Getter;
 
 import java.net.URL;
 import java.nio.file.Files;
@@ -19,11 +19,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class TestVotifierPlugin implements VotifierPlugin {
+
     private static final byte[] PUBLIC_KEY;
     private static final byte[] PRIVATE_KEY;
 
     @SuppressWarnings("DataFlowIssue")
-    static byte[] r(String u) throws Exception {
+    public static byte[] r(String u) throws Exception {
         URL resourceUrl = TestVotifierPlugin.class.getResource(u);
         Path resourcePath = Paths.get(resourceUrl.toURI());
 
@@ -39,11 +40,8 @@ public class TestVotifierPlugin implements VotifierPlugin {
         }
     }
 
+    @Getter
     public static final TestVotifierPlugin I = new TestVotifierPlugin();
-
-    public static TestVotifierPlugin getI() {
-        return I;
-    }
 
     private final Map<String, Key> keyMap = new HashMap<>();
     private final KeyPair keyPair;
