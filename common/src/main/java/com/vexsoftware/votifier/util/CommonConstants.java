@@ -11,7 +11,9 @@ public class CommonConstants {
     public static final int FAILURE_COLOR = 0xcb3a3a;
     public static final int PROCESSING_COLOR = 0xf1e079;
 
-    public static final String MODRINTH_URL = "https://modrinth.com/project/azuvotifier";
+    public static final String GITHUB_REPOSITORY = "azurejelly/azuvotifier";
+    public static final String MODRINTH_PROJECT_ID = "azuvotifier";
+    public static final String MODRINTH_URL = "https://modrinth.com/project/" + MODRINTH_PROJECT_ID;
 
     public static final String DEFAULT_TEST_ADDRESS = "127.0.0.1";
     public static final String DEFAULT_TEST_SERVICE = "test.azuuure.dev";
