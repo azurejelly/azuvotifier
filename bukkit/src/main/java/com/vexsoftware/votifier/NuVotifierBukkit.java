@@ -35,10 +35,9 @@ import com.vexsoftware.votifier.platform.scheduler.VotifierScheduler;
 import com.vexsoftware.votifier.platform.scheduler.bukkit.BukkitScheduler;
 import com.vexsoftware.votifier.platform.scheduler.folia.FoliaScheduler;
 import com.vexsoftware.votifier.redis.RedisCredentials;
-import com.vexsoftware.votifier.util.BukkitConstants;
-import com.vexsoftware.votifier.util.CryptoUtil;
-import com.vexsoftware.votifier.util.FoliaUtil;
-import com.vexsoftware.votifier.util.TokenUtil;
+import com.vexsoftware.votifier.update.UpdateChecker;
+import com.vexsoftware.votifier.update.impl.GitHubUpdateChecker;
+import com.vexsoftware.votifier.util.*;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SimplePie;
 import org.bukkit.configuration.ConfigurationSection;
@@ -89,6 +88,7 @@ public class NuVotifierBukkit extends JavaPlugin implements VoteHandler, Votifie
 
     private ForwardingVoteSink forwardingMethod;
     private VotifierScheduler scheduler;
+    private UpdateChecker updateChecker;
     private LoggingAdapter pluginLogger;
     private boolean isFolia;
 
@@ -103,6 +103,8 @@ public class NuVotifierBukkit extends JavaPlugin implements VoteHandler, Votifie
             this.isFolia = false;
         }
 
+        // TODO: replace with a modrinth update checker once implemented
+        this.updateChecker = new GitHubUpdateChecker(CommonConstants.GITHUB_REPOSITORY);
         this.pluginLogger = new JavaLoggingAdapter(getLogger());
 
         if (!getDataFolder().exists()) {
@@ -270,6 +272,21 @@ public class NuVotifierBukkit extends JavaPlugin implements VoteHandler, Votifie
         if (cfg.getBoolean("bstats", true)) {
             Metrics metrics = new Metrics(this, BukkitConstants.BSTATS_ID);
             metrics.addCustomChart(new SimplePie("forwarding_method", () -> method));
+        }
+
+        if (cfg.getBoolean("check-for-updates", true)) {
+            scheduler.runAsync(() -> {
+                //noinspection deprecation
+                String current = getDescription().getVersion();
+                String latest = updateChecker.fetchLatest();
+
+                if (current.equalsIgnoreCase(latest)) {
+                    return;
+                }
+
+                getLogger().info("There's a new version of azuvotifier available! (" + latest + ", you're currently on " + current + ")");
+                getLogger().info("Get the update on Modrinth: " + CommonConstants.MODRINTH_URL);
+            });
         }
 
         switch (method) {
