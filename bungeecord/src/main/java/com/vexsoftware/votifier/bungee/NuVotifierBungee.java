@@ -413,10 +413,8 @@ public class NuVotifierBungee extends Plugin implements VoteHandler, ProxyVotifi
         try {
             loadAndBind();
         } catch (Exception ex) {
-            getLogger().log(Level.SEVERE, "Failed to load Votifier:", ex);
+            getLogger().log(Level.SEVERE, "Failed to load Votifier", ex);
         }
-
-
     }
 
     private void halt() {

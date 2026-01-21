@@ -24,4 +24,9 @@ public final class BungeeScheduler implements VotifierScheduler {
     public VotifierTask repeatOnPool(Runnable runnable, int delay, int repeat, TimeUnit unit) {
         return new BungeeVotifierTask(plugin.getProxy().getScheduler().schedule(plugin, runnable, delay, repeat, unit));
     }
+
+    @Override
+    public VotifierTask runAsync(Runnable runnable) {
+        return new BungeeVotifierTask(plugin.getProxy().getScheduler().runAsync(plugin, runnable));
+    }
 }
