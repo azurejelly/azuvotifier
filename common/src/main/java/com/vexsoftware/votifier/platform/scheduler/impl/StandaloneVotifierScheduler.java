@@ -30,4 +30,9 @@ public final class StandaloneVotifierScheduler implements VotifierScheduler {
     public VotifierTask repeatOnPool(Runnable runnable, int delay, int repeat, TimeUnit unit) {
         return new StandaloneVotifierTask(service.scheduleAtFixedRate(runnable, delay, repeat, unit));
     }
+
+    @Override
+    public VotifierTask runAsync(Runnable runnable) {
+        return new StandaloneVotifierTask(service.submit(runnable));
+    }
 }
