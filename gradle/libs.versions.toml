@@ -65,7 +65,8 @@ bungeecord = { module = "net.md-5:bungeecord-api", version.ref = "bungeecord" }
 paper = { module = "io.papermc.paper:paper-api", version.ref = "paper" }
 json = { module = "org.json:json", version.ref = "json" }
 guava = { module = "com.google.guava:guava", version.ref = "guava" }
-configurate = { module = "org.spongepowered:configurate-yaml", version.ref = "configurate" }
+configurate-yaml = { module = "org.spongepowered:configurate-yaml", version.ref = "configurate" }
+configurate-hocon = { module = "org.spongepowered:configurate-hocon", version.ref = "configurate" }
 mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }
 mockito-junit-jupiter = { module = "org.mockito:mockito-junit-jupiter", version.ref = "mockito" }
 junit-bom = { group = "org.junit", name = "junit-bom", version.ref = "junit" }

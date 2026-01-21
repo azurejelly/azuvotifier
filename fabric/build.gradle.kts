@@ -35,13 +35,13 @@ dependencies {
     api(project(":azuvotifier-api"))
     api(project(":azuvotifier-common"))
     implementation(libs.jedis)
-    implementation(libs.configurate)
+    implementation(libs.configurate.hocon)
 
     add("shade", project(":azuvotifier-api"))
     add("shade", project(":azuvotifier-common"))
     add("shade", libs.fabric.permissions) // this is shading fabric api too
     add("shade", libs.jedis)
-    add("shade", libs.configurate)
+    add("shade", libs.configurate.hocon)
 }
 
 tasks {

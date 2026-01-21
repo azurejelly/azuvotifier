@@ -4,8 +4,7 @@ import com.vexsoftware.votifier.fabric.configuration.FabricConfig;
 import io.leangen.geantyref.TypeToken;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.ConfigurationOptions;
-import org.spongepowered.configurate.yaml.NodeStyle;
-import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
+import org.spongepowered.configurate.hocon.HoconConfigurationLoader;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,14 +21,15 @@ public class ConfigLoader {
             }
         }
 
-        File config = new File(configDir, "config.yml");
+        File config = new File(configDir, "settings.conf");
         if (!config.exists() && !config.createNewFile()) {
             throw new IOException("Unable to create the config file at " + config);
         }
 
-        YamlConfigurationLoader loader = YamlConfigurationLoader.builder()
+        HoconConfigurationLoader loader = HoconConfigurationLoader.builder()
                 .file(config)
-                .nodeStyle(NodeStyle.BLOCK)
+                .prettyPrinting(true)
+                .emitComments(true)
                 .build();
 
         ConfigurationNode node = loader.load(ConfigurationOptions.defaults().shouldCopyDefaults(true));
