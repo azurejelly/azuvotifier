@@ -12,8 +12,12 @@ import com.vexsoftware.votifier.platform.plugin.VotifierPlugin;
 import com.vexsoftware.votifier.platform.scheduler.VotifierScheduler;
 import com.vexsoftware.votifier.platform.scheduler.impl.StandaloneVotifierScheduler;
 import com.vexsoftware.votifier.redis.RedisCredentials;
+import com.vexsoftware.votifier.standalone.config.VotifierConfiguration;
 import com.vexsoftware.votifier.standalone.config.redis.RedisVotifierConfiguration;
 import com.vexsoftware.votifier.standalone.config.server.ForwardableServer;
+import com.vexsoftware.votifier.update.UpdateChecker;
+import com.vexsoftware.votifier.update.impl.GitHubUpdateChecker;
+import com.vexsoftware.votifier.util.CommonConstants;
 import com.vexsoftware.votifier.util.TokenUtil;
 
 import java.net.InetAddress;
@@ -28,40 +32,41 @@ import java.util.function.Consumer;
 
 public class StandaloneVotifierServer implements VotifierPlugin {
 
-    private final RedisVotifierConfiguration redis;
+    private final VotifierConfiguration config;
     private final boolean debug;
     private final Map<String, Key> tokens;
     private final KeyPair v1Key;
     private final InetSocketAddress socket;
     private final VotifierScheduler scheduler;
     private final LoggingAdapter logger;
+    private final UpdateChecker updateChecker;
     private final Map<String, ForwardableServer> backendServers;
-    private final boolean disableV1Protocol;
     private ForwardingVoteSource forwardingMethod;
     private VotifierServerBootstrap bootstrap;
 
     public StandaloneVotifierServer(
-            boolean debug, Map<String, Key> tokens,
+            Map<String, Key> tokens,
             KeyPair v1Key, InetSocketAddress socket,
             Map<String, ForwardableServer> backendServers,
-            boolean disableV1Protocol,
-            RedisVotifierConfiguration redis
+            VotifierConfiguration config
     ) {
-        this.debug = debug;
+        this.config = config;
+        this.debug = config.isDebug();
         this.socket = socket;
         this.tokens = Map.copyOf(tokens);
         this.v1Key = v1Key;
         this.backendServers = backendServers;
         this.scheduler = new StandaloneVotifierScheduler();
         this.logger = new SLF4JLoggingAdapter(getClass());
-        this.disableV1Protocol = disableV1Protocol;
-        this.redis = redis;
+        this.updateChecker = new GitHubUpdateChecker(CommonConstants.GITHUB_REPOSITORY);
     }
 
     public void start(Consumer<Throwable> error) {
-        this.bootstrap = new VotifierServerBootstrap(socket.getHostString(), socket.getPort(), this, disableV1Protocol);
+        this.bootstrap = new VotifierServerBootstrap(socket.getHostString(), socket.getPort(), this, config.isV1ProtocolDisabled());
         this.bootstrap.start(error);
         this.makeForwardingSource(backendServers);
+
+        // TODO: implement update checking
     }
 
     public void halt() {
@@ -77,6 +82,7 @@ public class StandaloneVotifierServer implements VotifierPlugin {
     }
 
     private void makeForwardingSource(Map<String, ForwardableServer> backendServers) {
+        RedisVotifierConfiguration redis = config.getRedis();
         if (redis != null && redis.isEnabled()) {
             RedisCredentials redisCredentials = RedisCredentials.builder()
                     .host(redis.getAddress())

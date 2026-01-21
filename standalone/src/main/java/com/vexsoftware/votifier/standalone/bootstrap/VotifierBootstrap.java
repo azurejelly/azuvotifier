@@ -99,9 +99,7 @@ public final class VotifierBootstrap {
         var builder = new VotifierServerBuilder()
                 .bind(socket)
                 .v1Key(rsaKeyPair)
-                .disableV1Protocol(config.isDisableV1Protocol())
-                .debug(config.isDebug())
-                .redis(config.getRedis())
+                .config(config)
                 .backendServers(config.getForwardableServers());
 
         config.getTokens().forEach((service, token) -> {

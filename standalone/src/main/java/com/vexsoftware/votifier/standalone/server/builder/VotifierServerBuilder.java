@@ -1,5 +1,6 @@
 package com.vexsoftware.votifier.standalone.server.builder;
 
+import com.vexsoftware.votifier.standalone.config.VotifierConfiguration;
 import com.vexsoftware.votifier.standalone.config.redis.RedisVotifierConfiguration;
 import com.vexsoftware.votifier.standalone.config.server.ForwardableServer;
 import com.vexsoftware.votifier.standalone.server.StandaloneVotifierServer;
@@ -23,9 +24,7 @@ public class VotifierServerBuilder {
     private KeyPair v1Key;
     private InetSocketAddress bind;
     private Map<String, ForwardableServer> servers;
-    private boolean debug;
-    private boolean disableV1Protocol;
-    private RedisVotifierConfiguration redis;
+    private VotifierConfiguration config;
 
     public VotifierServerBuilder addToken(String service, String token) {
         Objects.requireNonNull(service, "service");
@@ -54,29 +53,19 @@ public class VotifierServerBuilder {
         return this;
     }
 
-    public VotifierServerBuilder debug(boolean debug) {
-        this.debug = debug;
-        return this;
-    }
-
     public VotifierServerBuilder backendServers(Map<String, ForwardableServer> servers) {
         this.servers = servers;
         return this;
     }
 
-    public VotifierServerBuilder disableV1Protocol(boolean disableV1Protocol) {
-        this.disableV1Protocol = disableV1Protocol;
-        return this;
-    }
-
-    public VotifierServerBuilder redis(RedisVotifierConfiguration cfg) {
-        this.redis = cfg;
+    public VotifierServerBuilder config(VotifierConfiguration config) {
+        this.config = config;
         return this;
     }
 
     public StandaloneVotifierServer create() {
         Objects.requireNonNull(bind, "need an address to bind to");
         Objects.requireNonNull(servers, "need a list of servers to forward votes for");
-        return new StandaloneVotifierServer(debug, tokens, v1Key, bind, servers, disableV1Protocol, redis);
+        return new StandaloneVotifierServer(tokens, v1Key, bind, servers, config);
     }
 }
