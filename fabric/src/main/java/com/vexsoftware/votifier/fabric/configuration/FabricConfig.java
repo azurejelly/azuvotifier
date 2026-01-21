@@ -37,12 +37,6 @@ public class FabricConfig {
             "using NuVotifier's proxy forwarding mechanism, enabling this option will increase your server's security.")
     public boolean disableV1Protocol = false;
 
-    @Setting("run-commands")
-    @Comment("A list of commands to run when a vote is received.")
-    public List<String> runCommands = new ArrayList<>(
-            List.of("say Thanks for voting, %player%!")
-    );
-
     @Setting
     @Comment("All tokens, labeled by the serviceName of each server list.\n" +
             "Default token for all server lists, if another isn't supplied.")
@@ -61,6 +55,17 @@ public class FabricConfig {
         @Setting("skip-offline-players")
         @Comment("Prevents a vote event from firing if the player who voted isn't online.")
         public boolean skipOfflinePlayers = false;
+
+        @Setting("run-on-vote")
+        @Comment("A list of commands to run when a vote is received.")
+        public List<String> runOnVote = defaultCommands();
+
+        private static List<String> defaultCommands() {
+            List<String> list = new ArrayList<>();
+            list.add("give %player% minecraft:diamond 1");
+            list.add("say Thanks for voting, %player%!");
+            return list;
+        }
     }
 
     @ConfigSerializable
