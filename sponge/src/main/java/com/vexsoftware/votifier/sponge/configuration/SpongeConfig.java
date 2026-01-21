@@ -20,6 +20,10 @@ public class SpongeConfig {
     @Comment("Port to listen for new votes on")
     public int port = 8192;
 
+    @Setting(value = "check-for-updates")
+    @Comment("Whether to check for updates when the server starts.")
+    public boolean checkForUpdates = true;
+
     @Setting()
     @Comment("Whether or not to print debug messages. In a production system, this should be set to false.\n" +
             "This is useful when initially setting up NuVotifier to ensure votes are being delivered.")

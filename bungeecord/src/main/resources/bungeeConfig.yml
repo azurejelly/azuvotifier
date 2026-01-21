@@ -2,6 +2,9 @@
 # If you're not comfortable with this, simply change this to false.
 bstats: true
 
+# Whether to check for updates when the server starts.
+check-for-updates: true
+
 # The IP to listen to. Use 0.0.0.0 if you wish to listen to all interfaces on your server. (All IP addresses)
 # This defaults to the IP you have configured your server to listen on, or 0.0.0.0 if you have not configured this.
 host: 0.0.0.0

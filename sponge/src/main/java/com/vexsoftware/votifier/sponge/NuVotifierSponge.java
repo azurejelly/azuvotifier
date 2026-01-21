@@ -3,6 +3,10 @@ package com.vexsoftware.votifier.sponge;
 import com.google.inject.Inject;
 import com.vexsoftware.votifier.VoteHandler;
 import com.vexsoftware.votifier.sponge.commands.VotifierCommand;
+import com.vexsoftware.votifier.sponge.util.SpongeUtil;
+import com.vexsoftware.votifier.update.UpdateChecker;
+import com.vexsoftware.votifier.update.impl.GitHubUpdateChecker;
+import com.vexsoftware.votifier.util.CommonConstants;
 import com.vexsoftware.votifier.util.CryptoUtil;
 import com.vexsoftware.votifier.model.Vote;
 import com.vexsoftware.votifier.network.VotifierServerBootstrap;
@@ -83,6 +87,7 @@ public class NuVotifierSponge implements VoteHandler, VotifierPlugin, ForwardedV
     private ForwardingVoteSink forwardingMethod;
     private LoggingAdapter loggerAdapter;
     private VotifierScheduler scheduler;
+    private UpdateChecker updateChecker;
 
     private boolean loadAndBind() {
         /*
@@ -245,12 +250,27 @@ public class NuVotifierSponge implements VoteHandler, VotifierPlugin, ForwardedV
 
     @Listener
     public void onServerStart(final StartedEngineEvent<Server> event) {
+        this.updateChecker = new GitHubUpdateChecker(CommonConstants.GITHUB_REPOSITORY);
         this.config = ConfigLoader.getSpongeConfig();
         this.scheduler = new SpongeScheduler(container);
         this.loggerAdapter = new Log4JLoggingAdapter(logger);
 
         if (!loadAndBind()) {
             logger.error("Votifier did not initialize properly!");
+        }
+
+        if (config.checkForUpdates) {
+            scheduler.runAsync(() -> {
+                String current = SpongeUtil.getPluginVersion(SpongeConstants.PLUGIN_ID);
+                String latest = updateChecker.fetchLatest();
+
+                if (current.equalsIgnoreCase(latest)) {
+                    return;
+                }
+
+                logger.info("There's a new version of azuvotifier available! ({}, you're currently on {})", latest, current);
+                logger.info("Get the update on Modrinth: {}", CommonConstants.MODRINTH_URL);
+            });
         }
     }
 

@@ -10,6 +10,9 @@ import com.vexsoftware.votifier.bungee.platform.forwarding.PluginMessagingForwar
 import com.vexsoftware.votifier.bungee.platform.scheduler.BungeeScheduler;
 import com.vexsoftware.votifier.bungee.platform.server.BungeeBackendServer;
 import com.vexsoftware.votifier.bungee.util.BungeeConstants;
+import com.vexsoftware.votifier.update.UpdateChecker;
+import com.vexsoftware.votifier.update.impl.GitHubUpdateChecker;
+import com.vexsoftware.votifier.util.CommonConstants;
 import com.vexsoftware.votifier.util.CryptoUtil;
 import com.vexsoftware.votifier.model.Vote;
 import com.vexsoftware.votifier.network.VotifierServerBootstrap;
@@ -84,6 +87,7 @@ public class NuVotifierBungee extends Plugin implements VoteHandler, ProxyVotifi
      */
     private ForwardingVoteSource forwardingMethod;
 
+    private UpdateChecker updateChecker;
     private VotifierScheduler scheduler;
     private LoggingAdapter pluginLogger;
 
@@ -379,10 +383,25 @@ public class NuVotifierBungee extends Plugin implements VoteHandler, ProxyVotifi
                         "Defaulting to noop implementation.");
             }
         }
+
+        if (configuration.getBoolean("check-for-updates", true)) {
+            scheduler.runAsync(() -> {
+                String current = getDescription().getVersion();
+                String latest = updateChecker.fetchLatest();
+
+                if (current.equalsIgnoreCase(latest)) {
+                    return;
+                }
+
+                getLogger().info("There's a new version of azuvotifier available! (" + latest + ", you're currently on " + current + ")");
+                getLogger().info("Get the update on Modrinth: " + CommonConstants.MODRINTH_URL);
+            });
+        }
     }
 
     @Override
     public void onEnable() {
+        this.updateChecker = new GitHubUpdateChecker(CommonConstants.GITHUB_REPOSITORY);
         this.scheduler = new BungeeScheduler(this);
         this.pluginLogger = new JavaLoggingAdapter(getLogger());
 
@@ -396,6 +415,8 @@ public class NuVotifierBungee extends Plugin implements VoteHandler, ProxyVotifi
         } catch (Exception ex) {
             getLogger().log(Level.SEVERE, "Failed to load Votifier:", ex);
         }
+
+
     }
 
     private void halt() {

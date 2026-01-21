@@ -6,6 +6,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.vexsoftware.votifier.fabric.AzuVotifierFabric;
 import com.vexsoftware.votifier.fabric.util.CommandResult;
+import com.vexsoftware.votifier.fabric.util.FabricConstants;
 import com.vexsoftware.votifier.fabric.util.FabricUtil;
 import com.vexsoftware.votifier.model.Vote;
 import com.vexsoftware.votifier.network.protocol.session.VotifierSession;
@@ -59,7 +60,7 @@ public class VotifierCommand {
     }
 
     private static int info(CommandContext<ServerCommandSource> ctx) {
-        var version = FabricUtil.getModVersion("azuvotifier");
+        var version = FabricUtil.getModVersion(FabricConstants.MOD_ID);
         var text = Text.literal("This server is running ")
                 .withColor(CommonConstants.SECONDARY_COLOR)
                 .append(

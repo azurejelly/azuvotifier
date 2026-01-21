@@ -22,7 +22,11 @@ public class FabricConfig {
     @Comment("Port to listen for new votes on")
     public int port = 8192;
 
-    @Setting()
+    @Setting(value = "check-for-updates")
+    @Comment("Whether to check for updates when the server starts.")
+    public boolean checkForUpdates = true;
+
+    @Setting
     @Comment("Whether or not to print debug messages. In a production system, this should be set to false.\n" +
             "This is useful when initially setting up NuVotifier to ensure votes are being delivered.")
     public boolean debug = true;
@@ -44,7 +48,7 @@ public class FabricConfig {
             "Default token for all server lists, if another isn't supplied.")
     public Map<String, String> tokens = Collections.singletonMap("default", TokenUtil.newToken());
 
-    @Setting()
+    @Setting
     @Comment("Configuration section for all vote forwarding to NuVotifier")
     public Forwarding forwarding = new Forwarding();
 

@@ -7,6 +7,8 @@ import com.vexsoftware.votifier.fabric.event.listener.CommandRegistrationCallbac
 import com.vexsoftware.votifier.fabric.event.listener.DefaultVoteListener;
 import com.vexsoftware.votifier.fabric.platform.forwarding.FabricMessagingForwardingSink;
 import com.vexsoftware.votifier.fabric.platform.provider.MinecraftServerProvider;
+import com.vexsoftware.votifier.fabric.util.FabricConstants;
+import com.vexsoftware.votifier.fabric.util.FabricUtil;
 import com.vexsoftware.votifier.model.Vote;
 import com.vexsoftware.votifier.network.VotifierServerBootstrap;
 import com.vexsoftware.votifier.network.protocol.session.VotifierSession;
@@ -19,6 +21,9 @@ import com.vexsoftware.votifier.platform.plugin.VotifierPlugin;
 import com.vexsoftware.votifier.platform.scheduler.VotifierScheduler;
 import com.vexsoftware.votifier.platform.scheduler.impl.StandaloneVotifierScheduler;
 import com.vexsoftware.votifier.redis.RedisCredentials;
+import com.vexsoftware.votifier.update.UpdateChecker;
+import com.vexsoftware.votifier.update.impl.GitHubUpdateChecker;
+import com.vexsoftware.votifier.util.CommonConstants;
 import com.vexsoftware.votifier.util.CryptoUtil;
 import com.vexsoftware.votifier.util.TokenUtil;
 import lombok.Getter;
@@ -40,9 +45,8 @@ import java.util.Map;
 public class AzuVotifierFabric implements DedicatedServerModInitializer, VotifierPlugin, ForwardedVoteListener {
 
     @Getter private static AzuVotifierFabric instance;
-
-    @Getter
-    private Logger logger;
+    @Getter private Logger logger;
+    private UpdateChecker updateChecker;
     private LoggingAdapter loggingAdapter;
     private Map<String, Key> tokens;
     private VotifierScheduler scheduler;
@@ -66,12 +70,9 @@ public class AzuVotifierFabric implements DedicatedServerModInitializer, Votifie
     public void start(MinecraftServer server) {
         MinecraftServerProvider.setServer(server);
 
-        if (init()) {
-            // initialization was successful
-            return;
+        if (!init()) {
+            logger.error("azuvotifier did not initialize properly!");
         }
-
-        logger.error("azuvotifier did not initialize properly!");
     }
 
     public void stop(MinecraftServer server) {
@@ -79,7 +80,9 @@ public class AzuVotifierFabric implements DedicatedServerModInitializer, Votifie
         logger.info("azuvotifier disabled.");
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean init() {
+        updateChecker = new GitHubUpdateChecker(CommonConstants.GITHUB_REPOSITORY);
         loggingAdapter = new SLF4JLoggingAdapter(logger);
         tokens = new HashMap<>();
         scheduler = new StandaloneVotifierScheduler();
@@ -189,6 +192,20 @@ public class AzuVotifierFabric implements DedicatedServerModInitializer, Votifie
             }
         }
 
+        if (config.checkForUpdates) {
+            scheduler.runAsync(() -> {
+                String current = FabricUtil.getModVersion(FabricConstants.MOD_ID);
+                String latest = updateChecker.fetchLatest();
+
+                if (current.equalsIgnoreCase(latest)) {
+                    return;
+                }
+
+                logger.info("There's a new version of azuvotifier available! ({}, you're currently on {})", latest, current);
+                logger.info("Get the update on Modrinth: {}", CommonConstants.MODRINTH_URL);
+            });
+        }
+
         return true;
     }
 
@@ -256,8 +273,7 @@ public class AzuVotifierFabric implements DedicatedServerModInitializer, Votifie
     }
 
     private void fireVoteEvent(Vote vote) {
-        var server = MinecraftServerProvider.getServer();
-
+        MinecraftServer server = MinecraftServerProvider.getServer();
         if (config.experimental.skipOfflinePlayers) {
             String username = vote.getUsername();
             var player = server.getPlayerManager().getPlayer(username);

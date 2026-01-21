@@ -5,6 +5,9 @@ host: %ip%
 # Port to listen for new votes on
 port: 8192
 
+# Whether to check for updates when the server starts.
+check-for-updates: true
+
 # Setting this option to true will disable handling of Protocol v1 packets. While the old protocol is not secure, this
 # option is currently not recommended as most voting sites only support the old protocol at present. However, if you are
 # using NuVotifier's proxy forwarding mechanism, enabling this option will increase your server's security.

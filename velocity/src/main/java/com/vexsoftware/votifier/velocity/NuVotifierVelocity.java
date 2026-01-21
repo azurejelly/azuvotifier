@@ -26,6 +26,9 @@ import com.vexsoftware.votifier.platform.logger.impl.SLF4JLoggingAdapter;
 import com.vexsoftware.votifier.platform.plugin.proxy.ProxyVotifierPlugin;
 import com.vexsoftware.votifier.platform.scheduler.VotifierScheduler;
 import com.vexsoftware.votifier.redis.RedisCredentials;
+import com.vexsoftware.votifier.update.UpdateChecker;
+import com.vexsoftware.votifier.update.impl.GitHubUpdateChecker;
+import com.vexsoftware.votifier.util.CommonConstants;
 import com.vexsoftware.votifier.util.CryptoUtil;
 import com.vexsoftware.votifier.util.IOUtil;
 import com.vexsoftware.votifier.util.TokenUtil;
@@ -79,6 +82,7 @@ public class NuVotifierVelocity implements VoteHandler, ProxyVotifierPlugin {
     @Inject
     private Metrics.Factory metricsFactory;
 
+    private UpdateChecker updateChecker;
     private LoggingAdapter loggingAdapter;
     private VotifierScheduler scheduler;
 
@@ -150,6 +154,20 @@ public class NuVotifierVelocity implements VoteHandler, ProxyVotifierPlugin {
         if (config.getBoolean("bstats", true)) {
             Metrics metrics = metricsFactory.make(this, VelocityConstants.BSTATS_ID);
             metrics.addCustomChart(new SimplePie("forwarding_method", () -> method));
+        }
+
+        if (config.getBoolean("check-for-updates", true)) {
+            scheduler.runAsync(() -> {
+                String current = VelocityConstants.VERSION;
+                String latest = updateChecker.fetchLatest();
+
+                if (current.equalsIgnoreCase(latest)) {
+                    return;
+                }
+
+                logger.info("There's a new version of azuvotifier available! ({}, you're currently on {})", latest, current);
+                logger.info("Get the update on Modrinth: {}", CommonConstants.MODRINTH_URL);
+            });
         }
 
         switch (method) {
@@ -348,6 +366,7 @@ public class NuVotifierVelocity implements VoteHandler, ProxyVotifierPlugin {
 
     @Subscribe
     public void onServerStart(ProxyInitializeEvent event) {
+        this.updateChecker = new GitHubUpdateChecker(CommonConstants.GITHUB_REPOSITORY);
         this.scheduler = new VelocityScheduler(server, this);
         this.loggingAdapter = new SLF4JLoggingAdapter(logger);
 
