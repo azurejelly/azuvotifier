@@ -5,10 +5,7 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 import org.spongepowered.configurate.objectmapping.meta.Comment;
 import org.spongepowered.configurate.objectmapping.meta.Setting;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @ConfigSerializable
 public class FabricConfig {
@@ -40,7 +37,7 @@ public class FabricConfig {
     @Setting
     @Comment("All tokens, labeled by the serviceName of each server list.\n" +
             "Default token for all server lists, if another isn't supplied.")
-    public Map<String, String> tokens = Collections.singletonMap("default", TokenUtil.newToken());
+    public Map<String, String> tokens = defaultTokens();
 
     @Setting
     @Comment("Configuration section for all vote forwarding to NuVotifier")
@@ -112,5 +109,11 @@ public class FabricConfig {
             @Setting
             public String channel = "nuvotifier:votes";
         }
+    }
+
+    private static Map<String, String> defaultTokens() {
+        Map<String, String> map = new HashMap<>();
+        map.put("default", TokenUtil.newToken());
+        return map;
     }
 }
