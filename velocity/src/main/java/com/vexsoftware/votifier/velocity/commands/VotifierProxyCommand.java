@@ -12,6 +12,7 @@ import com.vexsoftware.votifier.util.UsernameUtil;
 import com.vexsoftware.votifier.velocity.NuVotifierVelocity;
 import com.vexsoftware.votifier.velocity.utils.VelocityConstants;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 
@@ -147,6 +148,7 @@ public class VotifierProxyCommand implements SimpleCommand {
                         .append(
                                 Component.text(CommonConstants.MODRINTH_URL)
                                         .color(TextColor.color(CommonConstants.PRIMARY_COLOR))
+                                        .style((s) -> s.clickEvent(ClickEvent.openUrl(CommonConstants.MODRINTH_URL)))
                         )
         );
     }
