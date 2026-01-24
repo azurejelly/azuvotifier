@@ -45,7 +45,7 @@ tasks {
     }
 
     runWaterfall {
-        waterfallVersion("1.20")
+        waterfallVersion("1.21")
     }
 }
 
