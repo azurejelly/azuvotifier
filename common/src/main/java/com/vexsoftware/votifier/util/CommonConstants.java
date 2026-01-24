@@ -5,8 +5,8 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class CommonConstants {
 
-    public static final int PRIMARY_COLOR = 0xe867ff;
-    public static final int SECONDARY_COLOR = 0xf3b0ff;
+    public static final int PRIMARY_COLOR = 0x8ADDFF;
+    public static final int SECONDARY_COLOR = 0xE5F9FF;
     public static final int SUCCESS_COLOR = 0x79f17b;
     public static final int FAILURE_COLOR = 0xcb3a3a;
     public static final int PROCESSING_COLOR = 0xf1e079;

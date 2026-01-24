@@ -32,4 +32,9 @@ public final class VelocityScheduler implements VotifierScheduler {
     public VotifierTask repeatOnPool(Runnable runnable, int delay, int repeat, TimeUnit unit) {
         return new VelocityVotifierTask(builder(runnable).delay(delay, unit).repeat(repeat, unit).schedule());
     }
+
+    @Override
+    public VotifierTask runAsync(Runnable runnable) {
+        return new VelocityVotifierTask(builder(runnable).schedule());
+    }
 }

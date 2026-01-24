@@ -1,8 +1,7 @@
 package com.vexsoftware.votifier.bungee;
 
 import com.vexsoftware.votifier.VoteHandler;
-import com.vexsoftware.votifier.bungee.commands.TestVoteCommand;
-import com.vexsoftware.votifier.bungee.commands.VotifierReloadCommand;
+import com.vexsoftware.votifier.bungee.commands.VotifierProxyCommand;
 import com.vexsoftware.votifier.bungee.events.VotifierEvent;
 import com.vexsoftware.votifier.bungee.listeners.ProxyReloadListener;
 import com.vexsoftware.votifier.bungee.platform.forwarding.OnlineForwardPluginMessagingForwardingSource;
@@ -247,9 +246,7 @@ public class NuVotifierBungee extends Plugin implements VoteHandler, ProxyVotifi
 
         switch (method) {
             case "none": {
-                getLogger().info("Method none selected for vote forwarding:" +
-                        "Votes will not be forwarded to backend servers.");
-
+                getLogger().info("Method none selected for vote forwarding: Votes will not be forwarded to backend servers.");
                 break;
             }
             case "pluginmessaging": {
@@ -260,9 +257,7 @@ public class NuVotifierBungee extends Plugin implements VoteHandler, ProxyVotifi
 
                 switch (cacheMethod) {
                     case "none": {
-                        getLogger().info("Vote cache 'none' selected:" +
-                                "votes that cannot be immediately delivered will be lost.");
-
+                        getLogger().info("Vote cache 'none' selected: votes that cannot be immediately delivered will be lost.");
                         break;
                     }
                     case "memory": {
@@ -357,8 +352,7 @@ public class NuVotifierBungee extends Plugin implements VoteHandler, ProxyVotifi
             case "redis": {
                 Configuration section = fwd.getSection("redis");
                 if (!fwd.contains("redis")) {
-                    throw new RuntimeException("Redis configuration is missing! " +
-                            "Defaulting to noop implementation.");
+                    throw new IllegalStateException("Attempted to use Redis forwarding without a valid Redis configuration");
                 }
 
                 this.forwardingMethod = new RedisForwardingVoteSource(
@@ -406,8 +400,7 @@ public class NuVotifierBungee extends Plugin implements VoteHandler, ProxyVotifi
         this.pluginLogger = new JavaLoggingAdapter(getLogger());
 
         PluginManager pluginManager = ProxyServer.getInstance().getPluginManager();
-        pluginManager.registerCommand(this, new VotifierReloadCommand(this));
-        pluginManager.registerCommand(this, new TestVoteCommand(this));
+        pluginManager.registerCommand(this, new VotifierProxyCommand(this));
         pluginManager.registerListener(this, new ProxyReloadListener(this));
 
         try {

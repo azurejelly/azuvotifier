@@ -53,7 +53,7 @@ tasks {
     }
 
     runServer {
-        minecraftVersion("1.21.11")
+        minecraftVersion("1.21.1")
         jvmArgs("-Dcom.mojang.eula.agree=true")
 
         downloadPlugins {

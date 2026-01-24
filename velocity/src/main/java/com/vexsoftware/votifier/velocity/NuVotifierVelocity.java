@@ -2,6 +2,7 @@ package com.vexsoftware.votifier.velocity;
 
 import com.google.inject.Inject;
 import com.moandjiezana.toml.Toml;
+import com.velocitypowered.api.command.CommandManager;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.proxy.ProxyReloadEvent;
@@ -32,8 +33,7 @@ import com.vexsoftware.votifier.util.CommonConstants;
 import com.vexsoftware.votifier.util.CryptoUtil;
 import com.vexsoftware.votifier.util.IOUtil;
 import com.vexsoftware.votifier.util.TokenUtil;
-import com.vexsoftware.votifier.velocity.commands.TestVoteCommand;
-import com.vexsoftware.votifier.velocity.commands.VotifierReloadCommand;
+import com.vexsoftware.votifier.velocity.commands.VotifierProxyCommand;
 import com.vexsoftware.votifier.velocity.event.VotifierEvent;
 import com.vexsoftware.votifier.velocity.forwarding.OnlineForwardPluginMessagingForwardingSource;
 import com.vexsoftware.votifier.velocity.forwarding.PluginMessagingForwardingSource;
@@ -370,8 +370,15 @@ public class NuVotifierVelocity implements VoteHandler, ProxyVotifierPlugin {
         this.scheduler = new VelocityScheduler(server, this);
         this.loggingAdapter = new SLF4JLoggingAdapter(logger);
 
-        this.getServer().getCommandManager().register("pnvreload", new VotifierReloadCommand(this));
-        this.getServer().getCommandManager().register("ptestvote", new TestVoteCommand(this));
+        CommandManager commandManager = getServer().getCommandManager();
+        commandManager.register(
+                commandManager.metaBuilder("votifier-proxy")
+                        .aliases("votifierproxy", "azuvotifierproxy", "azuvotifier-proxy")
+                        .plugin(this)
+                        .build(),
+
+                new VotifierProxyCommand(this)
+        );
 
         if (!loadAndBind()) {
             gracefulExit();

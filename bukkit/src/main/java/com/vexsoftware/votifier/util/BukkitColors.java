@@ -19,7 +19,7 @@ public class BukkitColors {
     }
 
     public String primary() {
-        return getColor(CommonConstants.PRIMARY_COLOR, ChatColor.LIGHT_PURPLE);
+        return getColor(CommonConstants.PRIMARY_COLOR, ChatColor.AQUA);
     }
 
     public String secondary() {
