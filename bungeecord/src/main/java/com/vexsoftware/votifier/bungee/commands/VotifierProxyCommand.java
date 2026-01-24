@@ -99,7 +99,7 @@ public class VotifierProxyCommand extends Command implements TabExecutor {
         ChatColor secondary = BungeeColors.secondary(sender);
 
         sender.sendMessage(
-                new ComponentBuilder("This server is running ").color(secondary)
+                new ComponentBuilder("This proxy is running ").color(secondary)
                     .append("azuvotifier").color(primary)
                     .append(" version ").color(secondary)
                     .append(plugin.getDescription().getVersion()).color(primary)
@@ -109,7 +109,7 @@ public class VotifierProxyCommand extends Command implements TabExecutor {
         if (sender.hasPermission("azuvotifier.more-info")) {
             ProxyServer server = ProxyServer.getInstance();
             sender.sendMessage(
-                    new ComponentBuilder("Server: ").color(secondary)
+                    new ComponentBuilder("Proxy: ").color(secondary)
                             .append(server.getName() + " " + server.getVersion())
                             .color(primary)
                             .build()

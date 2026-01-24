@@ -115,7 +115,7 @@ public class VotifierProxyCommand implements SimpleCommand {
         }
 
         source.sendMessage(
-                Component.text("This server is running ")
+                Component.text("This proxy is running ")
                         .color(TextColor.color(secondary))
                         .append(
                                 Component.text("azuvotifier")
@@ -132,7 +132,7 @@ public class VotifierProxyCommand implements SimpleCommand {
         if (source.hasPermission("azuvotifier.more-info")) {
             ProxyVersion version = plugin.getServer().getVersion();
             source.sendMessage(
-                    Component.text("Server: ")
+                    Component.text("Proxy: ")
                             .color(secondary)
                             .append(
                                     Component.text(version.getName() + " " + version.getVersion())
